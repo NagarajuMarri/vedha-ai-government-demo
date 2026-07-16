@@ -2,7 +2,7 @@
 
 A professional Government Demonstration edition of the Vedha AI Learning Platform for education leaders, school communities, investors, parents, teachers, and students.
 
-> **Project status:** Foundation planning. No application code has been created yet.
+> **Project status:** Sprint 3A AI Infrastructure is now implemented in the backend skeleton. No public lesson route or frontend changes were introduced in this sprint.
 
 ## Project overview
 

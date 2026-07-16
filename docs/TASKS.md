@@ -155,13 +155,21 @@
 | Dependencies | VGD-007, VGD-008, VGD-009 |
 | Estimated effort | 13–21 days |
 | Owner | AI + Full-stack Team |
-| Status | TODO |
+| Status | IN PROGRESS |
 
 **Acceptance criteria:**
 
 - Tutor responses meet educational and age-appropriateness rules.
 - Telugu-selected requests produce primarily Telugu responses.
 - Provider errors, timeouts, unsafe output, and usage limits are handled and tested.
+
+**Sprint 3A status:**
+
+- Provider-neutral lesson request/response types exist.
+- OpenAI provider integration is isolated in the provider layer.
+- Language profile policy engine is provider-independent.
+- Deterministic fallback generation and internal AI exceptions are implemented.
+- Sprint 3A tests pass without making live API calls.
 
 ### VGD-011 — Implement exact-composition practice system
 

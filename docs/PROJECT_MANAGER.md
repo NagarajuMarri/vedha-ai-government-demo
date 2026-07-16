@@ -7,11 +7,11 @@
 | Field | Current state |
 |---|---|
 | Current milestone | Phase 2 – Project Skeleton |
-| Progress | Foundation Documentation: 100% |
-| Overall status | Foundation documentation complete; ready for approved project skeleton generation; no application code started |
-| Current sprint | Project Skeleton Sprint 1 |
-| Sprint goal | Generate the architecture-aligned project skeleton without implementing product features |
-| Next task | Generate complete project skeleton |
+| Progress | Foundation Documentation: 100%; Sprint 3A AI Infrastructure: complete |
+| Overall status | Foundation documentation complete; backend AI infrastructure now implemented within the approved skeleton without adding public lesson routes or frontend changes |
+| Current sprint | Sprint 3A — AI Infrastructure |
+| Sprint goal | Create a secure, testable, provider-independent AI infrastructure for the backend without adding the public lesson API |
+| Next task | Sprint 3B Controlled Lesson API |
 
 ## Current milestone
 
