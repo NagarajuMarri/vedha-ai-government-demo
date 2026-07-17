@@ -5,6 +5,7 @@ import logging
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -34,6 +35,33 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
 
 
 def _register_exception_handlers(app: FastAPI) -> None:
+    @app.exception_handler(RequestValidationError)
+    async def request_validation_exception_handler(
+        request: Request,
+        exception: RequestValidationError,
+    ) -> JSONResponse:
+        request_id = getattr(request.state, "request_id", str(uuid4()))
+        details = [
+            {
+                "location": list(error["loc"]),
+                "message": error["msg"],
+                "type": error["type"],
+            }
+            for error in exception.errors()
+        ]
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": {
+                    "code": "validation_error",
+                    "message": "Please correct the invalid request data and try again.",
+                    "details": details,
+                    "request_id": request_id,
+                }
+            },
+            headers={"X-Request-ID": request_id},
+        )
+
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(
         request: Request,
