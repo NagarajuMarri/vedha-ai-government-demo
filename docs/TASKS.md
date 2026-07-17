@@ -333,6 +333,23 @@ No tasks are currently in review.
 
 ## COMPLETED
 
+### VGD-4C — Enterprise textbook repository and PDF ingestion foundation
+
+| Field | Value |
+|---|---|
+| Priority | P0 |
+| Description | Register and deterministically inspect four independent AP Class 10 Mathematics textbook variants. |
+| Dependencies | Sprint 4B curriculum metadata foundation |
+| Owner | Backend + Curriculum Engineering |
+| Status | COMPLETED |
+
+**Acceptance criteria:**
+
+- Generic `book_part` supports semester, volume, part, full-year and custom structures.
+- PDF validation, SHA-256 duplicate detection, page extraction, provenance, scanned detection and chapter detection are deterministic.
+- Storage is provider-independent and local paths are not exposed.
+- OCR, embeddings, vector search, OpenAI extraction and lesson grounding are absent.
+
 ### VGD-000 — Establish project source-of-truth rules
 
 | Field | Value |

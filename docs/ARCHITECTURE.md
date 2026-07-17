@@ -135,10 +135,29 @@ subject, medium, and language. Routes and future retrieval services must use
 that selection rather than accepting AI-generated curriculum metadata.
 
 Each chunk carries portable metadata for its curriculum location, language,
-version, and timestamps. Schema fields are reserved for embeddings, images,
-diagrams, animations, voice, learning objectives, and Bloom level, but Sprint
-4B performs no embedding generation, vector search, PDF processing, multimedia
-processing, or provider retrieval.
+version, and timestamps. The textbook hierarchy adds curriculum version and a
+generic `book_part` (`full_year`, semester, volume, part, or custom), avoiding
+board-specific semester assumptions.
+
+### Enterprise textbook repository and ingestion
+
+Textbook registration, file storage, metadata persistence, and PDF parsing use
+separate application-owned interfaces. The local storage adapter writes only
+to a configured private root and returns opaque storage keys; cloud adapters
+can replace it without changing ingestion rules. Each edition, language and
+book part remains an independent record.
+
+The deterministic pipeline validates extension, PDF signature, configured MIME
+allowlist, size, encryption, readability and page count; computes SHA-256;
+rejects only an exact checksum duplicate; stores the file; then extracts each
+page independently with warnings, image/table indicators and provenance.
+Likely scanned PDFs are marked `ocr_required` with a reason, but OCR is not
+executed. English `Chapter`/`Unit` and Telugu `అధ్యాయం`/`పాఠం` headings receive
+deterministic confidence values and remain open to later manual correction.
+
+Reserved embedding and multimedia fields provide forward schema compatibility.
+Sprint 4C performs no OCR, embedding generation, vector search, semantic search,
+OpenAI extraction, lesson grounding, or multimedia generation.
 
 The future retrieval pipeline boundary is:
 

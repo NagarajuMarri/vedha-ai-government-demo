@@ -21,6 +21,7 @@ class CurriculumResolver:
         *,
         board: str,
         academic_year: str,
+        curriculum_version: str,
         class_level: int,
         subject: str,
         medium: str,
@@ -33,12 +34,19 @@ class CurriculumResolver:
             allowed=self._supported_boards,
         )
         year_node = self._find(board_node.academic_years, academic_year, key=lambda item: item.id, level="academic_year")
-        class_node = self._find(year_node.classes, class_level, key=lambda item: item.class_level, level="class_level")
+        version_node = self._find(
+            year_node.curriculum_versions,
+            curriculum_version,
+            key=lambda item: item.id,
+            level="curriculum_version",
+        )
+        class_node = self._find(version_node.classes, class_level, key=lambda item: item.class_level, level="class_level")
         subject_node = self._find(class_node.subjects, subject, key=lambda item: item.id, level="subject")
         medium_node = self._find(subject_node.media, medium, key=lambda item: item.id, level="medium")
         return CurriculumSelection(
             board=board_node.id,
             academic_year=year_node.id,
+            curriculum_version=version_node.id,
             class_level=class_node.class_level,
             subject=subject_node.id,
             medium=medium_node.id,

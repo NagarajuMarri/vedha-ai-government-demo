@@ -14,6 +14,7 @@ from backend.app.curriculum import (
     CurriculumCatalog,
     CurriculumClass,
     CurriculumResolver,
+    CurriculumVersion,
     Medium,
     Subject,
     UnsupportedCurriculumError,
@@ -31,23 +32,21 @@ SUPPORTED_BOARDS = (
 def _catalog(board_ids: tuple[str, ...] = SUPPORTED_BOARDS) -> CurriculumCatalog:
     boards = []
     for board_id in board_ids:
+        subject = Subject(
+            id="mathematics",
+            name="Mathematics",
+            media=(
+                Medium(id="english", name="English Medium", language="en"),
+                Medium(id="telugu", name="Telugu Medium", language="te"),
+            ),
+        )
+        curriculum_class = CurriculumClass(class_level=5, subjects=(subject,))
+        version = CurriculumVersion(id="2025.1", classes=(curriculum_class,))
+        year = AcademicYear(id="2025-2026", curriculum_versions=(version,))
         boards.append(Board(
             id=board_id,
             name=board_id.replace("_", " ").title(),
-            academic_years=(AcademicYear(
-                id="2025-2026",
-                classes=(CurriculumClass(
-                    class_level=5,
-                    subjects=(Subject(
-                        id="mathematics",
-                        name="Mathematics",
-                        media=(
-                            Medium(id="english", name="English Medium", language="en"),
-                            Medium(id="telugu", name="Telugu Medium", language="te"),
-                        ),
-                    ),),
-                ),),
-            ),),
+            academic_years=(year,),
         ))
     return CurriculumCatalog(boards=tuple(boards))
 
@@ -57,6 +56,7 @@ def test_each_required_board_resolves(board: str) -> None:
     selection = CurriculumResolver(_catalog(), SUPPORTED_BOARDS).resolve(
         board=board,
         academic_year="2025-2026",
+        curriculum_version="2025.1",
         class_level=5,
         subject="mathematics",
         medium="telugu",
@@ -64,6 +64,7 @@ def test_each_required_board_resolves(board: str) -> None:
     assert selection.model_dump() == {
         "board": board,
         "academic_year": "2025-2026",
+        "curriculum_version": "2025.1",
         "class_level": 5,
         "subject": "mathematics",
         "medium": "telugu",
@@ -76,6 +77,7 @@ def test_unsupported_board_is_rejected_before_hierarchy_lookup() -> None:
         CurriculumResolver(_catalog(), SUPPORTED_BOARDS).resolve(
             board="unknown_board",
             academic_year="2025-2026",
+            curriculum_version="2025.1",
             class_level=5,
             subject="mathematics",
             medium="english",
@@ -86,6 +88,7 @@ def test_unsupported_board_is_rejected_before_hierarchy_lookup() -> None:
     ("override", "expected_level"),
     [
         ({"academic_year": "2026-2027"}, "academic_year"),
+        ({"curriculum_version": "old"}, "curriculum_version"),
         ({"class_level": 6}, "class_level"),
         ({"subject": "science"}, "subject"),
         ({"medium": "hindi"}, "medium"),
@@ -95,6 +98,7 @@ def test_resolver_rejects_invalid_hierarchy_node(override: dict, expected_level:
     request = {
         "board": "cbse",
         "academic_year": "2025-2026",
+        "curriculum_version": "2025.1",
         "class_level": 5,
         "subject": "mathematics",
         "medium": "english",
@@ -109,6 +113,7 @@ def test_new_configured_board_requires_no_resolver_code_change() -> None:
     selection = CurriculumResolver(_catalog(boards), boards).resolve(
         board="cambridge",
         academic_year="2025-2026",
+        curriculum_version="2025.1",
         class_level=5,
         subject="mathematics",
         medium="english",

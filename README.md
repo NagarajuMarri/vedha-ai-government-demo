@@ -47,9 +47,38 @@ See [Software Architecture](docs/ARCHITECTURE.md) for diagrams, boundaries, secu
 | Design | Responsive web design with English/Telugu support |
 | Version control | Git and GitHub |
 
-## Installation
+## Project Setup
 
-Installation instructions will be added when the approved implementation foundation and dependency definitions exist. Do not install unreviewed packages or infer setup commands from this placeholder.
+Create a virtual environment from the repository root:
+
+```powershell
+python -m venv .venv
+```
+
+Activate it on Windows:
+
+```powershell
+.venv\Scripts\activate
+```
+
+Install the project and test dependencies:
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Run the complete test suite:
+
+```powershell
+python -m pytest
+```
+
+Run FastAPI locally:
+
+```powershell
+uvicorn backend.app.main:app --reload
+```
 
 ## Running locally
 
@@ -92,6 +121,28 @@ python -m scripts.manual_openai_lesson --i-understand-this-uses-api-credits
 ```
 
 It runs only when explicitly invoked and requires `OPENAI_API_KEY`. Automated tests never invoke it and mock all provider calls. RAG, textbook ingestion, embeddings, persistence, streaming, conversation memory, voice, images, practice, evaluation, authentication, and analytics remain deferred. The next planned sprint is Sprint 4B RAG Foundation.
+
+## Testing
+
+Run the complete test suite from the repository root:
+
+```powershell
+python -m pytest
+```
+
+### Windows PermissionError troubleshooting
+
+If pytest fails with `PermissionError: [WinError 5]` because the default Windows
+temporary directory or `.pytest_cache` is unavailable, use a repository-local
+temporary directory and disable pytest's cache provider:
+
+```powershell
+python -m pytest --basetemp=.pytest-temp -p no:cacheprovider
+```
+
+Both generated directories are ignored by Git. This workaround changes only
+pytest's temporary and cache locations; tests should continue to use pytest's
+`tmp_path` fixtures so the suite remains platform-independent.
 
 ## Project structure
 
@@ -145,3 +196,26 @@ See the [complete roadmap](docs/ROADMAP.md) and [current project status](docs/PR
 ## License
 
 License terms have not yet been selected. Add an approved `LICENSE` file before external distribution or reuse.
+## Sprint 4C textbook ingestion foundation
+
+Vedha AI includes a provider-independent textbook repository foundation for
+curriculum PDFs. The pilot treats Andhra Pradesh Class 10 Mathematics Semester
+1/2 Telugu and Semester 1/2 English as four independent textbook records.
+
+The ingestion pipeline validates PDF type, size, encryption, readability and
+checksum; stores files behind an opaque local storage key; extracts text one
+page at a time; preserves provenance; detects likely scanned documents without
+running OCR; and detects explicit English/Telugu chapter headings. Exact
+SHA-256 duplicates are rejected, while different editions, languages and book
+parts coexist.
+
+Run the disabled-by-default manual command after configuring a private storage
+directory and setting `TEXTBOOK_INGESTION_ENABLED=true`:
+
+```powershell
+python scripts/ingest_textbook.py textbook.pdf --board andhra_pradesh_state_board --academic-year 2025-2026 --curriculum-version ap-2025-v1 --class-level 10 --subject mathematics --medium telugu --language te --book-part semester_1 --edition first --publication-year 2025
+```
+
+Textbook PDFs and private storage content must never be committed. OCR,
+embeddings, vector search, OpenAI extraction and lesson grounding remain out of
+scope.

@@ -73,6 +73,12 @@ class Settings:
     )
     default_board: str = "andhra_pradesh_state_board"
     default_academic_year: str = "2025-2026"
+    textbook_storage_path: Path = Path(__file__).resolve().parents[2] / "data" / "textbooks"
+    textbook_max_file_size_mb: int = 100
+    textbook_allowed_mime_types: tuple[str, ...] = ("application/pdf",)
+    textbook_checksum_algorithm: str = "sha256"
+    textbook_ingestion_enabled: bool = False
+    textbook_scanned_threshold: float = 0.8
 
 
 @lru_cache
@@ -94,6 +100,18 @@ def get_settings() -> Settings:
     )
     default_board = os.getenv("DEFAULT_BOARD", "andhra_pradesh_state_board").strip()
     default_academic_year = os.getenv("DEFAULT_ACADEMIC_YEAR", "2025-2026").strip()
+    textbook_storage_path = Path(os.getenv(
+        "TEXTBOOK_STORAGE_PATH",
+        str(Path(__file__).resolve().parents[2] / "data" / "textbooks"),
+    )).resolve()
+    try:
+        textbook_max_file_size_mb = int(os.getenv("TEXTBOOK_MAX_FILE_SIZE_MB", "100"))
+        textbook_scanned_threshold = float(os.getenv("TEXTBOOK_SCANNED_THRESHOLD", "0.8"))
+    except ValueError as exc:
+        raise ValueError("Textbook numeric configuration is invalid") from exc
+    textbook_allowed_mime_types = _read_csv("TEXTBOOK_ALLOWED_MIME_TYPES", "application/pdf")
+    textbook_checksum_algorithm = os.getenv("TEXTBOOK_CHECKSUM_ALGORITHM", "sha256").strip().lower()
+    textbook_ingestion_enabled = _read_bool("TEXTBOOK_INGESTION_ENABLED", False)
 
     if not project_name:
         raise ValueError("VEDHA_PROJECT_NAME must not be empty")
@@ -109,6 +127,14 @@ def get_settings() -> Settings:
         raise ValueError("DEFAULT_BOARD must be included in SUPPORTED_BOARDS")
     if not default_academic_year or not re.fullmatch(r"\d{4}-\d{4}", default_academic_year):
         raise ValueError("DEFAULT_ACADEMIC_YEAR must use YYYY-YYYY format")
+    if textbook_max_file_size_mb <= 0:
+        raise ValueError("TEXTBOOK_MAX_FILE_SIZE_MB must be greater than zero")
+    if textbook_allowed_mime_types != ("application/pdf",):
+        raise ValueError("TEXTBOOK_ALLOWED_MIME_TYPES currently supports only application/pdf")
+    if textbook_checksum_algorithm != "sha256":
+        raise ValueError("TEXTBOOK_CHECKSUM_ALGORITHM currently supports only sha256")
+    if not 0 <= textbook_scanned_threshold <= 1:
+        raise ValueError("TEXTBOOK_SCANNED_THRESHOLD must be between zero and one")
 
     return Settings(
         project_name=project_name,
@@ -127,6 +153,12 @@ def get_settings() -> Settings:
         supported_boards=supported_boards,
         default_board=default_board,
         default_academic_year=default_academic_year,
+        textbook_storage_path=textbook_storage_path,
+        textbook_max_file_size_mb=textbook_max_file_size_mb,
+        textbook_allowed_mime_types=textbook_allowed_mime_types,
+        textbook_checksum_algorithm=textbook_checksum_algorithm,
+        textbook_ingestion_enabled=textbook_ingestion_enabled,
+        textbook_scanned_threshold=textbook_scanned_threshold,
     )
 
 

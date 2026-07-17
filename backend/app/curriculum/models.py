@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
@@ -30,9 +32,14 @@ class CurriculumClass(CurriculumModel):
     subjects: tuple[Subject, ...] = Field(..., min_length=1)
 
 
+class CurriculumVersion(CurriculumModel):
+    id: str = Field(..., min_length=1, max_length=80)
+    classes: tuple[CurriculumClass, ...] = Field(..., min_length=1)
+
+
 class AcademicYear(CurriculumModel):
     id: str = Field(..., pattern=r"^\d{4}-\d{4}$")
-    classes: tuple[CurriculumClass, ...] = Field(..., min_length=1)
+    curriculum_versions: tuple[CurriculumVersion, ...] = Field(..., min_length=1)
 
 
 class Board(CurriculumModel):
@@ -49,6 +56,10 @@ class Book(CurriculumModel):
     book_id: str = Field(..., min_length=1, max_length=120)
     book_name: str = Field(..., min_length=1, max_length=240)
     version: str = Field(..., min_length=1, max_length=50)
+    book_part: Literal[
+        "full_year", "semester_1", "semester_2", "volume_1", "volume_2",
+        "part_1", "part_2", "custom",
+    ] = "full_year"
 
 
 class Chapter(CurriculumModel):
@@ -122,6 +133,7 @@ class CurriculumSelection(CurriculumModel):
 
     board: str
     academic_year: str
+    curriculum_version: str
     class_level: int
     subject: str
     medium: str

@@ -9,6 +9,7 @@ from backend.app.curriculum.models import (
     ChunkMetadata,
     CurriculumCatalog,
     CurriculumClass,
+    CurriculumVersion,
     CurriculumSelection,
     Medium,
     Page,
@@ -20,7 +21,7 @@ from backend.app.curriculum.resolver import CurriculumResolver, UnsupportedCurri
 
 __all__ = [
     "AcademicYear", "Board", "Book", "Chapter", "Chunk", "ChunkMetadata",
-    "CurriculumCatalog", "CurriculumClass", "CurriculumResolver",
+    "CurriculumCatalog", "CurriculumClass", "CurriculumResolver", "CurriculumVersion",
     "CurriculumSelection", "Medium", "Page", "SubTopic", "Subject", "Topic",
     "UnsupportedCurriculumError",
 ]
