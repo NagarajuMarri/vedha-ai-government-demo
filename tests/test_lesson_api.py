@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-import json
+import re
 
 import httpx
 
@@ -59,9 +59,63 @@ def test_valid_english_medium_request_success(monkeypatch) -> None:
     assert payload["request_id"]
     assert payload["lesson_id"]
     assert payload["title"] == "Fractions basics"
+    assert payload["introduction"]
+    assert payload["explanation_steps"]
+    assert payload["example"]
+    assert payload["key_points"]
+    assert payload["check_question"]
+    assert payload["created_at"]
     assert payload["learning_profile"] == "english_medium"
     assert payload["source"] == "openai"
     assert payload["fallback_used"] is False
+
+
+def test_fallback_responses_include_complete_content_for_all_profiles() -> None:
+    required_text_fields = (
+        "title",
+        "introduction",
+        "example",
+        "check_question",
+    )
+
+    for profile in ("english_medium", "telugu_assisted_english", "pure_telugu"):
+        response = _post(
+            {
+                "student_name": "Asha",
+                "class_level": 5,
+                "subject": "Mathematics",
+                "learning_profile": profile,
+                "question": "What is a fraction?",
+            }
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert all(payload[field].strip() for field in required_text_fields)
+        assert isinstance(payload["explanation_steps"], list)
+        assert payload["explanation_steps"]
+        assert all(step.strip() for step in payload["explanation_steps"])
+        assert isinstance(payload["key_points"], list)
+        assert payload["key_points"]
+        assert all(point.strip() for point in payload["key_points"])
+        assert payload["created_at"]
+        assert payload["source"] == "fallback"
+        assert payload["fallback_used"] is True
+
+        if profile == "pure_telugu":
+            telugu_pattern = r"[\u0C00-\u0C7F]"
+            assert all(
+                re.search(telugu_pattern, payload[field])
+                for field in required_text_fields
+            )
+            assert all(
+                re.search(telugu_pattern, step)
+                for step in payload["explanation_steps"]
+            )
+            assert all(
+                re.search(telugu_pattern, point)
+                for point in payload["key_points"]
+            )
 
 
 def test_invalid_class_below_one_returns_validation_error() -> None:

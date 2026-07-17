@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Request, status
@@ -66,9 +67,15 @@ async def explain_lesson(
         request_id=request_id,
         lesson_id=f"lesson-{uuid4()}",
         title=reviewed_lesson.title,
+        introduction=reviewed_lesson.introduction,
+        explanation_steps=reviewed_lesson.explanation_steps,
+        example=reviewed_lesson.example,
+        key_points=reviewed_lesson.key_points,
+        check_question=reviewed_lesson.check_question,
         learning_profile=reviewed_lesson.learning_profile,
         subject=reviewed_lesson.subject,
         class_level=reviewed_lesson.class_level,
         source=reviewed_lesson.source,
         fallback_used=reviewed_lesson.fallback_used,
+        created_at=datetime.now(timezone.utc),
     )
