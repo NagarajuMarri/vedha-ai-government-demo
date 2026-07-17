@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import json
-
 import pytest
 
 from backend.app.ai.exceptions import (
@@ -44,8 +42,8 @@ def test_settings_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
 
     settings = get_settings()
 
-    assert settings.openai_model == "gpt-4o-mini"
-    assert settings.openai_timeout_seconds == 20
+    assert settings.openai_model is None
+    assert settings.openai_timeout_seconds is None
     assert settings.ai_provider == "openai"
     assert settings.ai_fallback_enabled is True
     assert settings.openai_api_key is None
@@ -91,7 +89,7 @@ def test_telugu_profile_rules() -> None:
     assert "English" not in telugu_assisted.concise_prompt_instructions or "fully English" in telugu_assisted.forbidden_behaviour
     assert "తెలుగు" in pure_telugu.concise_prompt_instructions
     assert "fully English" in pure_telugu.forbidden_behaviour
-    assert "English terms may appear in parentheses only when useful" in pure_telugu.concise_prompt_instructions
+    assert "Unavoidable English terms may appear in parentheses only when useful" in pure_telugu.concise_prompt_instructions
 
 
 def test_prompt_builder_includes_required_evidence() -> None:
@@ -172,25 +170,22 @@ def test_provider_missing_key_prevents_network_call(monkeypatch: pytest.MonkeyPa
 
 def test_openai_provider_successfully_returns_structured_lesson(monkeypatch: pytest.MonkeyPatch) -> None:
     class FakeResponses:
-        def create(self, **kwargs):
+        def parse(self, **kwargs):
+            payload = kwargs["text_format"](
+                title="Fractions basics",
+                introduction="A fraction shows part of a whole.",
+                explanation_steps=["A fraction has a numerator and denominator."],
+                example="Half is shown by the fraction 1/2.",
+                key_points=["Numerator shows part", "Denominator shows whole"],
+                check_question="Can you identify the numerator in 3/4?",
+                learning_profile="english_medium",
+                subject="Mathematics",
+                class_level="5",
+            )
             return type(
                 "Result",
                 (),
-                {
-                    "output_text": json.dumps({
-                        "title": "Fractions basics",
-                        "introduction": "A fraction shows part of a whole.",
-                        "explanation_steps": ["A fraction has a numerator and denominator."],
-                        "example": "Half is 1/2.",
-                        "key_points": ["Numerator shows part", "Denominator shows whole"],
-                        "check_question": "Can you identify the numerator in 3/4?",
-                        "learning_profile": "english_medium",
-                        "subject": "Mathematics",
-                        "class_level": "5",
-                        "source": "openai",
-                        "fallback_used": False,
-                    })
-                },
+                {"output_parsed": payload, "output": []},
             )()
 
     class FakeClient:
@@ -231,7 +226,7 @@ def test_provider_maps_timeout_to_internal_error(monkeypatch: pytest.MonkeyPatch
 
     class FakeClient:
         def __init__(self, *args, **kwargs):
-            self.responses = type("Responses", (), {"create": lambda self, **kwargs: (_ for _ in ()).throw(TimeoutError("timeout"))})()
+            self.responses = type("Responses", (), {"parse": lambda self, **kwargs: (_ for _ in ()).throw(TimeoutError("timeout"))})()
 
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     monkeypatch.setattr("backend.app.ai.providers.openai_provider.OpenAI", FakeClient)
@@ -264,7 +259,7 @@ def test_provider_maps_rate_limit_to_internal_error(monkeypatch: pytest.MonkeyPa
 
     class FakeClient:
         def __init__(self, *args, **kwargs):
-            self.responses = type("Responses", (), {"create": lambda self, **kwargs: (_ for _ in ()).throw(RateLimitError("too many requests"))})()
+            self.responses = type("Responses", (), {"parse": lambda self, **kwargs: (_ for _ in ()).throw(RateLimitError("too many requests"))})()
 
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     monkeypatch.setattr("backend.app.ai.providers.openai_provider.OpenAI", FakeClient)
@@ -297,7 +292,7 @@ def test_provider_maps_authentication_errors(monkeypatch: pytest.MonkeyPatch) ->
 
     class FakeClient:
         def __init__(self, *args, **kwargs):
-            self.responses = type("Responses", (), {"create": lambda self, **kwargs: (_ for _ in ()).throw(AuthenticationError("bad key"))})()
+            self.responses = type("Responses", (), {"parse": lambda self, **kwargs: (_ for _ in ()).throw(AuthenticationError("bad key"))})()
 
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     monkeypatch.setattr("backend.app.ai.providers.openai_provider.OpenAI", FakeClient)
@@ -330,7 +325,7 @@ def test_provider_maps_unavailable_provider_error(monkeypatch: pytest.MonkeyPatc
 
     class FakeClient:
         def __init__(self, *args, **kwargs):
-            self.responses = type("Responses", (), {"create": lambda self, **kwargs: (_ for _ in ()).throw(UnavailableError("unavailable"))})()
+            self.responses = type("Responses", (), {"parse": lambda self, **kwargs: (_ for _ in ()).throw(UnavailableError("unavailable"))})()
 
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     monkeypatch.setattr("backend.app.ai.providers.openai_provider.OpenAI", FakeClient)
@@ -359,24 +354,23 @@ def test_provider_maps_unavailable_provider_error(monkeypatch: pytest.MonkeyPatc
 
 def test_provider_invalid_response_mapping(monkeypatch: pytest.MonkeyPatch) -> None:
     class FakeResponses:
-        def create(self, **kwargs):
+        def parse(self, **kwargs):
             return type(
                 "Result",
                 (),
                 {
-                    "output_text": json.dumps({
+                    "output_parsed": {
                         "title": "Fractions basics",
                         "introduction": "A fraction shows part of a whole.",
                         "explanation_steps": [],
-                        "example": "Half is 1/2.",
+                        "example": "Half is shown by 1/2.",
                         "key_points": ["Numerator shows part"],
                         "check_question": "Can you identify the numerator in 3/4?",
                         "learning_profile": "english_medium",
                         "subject": "Mathematics",
                         "class_level": "5",
-                        "source": "openai",
-                        "fallback_used": False,
-                    })
+                    },
+                    "output": [],
                 },
             )()
 

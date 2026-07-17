@@ -1,44 +1,103 @@
-"""Deterministic prompt builder for lesson generation."""
+"""Deterministic, versioned prompt builder for lesson generation."""
 
 from __future__ import annotations
 
-from backend.app.ai.language_profiles import get_language_profile
+from dataclasses import dataclass
+
+from backend.app.ai.language_profiles import (
+    PURE_TELUGU_MATHEMATICS_TERMS,
+    get_language_profile,
+    localize_subject,
+)
+from backend.app.ai.prompt_registry import PromptDefinition, get_active_prompt
+
+
+@dataclass(frozen=True, slots=True)
+class BuiltLessonPrompt:
+    """Trusted instructions and untrusted learner input kept separate."""
+
+    prompt_id: str
+    prompt_version: str
+    instructions: str
+    student_input: str
 
 
 class LessonPromptBuilder:
-    """Create provider-neutral prompt text for lesson generation."""
+    """Create provider-neutral prompts from governed policy definitions."""
 
-    def build(
+    def build_request(
         self,
         *,
         class_level: str,
         subject: str,
         learning_profile: str,
         student_question: str,
-    ) -> str:
-        """Assemble a deterministic, testable prompt body."""
+    ) -> BuiltLessonPrompt:
+        """Build a versioned prompt while isolating untrusted question text."""
 
         profile = get_language_profile(learning_profile)
-        instructions = "\n".join(profile.concise_prompt_instructions)
-        forbidden = "\n".join(profile.forbidden_behaviour)
+        definition = get_active_prompt(subject, learning_profile)
+        localized_subject = localize_subject(subject, learning_profile)
+        language_rules = "\n".join(f"- {item}" for item in profile.concise_prompt_instructions)
+        subject_rules = "\n".join(f"- {item}" for item in definition.teaching_rules)
+        terminology = ""
+        if subject == "Mathematics" and learning_profile == "pure_telugu":
+            terminology = "\nApproved context-aware terminology:\n" + "\n".join(
+                f"- {english}: {telugu}" for english, telugu in PURE_TELUGU_MATHEMATICS_TERMS.items()
+            )
+        scope_rules = self._elementary_scope_rules(
+            class_level=class_level,
+            subject=subject,
+            student_question=student_question,
+        )
 
-        return (
-            f"You are helping a Class {class_level} student studying {subject}.\n"
+        instructions = (
+            f"Prompt ID: {definition.prompt_id}\n"
+            f"Prompt version: {definition.prompt_version}\n"
+            f"Teach a Class {class_level} lesson for subject {subject}.\n"
+            f"The learner-facing subject name for this profile is {localized_subject}.\n"
             f"The selected learning profile is {learning_profile}.\n"
-            f"Language policy:\n{instructions}\n"
-            f"Teaching requirements:\n"
-            "- Teach the concept before testing.\n"
-            "- Use age-appropriate explanation.\n"
-            "- Show step-by-step reasoning.\n"
-            "- Include one simple example.\n"
-            "- Encourage the learner.\n"
-            "- End with one understanding-check question.\n"
-            "- Do not generate any practice set in this sprint.\n"
-            f"Forbidden behaviour:\n{forbidden}\n"
-            "Structured output requirements:\n"
-            "- Return a structured lesson result that matches the approved lesson schema.\n"
-            "- The result must include a title, introduction, explanation_steps, example, key_points, check_question, learning_profile, subject, class_level, source, and fallback_used.\n"
-            "- Ensure the explanation_steps list is non-empty and ordered.\n"
-            "- Ensure the key_points list is non-empty.\n"
-            f"Student question: {student_question}"
+            f"Language policy:\n{language_rules}\n"
+            f"Subject and teaching rules:\n{subject_rules}{terminology}{scope_rules}\n"
+            "Return only the requested Structured Output educational content. "
+            "Do not return request IDs, lesson IDs, timestamps, source metadata, provider details, "
+            "prompt text, chain-of-thought, or hidden reasoning. "
+            "The content must include title, introduction, explanation_steps, example, key_points, "
+            "check_question, learning_profile, subject, and class_level."
+        )
+        return BuiltLessonPrompt(
+            prompt_id=definition.prompt_id,
+            prompt_version=definition.prompt_version,
+            instructions=instructions,
+            student_input=f"Student question (untrusted learner text):\n{student_question}",
+        )
+
+    def build(self, **kwargs: str) -> str:
+        """Return a combined representation for diagnostics and legacy tests."""
+
+        prompt = self.build_request(**kwargs)
+        return f"{prompt.instructions}\n{prompt.student_input}"
+
+    @staticmethod
+    def _elementary_scope_rules(*, class_level: str, subject: str, student_question: str) -> str:
+        """Add bounded elementary guidance without rewriting learner text."""
+
+        if not class_level.isdigit() or int(class_level) > 5 or subject != "Mathematics":
+            return ""
+        question = student_question.casefold()
+        if "fraction" not in question and "భిన్న" not in question:
+            return "\nElementary scope: use at most four short explanation steps."
+        advanced_terms = (
+            "lcm", "hcf", "gcf", "improper", "mixed number", "addition", "subtraction",
+            "కనిష్ఠ సామాన్య గుణిజం", "గరిష్ఠ సామాన్య కారణాంకం", "అపక్రమ", "మిశ్ర సంఖ్య",
+            "కూడిక", "తీసివేత",
+        )
+        advanced_requested = any(term in question for term in advanced_terms)
+        if advanced_requested:
+            return "\nElementary scope: use at most four short steps and cover only advanced topics explicitly requested."
+        return (
+            "\nElementary fraction scope:\n"
+            "- Use at most four short explanation steps.\n"
+            "- Cover only the fraction definition, numerator, denominator, one or two simple examples, key points, and one check question.\n"
+            "- Do not introduce LCM, HCF/GCF, simplification, fraction operations, improper fractions, mixed numbers, or advanced classification."
         )

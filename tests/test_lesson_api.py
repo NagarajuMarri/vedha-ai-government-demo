@@ -37,6 +37,8 @@ def test_valid_english_medium_request_success(monkeypatch) -> None:
             class_level="5",
             source="openai",
             fallback_used=False,
+            prompt_id="vedha_mathematics_teacher_v1",
+            prompt_version="1.0.0",
         )
 
     monkeypatch.setattr(

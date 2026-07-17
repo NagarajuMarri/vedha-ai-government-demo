@@ -12,6 +12,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
 from backend.app.api.router import api_router
+from backend.app.ai.exceptions import AIInfrastructureError
 from backend.app.core.config import Settings, get_settings
 from backend.app.core.logging import configure_logging
 
@@ -35,6 +36,33 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
 
 
 def _register_exception_handlers(app: FastAPI) -> None:
+    @app.exception_handler(AIInfrastructureError)
+    async def ai_infrastructure_exception_handler(
+        request: Request,
+        exception: AIInfrastructureError,
+    ) -> JSONResponse:
+        request_id = getattr(request.state, "request_id", str(uuid4()))
+        logger.warning(
+            "AI service unavailable",
+            extra={
+                "request_id": request_id,
+                "path": request.url.path,
+                "error_category": type(exception).__name__,
+            },
+        )
+        return JSONResponse(
+            status_code=503,
+            content={
+                "error": {
+                    "code": "ai_service_unavailable",
+                    "message": "The lesson service is temporarily unavailable. Please try again.",
+                    "details": [],
+                    "request_id": request_id,
+                }
+            },
+            headers={"X-Request-ID": request_id},
+        )
+
     @app.exception_handler(RequestValidationError)
     async def request_validation_exception_handler(
         request: Request,

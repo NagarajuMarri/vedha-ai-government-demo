@@ -120,6 +120,42 @@ erDiagram
 
 The final schema must be validated during backend design; this diagram communicates boundaries rather than physical table definitions.
 
+## Multi-board curriculum and metadata-first RAG foundation
+
+Curriculum is an application-owned domain independent of the AI provider. The
+hierarchy is `Board -> Academic Year -> Class -> Subject -> Medium`, followed by
+books, chapters, topics, subtopics, pages, and immutable chunks. Andhra Pradesh
+State Board, Telangana State Board, CBSE, and ICSE are initial configured
+boards; additional canonical board IDs and catalog data can be added without
+changing resolver logic.
+
+The deterministic curriculum resolver validates each hierarchy level in order
+and returns a canonical selection containing board, academic year, class,
+subject, medium, and language. Routes and future retrieval services must use
+that selection rather than accepting AI-generated curriculum metadata.
+
+Each chunk carries portable metadata for its curriculum location, language,
+version, and timestamps. Schema fields are reserved for embeddings, images,
+diagrams, animations, voice, learning objectives, and Bloom level, but Sprint
+4B performs no embedding generation, vector search, PDF processing, multimedia
+processing, or provider retrieval.
+
+The future retrieval pipeline boundary is:
+
+```text
+validated curriculum selection
+    -> authorized curriculum repository query
+    -> metadata filters
+    -> future indexed retrieval/ranking
+    -> governed lesson context assembly
+    -> AI provider
+```
+
+Metadata filtering must precede future semantic retrieval so content cannot
+cross board, academic-year, class, subject, or medium boundaries. Multimedia
+references remain opaque metadata identifiers until separately approved asset
+storage, authorization, validation, and accessibility designs exist.
+
 ## AI services
 
 The AI layer is server-side and provider-abstracted. Its responsibilities include tutor response orchestration, bilingual prompt policy, age/class context, practice generation, answer evaluation, safety controls, structured-output validation, retry/timeout policy, and usage telemetry.

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 import os
 from pathlib import Path
+import re
 
 from dotenv import load_dotenv
 
@@ -35,12 +36,14 @@ def _read_bool(name: str, default: bool) -> bool:
     raise ValueError(f"{name} must be a boolean value")
 
 
-def _read_timeout_seconds(name: str, default: int) -> int:
+def _read_timeout_seconds(name: str) -> int | None:
     """Read and validate a timeout environment setting."""
 
-    raw_value = os.getenv(name, str(default))
+    raw_value = os.getenv(name, "").strip()
+    if not raw_value:
+        return None
     try:
-        timeout = int(raw_value.strip())
+        timeout = int(raw_value)
     except ValueError as exc:
         raise ValueError(f"{name} must be an integer number of seconds") from exc
     if timeout <= 0:
@@ -58,10 +61,18 @@ class Settings:
     log_level: str
     cors_origins: tuple[str, ...]
     openai_api_key: str | None
-    openai_model: str
-    openai_timeout_seconds: int
+    openai_model: str | None
+    openai_timeout_seconds: int | None
     ai_provider: str
     ai_fallback_enabled: bool
+    supported_boards: tuple[str, ...] = (
+        "andhra_pradesh_state_board",
+        "telangana_state_board",
+        "cbse",
+        "icse",
+    )
+    default_board: str = "andhra_pradesh_state_board"
+    default_academic_year: str = "2025-2026"
 
 
 @lru_cache
@@ -73,10 +84,16 @@ def get_settings() -> Settings:
     api_v1_prefix = os.getenv("VEDHA_API_V1_PREFIX", "/api/v1").strip()
     log_level = os.getenv("VEDHA_LOG_LEVEL", "INFO").strip().upper()
     openai_api_key = os.getenv("OPENAI_API_KEY", "").strip() or None
-    openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini").strip() or "gpt-4o-mini"
-    openai_timeout_seconds = _read_timeout_seconds("OPENAI_TIMEOUT_SECONDS", 20)
+    openai_model = os.getenv("OPENAI_MODEL", "").strip() or None
+    openai_timeout_seconds = _read_timeout_seconds("OPENAI_TIMEOUT_SECONDS")
     ai_provider = os.getenv("AI_PROVIDER", "openai").strip().lower()
     ai_fallback_enabled = _read_bool("AI_FALLBACK_ENABLED", True)
+    supported_boards = _read_csv(
+        "SUPPORTED_BOARDS",
+        "andhra_pradesh_state_board,telangana_state_board,cbse,icse",
+    )
+    default_board = os.getenv("DEFAULT_BOARD", "andhra_pradesh_state_board").strip()
+    default_academic_year = os.getenv("DEFAULT_ACADEMIC_YEAR", "2025-2026").strip()
 
     if not project_name:
         raise ValueError("VEDHA_PROJECT_NAME must not be empty")
@@ -88,6 +105,10 @@ def get_settings() -> Settings:
         raise ValueError("VEDHA_LOG_LEVEL has an unsupported value")
     if ai_provider not in {"openai", "fallback"}:
         raise ValueError("AI_PROVIDER must be 'openai' or 'fallback'")
+    if default_board not in supported_boards:
+        raise ValueError("DEFAULT_BOARD must be included in SUPPORTED_BOARDS")
+    if not default_academic_year or not re.fullmatch(r"\d{4}-\d{4}", default_academic_year):
+        raise ValueError("DEFAULT_ACADEMIC_YEAR must use YYYY-YYYY format")
 
     return Settings(
         project_name=project_name,
@@ -103,4 +124,19 @@ def get_settings() -> Settings:
         openai_timeout_seconds=openai_timeout_seconds,
         ai_provider=ai_provider,
         ai_fallback_enabled=ai_fallback_enabled,
+        supported_boards=supported_boards,
+        default_board=default_board,
+        default_academic_year=default_academic_year,
     )
+
+
+def get_safe_ai_configuration(settings: Settings | None = None) -> dict[str, str | bool | None]:
+    """Return non-secret AI configuration fields suitable for diagnostics."""
+
+    resolved = settings or get_settings()
+    return {
+        "provider": resolved.ai_provider,
+        "model": resolved.openai_model,
+        "key_configured": bool(resolved.openai_api_key),
+        "fallback_enabled": resolved.ai_fallback_enabled,
+    }

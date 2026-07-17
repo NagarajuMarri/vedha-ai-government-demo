@@ -2,7 +2,7 @@
 
 A professional Government Demonstration edition of the Vedha AI Learning Platform for education leaders, school communities, investors, parents, teachers, and students.
 
-> **Project status:** Sprint 3C Student Tutor Frontend Integration is implemented. The Student App submits bilingual lesson requests to the controlled backend API and renders complete structured lessons, including safe deterministic fallback behavior.
+> **Project status:** Sprint 4A Real OpenAI Integration and Prompt Versioning is implemented. Real provider use is opt-in through server-side environment configuration; deterministic fallback remains the default safe path when provider configuration or service is unavailable.
 
 ## Project overview
 
@@ -68,6 +68,30 @@ python -m http.server 8080 --bind 127.0.0.1 --directory frontend
 Open `http://127.0.0.1:8080/`, choose Student App, complete setup, and ask a question. The frontend defaults to `http://127.0.0.1:8000`; development hosts may define `window.VEDHA_API_BASE_URL` before `api-client.js` loads. This value is configuration only and must never contain secrets.
 
 Manual acceptance profiles are Asha/Class 5/Mathematics/English Medium, Ravi/Class 6/Science/Telugu Assisted English, and సాయి/Class 5/Mathematics/Pure Telugu. Without a configured provider, the backend returns a safe structured fallback and the student sees a calm informational notice. Voice, attachments, persistence, authentication, streaming, and conversation history remain known limitations for later sprints.
+
+## OpenAI provider configuration
+
+Copy `backend/.env.example` to the ignored local file `backend/.env` and set these server-side values:
+
+```dotenv
+AI_PROVIDER=openai
+OPENAI_API_KEY=your-local-secret
+OPENAI_MODEL=your-account-supported-model
+OPENAI_TIMEOUT_SECONDS=30
+AI_FALLBACK_ENABLED=true
+```
+
+Never place the key in frontend assets, committed files, commands saved in documentation, or test fixtures. The provider uses the official SDK Responses API with strict typed parsing. Prompts are selected from an internal active registry by subject; the initial prompt IDs use version `1.0.0`. Prompt text and prompt metadata are not returned by the public lesson API.
+
+When fallback is enabled, missing configuration, authentication, rate limits, timeouts, provider failures, refusals, malformed output, and deterministic review rejection return a complete fallback lesson. With fallback disabled, the API returns a safe `503` envelope without raw provider details.
+
+An optional real-provider check makes exactly one request and may consume API credits:
+
+```powershell
+python -m scripts.manual_openai_lesson --i-understand-this-uses-api-credits
+```
+
+It runs only when explicitly invoked and requires `OPENAI_API_KEY`. Automated tests never invoke it and mock all provider calls. RAG, textbook ingestion, embeddings, persistence, streaming, conversation memory, voice, images, practice, evaluation, authentication, and analytics remain deferred. The next planned sprint is Sprint 4B RAG Foundation.
 
 ## Project structure
 

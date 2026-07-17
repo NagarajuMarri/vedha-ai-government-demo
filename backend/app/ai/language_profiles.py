@@ -13,6 +13,27 @@ LANGUAGE_PROFILE_IDS = {
     "pure_telugu",
 }
 
+PURE_TELUGU_SUBJECTS = {
+    "Mathematics": "గణితం",
+    "Science": "విజ్ఞానశాస్త్రం",
+    "English": "ఆంగ్లం",
+    "Telugu": "తెలుగు",
+    "Social Studies": "సాంఘిక శాస్త్రం",
+}
+
+PURE_TELUGU_MATHEMATICS_TERMS = {
+    "fraction": "భిన్నం",
+    "numerator": "లవం",
+    "denominator": "హారం",
+    "proper fraction": "క్రమ భిన్నం",
+    "improper fraction": "అపక్రమ భిన్నం",
+    "mixed number": "మిశ్ర సంఖ్య",
+    "lowest common multiple": "కనిష్ఠ సామాన్య గుణిజం",
+    "highest common factor": "గరిష్ఠ సామాన్య కారణాంకం",
+    "equal parts": "సమాన భాగాలు",
+    "whole": "మొత్తం",
+}
+
 
 @dataclass(frozen=True, slots=True)
 class LanguageProfilePolicy:
@@ -67,12 +88,19 @@ _LANGUAGE_PROFILES: dict[str, LanguageProfilePolicy] = {
         forbidden_behaviour=(
             "Do not merely translate English word-for-word.",
             "Do not return a fully English lesson.",
+            "Do not use Han, Cyrillic, corrupted encoding, or unrelated foreign-script characters.",
+            "Do not introduce advanced subtopics that the student did not ask about.",
             "fully English",
         ),
         concise_prompt_instructions=(
             "తెలుగు",
-            "Use correct Telugu academic terms wherever available",
-            "English terms may appear in parentheses only when useful",
+            "Use natural, grammatically correct Telugu with simple age-appropriate sentences",
+            "Use established Telugu educational terminology wherever available",
+            "Do not use unrelated foreign scripts or corrupted characters",
+            "Mathematical symbols and digits may remain unchanged",
+            "Unavoidable English terms may appear in parentheses only when useful",
+            "Answer the requested concept directly before any supporting detail",
+            "Do not introduce advanced or unrelated subtopics unless explicitly requested",
             "Must not merely translate English word-for-word",
             "Must teach naturally in Telugu",
             "Must not return a fully English lesson",
@@ -87,3 +115,11 @@ def get_language_profile(profile_id: str) -> LanguageProfilePolicy:
     if profile_id not in _LANGUAGE_PROFILES:
         raise AIConfigurationError(f"Unsupported language profile: {profile_id}")
     return _LANGUAGE_PROFILES[profile_id]
+
+
+def localize_subject(subject: str, profile_id: str) -> str:
+    """Return policy-approved subject terminology without rewriting prose."""
+
+    if profile_id == "pure_telugu":
+        return PURE_TELUGU_SUBJECTS.get(subject, subject)
+    return subject

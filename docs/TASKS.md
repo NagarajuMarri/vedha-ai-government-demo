@@ -179,6 +179,16 @@
 - Loading, duplicate prevention, question retention, accessible errors, Unicode, and the 1500-character boundary are covered by regression tests.
 - Voice, attachments, persistence, authentication, streaming, and conversation history remain explicitly out of scope.
 
+**Sprint 4A status:**
+
+- The configured OpenAI provider uses the official Responses API with strict Pydantic parsing and zero live calls in automated tests.
+- Application-owned source/fallback metadata is never accepted from model output.
+- Six active prompt definitions cover general teaching and all five approved subjects at version `1.0.0`.
+- Language-profile policy includes context-aware Pure Telugu subject and Mathematics terminology.
+- Provider, parsing, refusal, and reviewer failures use complete deterministic fallback when enabled and a safe `503` when disabled.
+- An explicit one-request manual integration command is available with an API-credit warning.
+- Sprint 4B RAG Foundation is next; RAG, ingestion, embeddings, and vector storage were not introduced in Sprint 4A.
+
 ### VGD-011 — Implement exact-composition practice system
 
 | Field | Value |

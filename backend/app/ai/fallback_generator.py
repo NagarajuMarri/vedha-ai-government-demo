@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from backend.app.ai.lesson_models import LessonGenerationRequest, LessonResult
+from backend.app.ai.language_profiles import localize_subject
+from backend.app.ai.prompt_registry import get_active_prompt
 
 
 class DeterministicFallbackLessonGenerator:
@@ -13,6 +15,7 @@ class DeterministicFallbackLessonGenerator:
 
         profile = request.learning_profile
         content = self._build_content(profile, request)
+        prompt = get_active_prompt(request.subject, profile)
 
         return LessonResult(
             title=content["title"],
@@ -26,10 +29,12 @@ class DeterministicFallbackLessonGenerator:
             class_level=request.class_level,
             source="fallback",
             fallback_used=True,
+            prompt_id=prompt.prompt_id,
+            prompt_version=prompt.prompt_version,
         )
 
     def _build_content(self, profile: str, request: LessonGenerationRequest) -> dict[str, str | list[str]]:
-        subject = request.subject
+        subject = localize_subject(request.subject, profile)
         if profile == "english_medium":
             return {
                 "title": f"Understanding the foundation of {subject}",

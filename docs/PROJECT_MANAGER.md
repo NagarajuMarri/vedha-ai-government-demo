@@ -6,12 +6,12 @@
 
 | Field | Current state |
 |---|---|
-| Current milestone | Phase 3 - Frontend Development |
-| Progress | Sprint 3A AI Infrastructure, Sprint 3B Controlled Lesson API, and Sprint 3C Student Tutor Frontend Integration complete |
-| Overall status | The Student Tutor submits validated bilingual requests to the lesson API and renders complete structured fallback lessons with accessible loading and safe recovery states |
-| Current sprint | Sprint 3C - Student Tutor Frontend Integration |
-| Sprint goal | Connect the approved Student Tutor flow to POST /api/v1/lessons/explain without live provider calls or secrets |
-| Next task | Review Sprint 3C evidence and plan the next approved Tutor capability |
+| Current milestone | Phase 4 - AI Tutor |
+| Progress | Sprints 3A-3C complete; Sprint 4A Real OpenAI Integration and Prompt Versioning complete |
+| Overall status | The provider-neutral lesson flow now supports configured OpenAI Responses API generation, strict structured parsing, versioned subject prompts, deterministic review, and complete fallback without exposing provider details |
+| Current sprint | Sprint 4A - Real OpenAI Integration and Prompt Versioning |
+| Sprint goal | Enable securely configured real structured lesson generation while preserving complete deterministic fallback and zero-credit automated tests |
+| Next task | Sprint 4B RAG Foundation |
 
 ## Current milestone
 
