@@ -9,6 +9,8 @@
   --color-surface: #ffffff;
   --color-border: #dbe3ee;
   --color-focus: #f0a202;
+  --color-error: #a51d2d;
+  --color-information: #185f8d;
   --shadow-card: 0 14px 34px rgb(23 63 115 / 10%);
   --radius-small: 0.5rem;
   --radius-medium: 1rem;
@@ -42,6 +44,15 @@ a {
 a:focus-visible {
   outline: 0.2rem solid var(--color-focus);
   outline-offset: 0.25rem;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex="-1"]:focus-visible {
+  outline: 0.2rem solid var(--color-focus);
+  outline-offset: 0.2rem;
 }
 
 .container {
@@ -86,6 +97,11 @@ a:focus-visible {
   gap: 0.75rem;
   font-size: 1.125rem;
   font-weight: 700;
+}
+
+.brand-link {
+  color: inherit;
+  text-decoration: none;
 }
 
 .brand-mark {
@@ -322,6 +338,280 @@ h2 {
   font-weight: 700;
 }
 
+.student-main {
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.student-panel,
+.question-card,
+.lesson-result {
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.student-panel {
+  width: min(100%, 54rem);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.student-heading {
+  max-width: 42rem;
+  margin-bottom: 2rem;
+}
+
+.student-heading .eyebrow,
+.tutor-header .eyebrow,
+.lesson-heading .eyebrow {
+  color: var(--color-secondary);
+}
+
+.student-heading p:not(.eyebrow) {
+  color: var(--color-muted);
+}
+
+.setup-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.form-field,
+.profile-options {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-field-wide {
+  grid-column: 1 / -1;
+}
+
+.form-field label,
+.profile-options legend,
+.question-card > label {
+  font-weight: 750;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem;
+  border: 0.0625rem solid #aab7c8;
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: #ffffff;
+  font: inherit;
+}
+
+textarea {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+.profile-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.profile-options legend {
+  grid-column: 1 / -1;
+  margin-bottom: 0.25rem;
+}
+
+.profile-options label {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.85rem;
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-small);
+}
+
+.profile-options input {
+  width: 1.1rem;
+  min-height: auto;
+  accent-color: var(--color-primary);
+}
+
+.primary-button,
+.secondary-button,
+.future-actions button {
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+  border: 0.0625rem solid transparent;
+  border-radius: var(--radius-small);
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.primary-button {
+  color: #ffffff;
+  background: var(--color-primary);
+}
+
+.primary-button:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.secondary-button {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: #ffffff;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.tutor-view {
+  width: min(100%, 58rem);
+  margin-inline: auto;
+}
+
+.tutor-header,
+.composer-actions,
+.composer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.context-bar {
+  margin-block: 1.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 0.25rem solid var(--color-secondary);
+  border-radius: 0 var(--radius-small) var(--radius-small) 0;
+  background: #eef9f7;
+  font-weight: 650;
+}
+
+.question-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.composer-meta {
+  align-items: start;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.future-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.future-actions button {
+  border-color: var(--color-border);
+  color: var(--color-muted);
+  background: #f5f7fa;
+}
+
+.field-error,
+.error-message {
+  color: var(--color-error);
+}
+
+.field-error {
+  margin: 0;
+  font-weight: 650;
+}
+
+.status-message {
+  min-height: 1.75rem;
+  margin-block: 1rem;
+  color: var(--color-information);
+  font-weight: 650;
+}
+
+.error-message,
+.fallback-note {
+  margin-block: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-small);
+}
+
+.error-message {
+  border: 0.0625rem solid #e7a8b0;
+  background: #fff2f3;
+}
+
+.fallback-note {
+  border: 0.0625rem solid #a9cde2;
+  color: #124c70;
+  background: #eef7fc;
+}
+
+.lesson-result {
+  display: grid;
+  gap: 0;
+  margin-top: 1.5rem;
+  overflow: hidden;
+}
+
+.lesson-result[hidden] {
+  display: none;
+}
+
+.lesson-heading,
+.lesson-result section,
+.fallback-note {
+  margin: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.lesson-heading {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+}
+
+.lesson-heading .eyebrow {
+  color: #bcece7;
+}
+
+.lesson-heading h2 {
+  font-size: clamp(1.6rem, 4vw, 2.25rem);
+}
+
+.lesson-result section + section {
+  border-top: 0.0625rem solid var(--color-border);
+}
+
+.lesson-result h3 {
+  margin: 0 0 0.65rem;
+  font-size: 1.2rem;
+}
+
+.lesson-result p,
+.lesson-result ol,
+.lesson-result ul {
+  margin-block: 0;
+}
+
+.lesson-result li + li {
+  margin-top: 0.55rem;
+}
+
+.example-section {
+  background: #f7fafc;
+}
+
+.check-section {
+  border-left: 0.3rem solid var(--color-secondary);
+  background: #eef9f7;
+}
+
 @media (max-width: 48rem) {
   .section-heading,
   .footer-content {
@@ -337,6 +627,16 @@ h2 {
     justify-content: center;
     padding-block: 1.25rem;
   }
+
+  .setup-form,
+  .profile-options {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-options legend,
+  .form-field-wide {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 30rem) {
@@ -350,6 +650,18 @@ h2 {
 
   .card-arrow {
     display: none;
+  }
+
+  .tutor-header,
+  .composer-actions,
+  .composer-meta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
   }
 }
 

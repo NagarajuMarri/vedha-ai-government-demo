@@ -2,7 +2,7 @@
 
 A professional Government Demonstration edition of the Vedha AI Learning Platform for education leaders, school communities, investors, parents, teachers, and students.
 
-> **Project status:** Sprint 3A AI Infrastructure is now implemented in the backend skeleton. No public lesson route or frontend changes were introduced in this sprint.
+> **Project status:** Sprint 3C Student Tutor Frontend Integration is implemented. The Student App submits bilingual lesson requests to the controlled backend API and renders complete structured lessons, including safe deterministic fallback behavior.
 
 ## Project overview
 
@@ -53,7 +53,21 @@ Installation instructions will be added when the approved implementation foundat
 
 ## Running locally
 
-Local run instructions will be documented after the backend and frontend foundations are implemented and verified. Environment secrets, including the OpenAI API key, must remain server-side and must never be committed.
+Start both services from the repository root in this order:
+
+```powershell
+# Terminal 1: backend
+python -m uvicorn backend.app.main:app --reload
+```
+
+```powershell
+# Terminal 2: frontend
+python -m http.server 8080 --bind 127.0.0.1 --directory frontend
+```
+
+Open `http://127.0.0.1:8080/`, choose Student App, complete setup, and ask a question. The frontend defaults to `http://127.0.0.1:8000`; development hosts may define `window.VEDHA_API_BASE_URL` before `api-client.js` loads. This value is configuration only and must never contain secrets.
+
+Manual acceptance profiles are Asha/Class 5/Mathematics/English Medium, Ravi/Class 6/Science/Telugu Assisted English, and సాయి/Class 5/Mathematics/Pure Telugu. Without a configured provider, the backend returns a safe structured fallback and the student sees a calm informational notice. Voice, attachments, persistence, authentication, streaming, and conversation history remain known limitations for later sprints.
 
 ## Project structure
 

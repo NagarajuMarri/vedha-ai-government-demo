@@ -3,16 +3,106 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student App | Vedha AI Government Demo</title>
+    <meta name="description" content="Vedha AI guided student tutor">
+    <title>Student Tutor | Vedha AI Government Demo</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/api-client.js" defer></script>
+    <script src="../assets/js/student-tutor.js" defer></script>
   </head>
-  <body class="interface-shell">
-    <main class="shell-panel">
-      <p class="eyebrow">Student experience</p>
-      <h1>Student App</h1>
-      <p lang="te">విద్యార్థి యాప్</p>
-      <p>The interface shell is ready. Learning features are not implemented in Sprint 1.</p>
-      <a class="back-link" href="../">← Return to interface gateway</a>
+  <body class="student-app">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="site-header">
+      <div class="container header-content">
+        <a class="brand brand-link" href="../" aria-label="Vedha AI home">
+          <span class="brand-mark" aria-hidden="true">V</span><span>Vedha AI</span>
+        </a>
+        <span class="demo-label">Student Tutor · Government Demo</span>
+      </div>
+    </header>
+
+    <main id="main-content" class="student-main container">
+      <section id="setup-view" class="student-panel" aria-labelledby="setup-title">
+        <div class="student-heading">
+          <p class="eyebrow">Start learning independently</p>
+          <h1 id="setup-title">Set up your lesson</h1>
+          <p>Tell Vedha how you would like to learn. You can change these details before starting.</p>
+        </div>
+
+        <form id="setup-form" class="setup-form">
+          <div class="form-field form-field-wide">
+            <label for="student-name">Student name</label>
+            <input id="student-name" name="student_name" type="text" minlength="2" maxlength="80" autocomplete="name" required>
+          </div>
+          <div class="form-field">
+            <label for="class-level">Class</label>
+            <select id="class-level" name="class_level" required>
+              <option value="">Choose class</option>
+              <option value="1">Class 1</option><option value="2">Class 2</option><option value="3">Class 3</option>
+              <option value="4">Class 4</option><option value="5">Class 5</option><option value="6">Class 6</option>
+              <option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option>
+              <option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject" required>
+              <option value="">Choose subject</option>
+              <option value="Mathematics">Mathematics</option><option value="Science">Science</option>
+              <option value="English">English</option><option value="Telugu">Telugu</option>
+              <option value="Social Studies">Social Studies</option>
+            </select>
+          </div>
+          <fieldset class="profile-options form-field-wide">
+            <legend>Learning profile</legend>
+            <label><input type="radio" name="learning_profile" value="english_medium" required> English Medium</label>
+            <label><input type="radio" name="learning_profile" value="telugu_assisted_english"> Telugu Assisted English</label>
+            <label lang="te"><input type="radio" name="learning_profile" value="pure_telugu"> పూర్తి తెలుగు</label>
+          </fieldset>
+          <button class="primary-button form-field-wide" type="submit">Continue to Tutor</button>
+        </form>
+      </section>
+
+      <section id="tutor-view" class="tutor-view" aria-labelledby="tutor-title" hidden>
+        <div class="tutor-header">
+          <div>
+            <p class="eyebrow">Your learning space</p>
+            <h1 id="tutor-title">Ask Vedha</h1>
+          </div>
+          <button id="edit-setup" class="secondary-button" type="button">Change setup</button>
+        </div>
+
+        <div id="student-context" class="context-bar" aria-label="Current lesson setup"></div>
+
+        <form id="question-form" class="question-card" novalidate>
+          <label for="question">What would you like to understand?</label>
+          <textarea id="question" name="question" rows="5" maxlength="1500" aria-describedby="question-hint question-error question-counter" required></textarea>
+          <div class="composer-meta">
+            <span id="question-hint">Enter sends your question. Shift+Enter adds a new line.</span>
+            <span id="question-counter">0 / 1500</span>
+          </div>
+          <p id="question-error" class="field-error" role="alert" hidden></p>
+          <div class="composer-actions">
+            <div class="future-actions" aria-label="Future tutor features">
+              <button type="button" disabled aria-label="Microphone is coming in a future sprint" title="Coming in a future sprint">🎙 Microphone</button>
+              <button type="button" disabled aria-label="Attachments are coming in a future sprint" title="Coming in a future sprint">📎 Attachment</button>
+            </div>
+            <button id="ask-button" class="primary-button" type="submit">Ask Vedha</button>
+          </div>
+        </form>
+
+        <div id="status-message" class="status-message" role="status" aria-live="polite"></div>
+        <div id="error-message" class="error-message" role="alert" tabindex="-1" hidden></div>
+
+        <article id="lesson-result" class="lesson-result" tabindex="-1" aria-labelledby="lesson-title" hidden>
+          <div id="fallback-note" class="fallback-note" role="note" hidden></div>
+          <header class="lesson-heading"><p class="eyebrow">Your Vedha lesson</p><h2 id="lesson-title"></h2></header>
+          <section aria-labelledby="introduction-title"><h3 id="introduction-title">Introduction</h3><p id="lesson-introduction"></p></section>
+          <section aria-labelledby="steps-title"><h3 id="steps-title">Step-by-step Explanation</h3><ol id="lesson-steps"></ol></section>
+          <section class="example-section" aria-labelledby="example-title"><h3 id="example-title">Example</h3><p id="lesson-example"></p></section>
+          <section aria-labelledby="points-title"><h3 id="points-title">Key Points</h3><ul id="lesson-points"></ul></section>
+          <section class="check-section" aria-labelledby="check-title"><h3 id="check-title">Check Your Understanding</h3><p id="lesson-check"></p></section>
+        </article>
+      </section>
     </main>
   </body>
 </html>

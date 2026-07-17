@@ -134,6 +134,21 @@ def test_invalid_class_below_one_returns_validation_error() -> None:
     assert payload["error"]["code"] == "validation_error"
 
 
+def test_question_over_1500_characters_returns_validation_error() -> None:
+    response = _post(
+        {
+            "student_name": "Asha",
+            "class_level": 5,
+            "subject": "Mathematics",
+            "learning_profile": "english_medium",
+            "question": "x" * 1501,
+        }
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "validation_error"
+
+
 def test_openapi_lists_lesson_endpoint() -> None:
     response = _post({
         "student_name": "Asha",

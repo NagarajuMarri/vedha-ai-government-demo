@@ -171,6 +171,14 @@
 - Deterministic fallback generation and internal AI exceptions are implemented.
 - Sprint 3A tests pass without making live API calls.
 
+**Sprint 3C status:**
+
+- The Student setup preserves exact backend class, subject, and learning-profile values.
+- A centralized browser API client handles JSON, timeout, safe error classification, and complete response validation.
+- The Tutor renders all structured lesson sections and profile-appropriate fallback messaging.
+- Loading, duplicate prevention, question retention, accessible errors, Unicode, and the 1500-character boundary are covered by regression tests.
+- Voice, attachments, persistence, authentication, streaming, and conversation history remain explicitly out of scope.
+
 ### VGD-011 — Implement exact-composition practice system
 
 | Field | Value |

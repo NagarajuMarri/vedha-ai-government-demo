@@ -6,12 +6,12 @@
 
 | Field | Current state |
 |---|---|
-| Current milestone | Phase 2 – Project Skeleton |
-| Progress | Foundation Documentation: 100%; Sprint 3A AI Infrastructure: complete |
-| Overall status | Foundation documentation complete; backend AI infrastructure now implemented within the approved skeleton without adding public lesson routes or frontend changes |
-| Current sprint | Sprint 3A — AI Infrastructure |
-| Sprint goal | Create a secure, testable, provider-independent AI infrastructure for the backend without adding the public lesson API |
-| Next task | Sprint 3B Controlled Lesson API |
+| Current milestone | Phase 3 - Frontend Development |
+| Progress | Sprint 3A AI Infrastructure, Sprint 3B Controlled Lesson API, and Sprint 3C Student Tutor Frontend Integration complete |
+| Overall status | The Student Tutor submits validated bilingual requests to the lesson API and renders complete structured fallback lessons with accessible loading and safe recovery states |
+| Current sprint | Sprint 3C - Student Tutor Frontend Integration |
+| Sprint goal | Connect the approved Student Tutor flow to POST /api/v1/lessons/explain without live provider calls or secrets |
+| Next task | Review Sprint 3C evidence and plan the next approved Tutor capability |
 
 ## Current milestone
 
