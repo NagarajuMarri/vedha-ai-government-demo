@@ -175,6 +175,27 @@ The planned implementation structure is documented in `docs/ARCHITECTURE.md`; it
 
 ## Contribution rules
 
+### Typical Git workflow
+
+Before starting work, update the current branch:
+
+```powershell
+git pull
+```
+
+After making and reviewing changes, commit and push them:
+
+```powershell
+git add .
+git commit -m "message"
+git push
+```
+
+Use a feature branch for focused development and review. Keep `main` stable and
+merge a feature branch into `main` only after the feature is complete, tests
+pass, and the change has been approved. A new local branch needs a configured
+remote and an initial upstream push before plain `git pull` and `git push` work.
+
 Before contributing:
 
 1. Read `AGENTS.md`, `docs/VEDHA_AI_MASTER_RULES.md`, and `docs/PROJECT_MANAGER.md` completely.
