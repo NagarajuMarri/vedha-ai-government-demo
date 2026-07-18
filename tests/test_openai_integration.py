@@ -571,3 +571,22 @@ def test_prompt_forbids_object_replacement_glyphs() -> None:
     )
     assert "Never emit [OBJ]" in prompt.instructions
     assert "plain readable Unicode text only" in prompt.instructions
+
+
+def test_pure_telugu_geometry_fallback_is_concept_specific() -> None:
+    request = LessonGenerationRequest(
+        class_level="9",
+        subject="Mathematics",
+        learning_profile="pure_telugu",
+        student_question="జ్యామితిని మొదటి నుండి వివరించండి.",
+        concept="Geometry",
+    )
+    result = DeterministicFallbackLessonGenerator().generate(request)
+    content = " ".join([
+        result.title, result.introduction, result.example, result.check_question,
+        *result.explanation_steps, *result.key_points,
+    ])
+    assert "జ్యామితి" in content
+    assert "త్రిభుజ" in content
+    assert "180°" in content
+    assert "పునాది భావన" not in result.title
