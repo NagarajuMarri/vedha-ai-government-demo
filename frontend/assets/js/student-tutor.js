@@ -160,4 +160,22 @@
       setLoading(false);
     }
   });
+
+  byId("generate-practice").addEventListener("click", async () => {
+    if (state.practiceLoading || !state.setup) return;
+    byId("practice-error").hidden = true;
+    byId("practice-result").hidden = true;
+    setPracticeLoading(true);
+    try {
+      state.practice = await api.requestPractice(state.setup);
+      renderPractice(state.practice);
+    } catch (_error) {
+      const error = byId("practice-error");
+      error.textContent = messages[state.setup.learning_profile].practiceError;
+      error.hidden = false;
+      error.focus();
+    } finally {
+      setPracticeLoading(false);
+    }
+  });
 })(document, window.VedhaLessonApi);
