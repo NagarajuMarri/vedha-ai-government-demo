@@ -260,3 +260,44 @@ def test_pure_telugu_geometry_practice_contains_no_english_letters() -> None:
         assert not any("A" <= char <= "Z" or "a" <= char <= "z" for char in question["hint"])
         assert "చతురస్రం" in question["prompt"]
         assert "చుట్టుకొలత" in question["prompt"]
+
+
+@pytest.mark.parametrize(
+    "concept",
+    [
+        "Indian Constitution",
+        "Indian Freedom Movement",
+        "Andhra Pradesh Geography",
+        "Local Government",
+        "Climate and Natural Resources",
+    ],
+)
+def test_telugu_social_studies_has_fifteen_distinct_questions(concept: str) -> None:
+    payload = _payload("pure_telugu")
+    payload.update({"subject": "Social Studies", "concept": concept, "class_level": 9})
+    response = _post(payload)
+    assert response.status_code == 200
+    body = response.json()
+    prompts = [question["prompt"] for question in body["questions"]]
+    assert len(prompts) == 15
+    assert len(set(prompts)) == 15
+    assert all(any("\u0c00" <= char <= "\u0c7f" for char in prompt) for prompt in prompts)
+    assert all("ఈ అభ్యాసంలోని భావన పేరు ఏమిటి" not in prompt for prompt in prompts)
+
+
+def test_client_second_attempt_reveals_social_studies_answer() -> None:
+    payload = _payload("pure_telugu")
+    payload.update({"subject": "Social Studies", "concept": "Indian Constitution", "class_level": 9})
+    practice = _post(payload).json()
+    question = practice["questions"][0]
+    response = _evaluate({
+        "practice_set_id": practice["practice_set_id"],
+        "question_id": question["question_id"],
+        "student_answer": "తప్పు సమాధానం",
+        "attempt_number": 2,
+    })
+    assert response.status_code == 200
+    body = response.json()
+    assert body["attempt_number"] == 2
+    assert "భారత రాజ్యాంగం" in body["feedback"]
+    assert any("సరైన సమాధానం" in step for step in body["corrective_guidance"])
