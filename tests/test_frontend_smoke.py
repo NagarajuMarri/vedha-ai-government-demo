@@ -163,3 +163,14 @@ def test_practice_answer_ui_supports_keyboard_feedback_and_retry() -> None:
 
 def test_lesson_browser_timeout_exceeds_backend_provider_timeout() -> None:
     assert "options.timeoutMs || 45000" in API_JS
+
+
+def test_handwritten_phone_photo_evaluation_is_connected() -> None:
+    assert '/api/v1/practice/evaluate-handwriting' in API_JS
+    assert 'requestHandwritingEvaluation' in API_JS
+    assert 'uploadInput.accept = "image/jpeg,image/png"' in TUTOR_JS
+    assert 'file.size > 5 * 1024 * 1024' in TUTOR_JS
+    assert 'Upload Handwritten Work' in TUTOR_JS
+    assert 'image_data_url: imageDataUrl' in TUTOR_JS
+    assert 'Transcribed work:' in TUTOR_JS
+    assert 'innerHTML' not in TUTOR_JS
