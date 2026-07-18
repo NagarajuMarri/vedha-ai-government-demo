@@ -206,6 +206,15 @@
 - Invalid or duplicate-heavy output is rejected or safely regenerated.
 - Only the owning student can access and submit a practice session.
 
+**Sprint 4D controlled-demo status:**
+
+- Student UI generates and renders exactly 5 Easy, 5 Medium, and 5 Hard questions.
+- English, Telugu Assisted English, and Pure Telugu paths are covered.
+- Typed answers and approved JPG/PNG phone photos receive corrective guidance.
+- A second wrong attempt reveals a worked solution; question-scoped retry tracking is explicit.
+- Session-only progress shows attempted, mastered, accuracy, and completion.
+- Persistent ownership and cross-session progress remain outside this demo slice.
+
 ### VGD-012 — Implement assessment, uploads, and progress
 
 | Field | Value |
