@@ -799,3 +799,20 @@ button:disabled {
     width: 100%;
   }
 }
+
+
+.handwriting-upload-row {
+  margin-top: 0.6rem;
+}
+
+.upload-work {
+  width: 100%;
+  border-style: dashed;
+}
+
+.upload-status {
+  min-height: 1.4rem;
+  margin-top: 0.45rem !important;
+  color: var(--color-information);
+  font-size: 0.85rem;
+}
