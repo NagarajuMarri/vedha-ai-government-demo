@@ -112,5 +112,54 @@
     return validatePractice(data);
   }
 
-  global.VedhaLessonApi = { requestLesson, validateLesson, requestPractice, validatePractice, LessonApiError, DEFAULT_BASE_URL };
+  function validateEvaluation(data) {
+    if (!data || typeof data !== "object" ||
+        typeof data.request_id !== "string" ||
+        typeof data.practice_set_id !== "string" ||
+        typeof data.question_id !== "string" ||
+        typeof data.correct !== "boolean" ||
+        typeof data.feedback !== "string" || !data.feedback.trim() ||
+        !Array.isArray(data.corrective_guidance) || data.corrective_guidance.length === 0 ||
+        !data.corrective_guidance.every((step) => typeof step === "string" && step.trim()) ||
+        !Number.isInteger(data.attempt_number) || data.attempt_number < 1 ||
+        typeof data.evaluated_at !== "string") {
+      throw new LessonApiError("malformed_response");
+    }
+    return data;
+  }
+
+  async function requestPracticeEvaluation(payload, options = {}) {
+    const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
+    const controller = new AbortController();
+    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 15000);
+    let response;
+    try {
+      response = await global.fetch(`${baseUrl}/api/v1/practice/evaluate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      throw new LessonApiError(error && error.name === "AbortError" ? "timeout" : "network");
+    } finally {
+      global.clearTimeout(timeoutId);
+    }
+    let data;
+    try {
+      data = await response.json();
+    } catch (_error) {
+      throw new LessonApiError("non_json_response");
+    }
+    if (!response.ok) {
+      throw new LessonApiError(response.status === 404 ? "expired_practice" :
+        response.status === 422 ? "validation" : response.status >= 500 ? "server" : "request");
+    }
+    return validateEvaluation(data);
+  }
+
+  global.VedhaLessonApi = {
+    requestLesson, validateLesson, requestPractice, validatePractice,
+    requestPracticeEvaluation, validateEvaluation, LessonApiError, DEFAULT_BASE_URL,
+  };
 })(window);
