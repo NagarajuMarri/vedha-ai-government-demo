@@ -39,7 +39,7 @@ class PracticeGenerationService:
                         hint=hint,
                         learning_profile=learning_profile,
                         concept=concept,
-                        source_prompt=prompt_en,
+                        source_prompt=prompt,
                     ),
                 )
         return PracticeSet(
