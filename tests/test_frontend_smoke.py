@@ -153,7 +153,7 @@ def test_practice_answer_evaluation_is_connected_safely() -> None:
 
 def test_practice_answer_ui_supports_keyboard_feedback_and_retry() -> None:
     assert 'input.className = "practice-answer"' in TUTOR_JS
-    assert 'button.textContent = "Check Answer"' in TUTOR_JS
+    assert "button.textContent = copy.checkAnswer" in TUTOR_JS
     assert 'event.key === "Enter"' in TUTOR_JS
     assert 'aria-live", "polite"' in TUTOR_JS
     assert 'answerRequired' in TUTOR_JS
