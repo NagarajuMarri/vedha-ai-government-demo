@@ -5,10 +5,16 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
+from backend.app.practice.evaluation import PracticeEvaluationService, PracticeQuestionNotFoundError
 from backend.app.practice.service import PracticeGenerationService
-from backend.app.schemas.practice import GeneratePracticeRequest, PracticeSetResponse
+from backend.app.schemas.practice import (
+    EvaluatePracticeAnswerRequest,
+    GeneratePracticeRequest,
+    PracticeEvaluationResponse,
+    PracticeSetResponse,
+)
 
 router = APIRouter(prefix="/practice", tags=["practice"])
 
@@ -44,4 +50,35 @@ def generate_practice_set(
         learning_profile=practice_set.learning_profile,
         questions=practice_set.questions,
         created_at=datetime.now(timezone.utc),
+    )
+
+
+@router.post(
+    "/evaluate",
+    operation_id="evaluate_practice_answer",
+    response_model=PracticeEvaluationResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Evaluate one typed practice answer and return corrective guidance",
+)
+def evaluate_practice_answer(
+    request: Request,
+    payload: EvaluatePracticeAnswerRequest,
+) -> PracticeEvaluationResponse:
+    try:
+        result = PracticeEvaluationService().evaluate(
+            practice_set_id=payload.practice_set_id,
+            question_id=payload.question_id,
+            student_answer=payload.student_answer,
+        )
+    except PracticeQuestionNotFoundError as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error)) from error
+    return PracticeEvaluationResponse(
+        request_id=getattr(request.state, "request_id", str(uuid4())),
+        practice_set_id=payload.practice_set_id,
+        question_id=payload.question_id,
+        correct=bool(result["correct"]),
+        feedback=str(result["feedback"]),
+        corrective_guidance=list(result["corrective_guidance"]),
+        attempt_number=int(result["attempt_number"]),
+        evaluated_at=datetime.now(timezone.utc),
     )
