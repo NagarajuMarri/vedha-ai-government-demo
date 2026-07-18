@@ -2,7 +2,7 @@
 
 (function initializeStudentTutor(document, api) {
   const MAX_QUESTION_LENGTH = 1500;
-  const state = { setup: null, question: "", loading: false, error: null, lesson: null, submitted: false };
+  const state = { setup: null, question: "", loading: false, practiceLoading: false, error: null, lesson: null, practice: null, submitted: false };
   const byId = (id) => document.getElementById(id);
   const setupForm = byId("setup-form");
   const questionForm = byId("question-form");
@@ -13,17 +13,17 @@
     english_medium: {
       loading: "Vedha is preparing your lesson...",
       error: "We could not prepare the lesson. Please try again.",
-      fallback: "Vedha is showing a basic lesson while the advanced tutor service is unavailable.",
+      fallback: "Vedha is showing a basic lesson while the advanced tutor service is unavailable.",\n      practiceLoading: "Vedha is preparing 15 practice questions...",\n      practiceError: "We could not prepare practice. Please try again.",
     },
     telugu_assisted_english: {
       loading: "Vedha మీ lesson సిద్ధం చేస్తోంది...",
       error: "Lesson సిద్ధం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
-      fallback: "Advanced tutor service అందుబాటులో లేనందున Vedha ఒక basic lesson చూపిస్తోంది.",
+      fallback: "Advanced tutor service అందుబాటులో లేనందున Vedha ఒక basic lesson చూపిస్తోంది.",\n      practiceLoading: "Vedha 15 practice questions సిద్ధం చేస్తోంది...",\n      practiceError: "Practice సిద్ధం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
     },
     pure_telugu: {
       loading: "వేద మీ పాఠాన్ని సిద్ధం చేస్తోంది...",
       error: "పాఠాన్ని సిద్ధం చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.",
-      fallback: "అధునాతన బోధనా సేవ అందుబాటులో లేనందున వేద ప్రాథమిక పాఠాన్ని చూపిస్తోంది.",
+      fallback: "అధునాతన బోధనా సేవ అందుబాటులో లేనందున వేద ప్రాథమిక పాఠాన్ని చూపిస్తోంది.",\n      practiceLoading: "వేద 15 అభ్యాస ప్రశ్నలను సిద్ధం చేస్తోంది...",\n      practiceError: "అభ్యాస ప్రశ్నలను సిద్ధం చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
     },
   };
 
@@ -49,6 +49,33 @@
     byId("lesson-result").hidden = false;
     byId("lesson-result").focus({ preventScroll: true });
     byId("lesson-result").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderPractice(practice) {
+    ["easy", "medium", "hard"].forEach((difficulty) => {
+      const questions = practice.questions.filter((question) => question.difficulty === difficulty);
+      const list = byId(`practice-${difficulty}`);
+      list.replaceChildren(...questions.map((question) => {
+        const item = document.createElement("li");
+        const prompt = document.createElement("p");
+        const hint = document.createElement("small");
+        prompt.textContent = question.prompt;
+        hint.textContent = `Hint: ${question.hint}`;
+        item.append(prompt, hint);
+        return item;
+      }));
+    });
+    byId("practice-result").hidden = false;
+    byId("practice-result").focus({ preventScroll: true });
+    byId("practice-result").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function setPracticeLoading(isLoading) {
+    state.practiceLoading = isLoading;
+    const button = byId("generate-practice");
+    button.disabled = isLoading;
+    button.textContent = isLoading ? "Preparing 15 questions…" : "Generate Practice";
+    byId("practice-status").textContent = isLoading ? messages[state.setup.learning_profile].practiceLoading : "";
   }
 
   function setLoading(isLoading) {
@@ -87,7 +114,7 @@
       subject: String(form.get("subject")),
       learning_profile: String(form.get("learning_profile")),
     };
-    byId("student-context").textContent = `${state.setup.student_name} · Class ${state.setup.class_level} · ${state.setup.subject}`;
+    byId("student-context").textContent = `${state.setup.student_name} · Class ${state.setup.class_level} · ${state.setup.subject} · ${state.setup.concept}`;
     byId("setup-view").hidden = true;
     byId("tutor-view").hidden = false;
     questionInput.focus();
