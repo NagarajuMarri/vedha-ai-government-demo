@@ -283,6 +283,14 @@
 - Aggregates are accurate, performant, and protected by privacy thresholds.
 - All synthetic/demo data is clearly identified.
 
+**Controlled-demo status:**
+
+- A responsive executive dashboard presents fictional statewide and district indicators.
+- District and class-band filters update synthetic aggregate metrics and charts.
+- Synthetic-data labelling is persistent and explicit.
+- The demo provides no student-level drill-down and explains the intended privacy boundary.
+- Production authentication, approved organizational scope, privacy thresholds, and live data integration remain pending.
+
 ### VGD-016 — Complete system validation and demo rehearsal
 
 | Field | Value |
