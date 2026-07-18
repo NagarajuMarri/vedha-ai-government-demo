@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from backend.app.practice.models import LearningProfile, PracticeQuestion, PracticeSet
 from backend.app.practice.repository import AnswerKey, PracticeAnswerRepository, practice_answer_repository
+from backend.app.practice.social_studies_bank import telugu_social_studies_question
 
 
 class PracticeGenerationService:
@@ -87,12 +88,20 @@ class PracticeGenerationService:
             "water cycle": "నీరు ఒక స్థితి నుండి మరొక స్థితికి మారే ప్రక్రియను గుర్తించండి.",
             "photosynthesis": "మొక్కలు కాంతి సహాయంతో ఆహారం తయారు చేసే ప్రక్రియను గుర్తుచేసుకోండి.",
             "grammar": "పదం వాక్యంలో చేసే పనిని గుర్తించండి.",
+            "indian constitution": "రాజ్యాంగంలోని సంస్థ, హక్కు, తేదీ లేదా పదాన్ని గుర్తుచేసుకోండి.",
+            "indian freedom movement": "ఉద్యమానికి సంబంధించిన నాయకుడు, ప్రదేశం, సంవత్సరం లేదా నినాదాన్ని గుర్తుచేసుకోండి.",
+            "andhra pradesh geography": "ఆంధ్రప్రదేశ్‌లోని నది, ప్రాంతం, పంట లేదా భౌగోళిక లక్షణాన్ని గుర్తించండి.",
+            "local government": "ప్రశ్న గ్రామ, మండల, జిల్లా లేదా పట్టణ స్థాయిలో దేనిని అడుగుతోందో గుర్తించండి.",
+            "climate and natural resources": "వాతావరణ ప్రక్రియ లేదా వనరు పునరుత్పాదకమా కాదా గుర్తించండి.",
         }
         return hints.get(concept.casefold(), "ప్రశ్నలోని ముఖ్య భావనను గుర్తించి ఒక్కో దశగా పరిష్కరించండి.")
 
     @staticmethod
     def _question_and_answer_telugu(concept: str, index: int) -> tuple[str, str]:
         normalized = concept.casefold()
+        social_question = telugu_social_studies_question(concept, index)
+        if social_question is not None:
+            return social_question
         if normalized == "fractions":
             return f"{index}/{index * 2} భిన్నాన్ని సరళీకరించండి.", "1/2"
         if normalized == "decimals":
