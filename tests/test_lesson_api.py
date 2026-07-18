@@ -8,7 +8,9 @@ import re
 import httpx
 
 from backend.app.ai.lesson_models import LessonGenerationRequest, LessonResult
+from backend.app.ai.prompt_builder import LessonPromptBuilder
 from backend.app.main import app
+from backend.app.schemas.lessons import ExplainLessonRequest
 
 
 def _post(payload: dict[str, object]) -> httpx.Response:
