@@ -57,10 +57,65 @@ class PracticeEvaluationService:
                 "Briefly review the calculation so you can repeat the method."
             ]
 
+        if attempt_number >= 2:
+            return cls._worked_solution(key, student_answer, attempt_number)
+
         normalized_concept = key.concept.casefold()
         if normalized_concept == "fractions":
             return cls._fraction_guidance(key, student_answer, attempt_number)
         return cls._concept_guidance(key, student_answer, attempt_number)
+
+    @staticmethod
+    def _worked_solution(
+        key: AnswerKey,
+        student_answer: str,
+        attempt_number: int,
+    ) -> tuple[str, list[str]]:
+        source_match = re.search(r"(\d+)\s*/\s*(\d+)", key.source_prompt)
+        if key.concept.casefold() == "fractions" and source_match:
+            numerator, denominator = int(source_match.group(1)), int(source_match.group(2))
+            divisor = gcd(numerator, denominator)
+            solved_numerator = numerator // divisor
+            solved_denominator = denominator // divisor
+            final_answer = f"{solved_numerator}/{solved_denominator}"
+            if key.learning_profile == "pure_telugu":
+                return f"{attempt_number}వ ప్రయత్నం తర్వాత పూర్తి పరిష్కారాన్ని చూద్దాం. సరైన సమాధానం {final_answer}.", [
+                    f"ఇచ్చిన భిన్నం {numerator}/{denominator}.",
+                    f"{numerator}, {denominator}ల గరిష్ఠ సామాన్య కారణాంకం {divisor}.",
+                    f"లవం: {numerator} ÷ {divisor} = {solved_numerator}; హారం: {denominator} ÷ {divisor} = {solved_denominator}.",
+                    f"కాబట్టి సరళీకరించిన భిన్నం {final_answer}.",
+                ]
+            if key.learning_profile == "telugu_assisted_english":
+                return f"Attempt {attempt_number} తర్వాత complete solution చూద్దాం. Correct answer {final_answer}.", [
+                    f"Given fraction: {numerator}/{denominator}.",
+                    f"{numerator}, {denominator}కి GCF = {divisor}.",
+                    f"Numerator: {numerator} ÷ {divisor} = {solved_numerator}; denominator: {denominator} ÷ {divisor} = {solved_denominator}.",
+                    f"Therefore simplified fraction = {final_answer}.",
+                ]
+            return f"After attempt {attempt_number}, here is the complete solution. The correct answer is {final_answer}.", [
+                f"Start with the given fraction {numerator}/{denominator}.",
+                f"The greatest common divisor of {numerator} and {denominator} is {divisor}.",
+                f"Divide both by {divisor}: {numerator} ÷ {divisor} = {solved_numerator} and {denominator} ÷ {divisor} = {solved_denominator}.",
+                f"Therefore, the simplified fraction is {final_answer}.",
+            ]
+
+        if key.learning_profile == "pure_telugu":
+            return f"{attempt_number}వ ప్రయత్నం తర్వాత పూర్తి సమాధానం: {key.expected_answer}.", [
+                f"ప్రశ్న: {key.source_prompt}",
+                f"సూచనను వర్తింపజేయండి: {key.hint}",
+                f"సరైన సమాధానం: {key.expected_answer}.",
+            ]
+        if key.learning_profile == "telugu_assisted_english":
+            return f"Attempt {attempt_number} తర్వాత complete answer: {key.expected_answer}.", [
+                f"Question: {key.source_prompt}",
+                f"Apply the hint: {key.hint}",
+                f"Correct answer: {key.expected_answer}.",
+            ]
+        return f"After attempt {attempt_number}, the correct answer is {key.expected_answer}.", [
+            f"Question: {key.source_prompt}",
+            f"Apply the concept-specific hint: {key.hint}",
+            f"Correct answer: {key.expected_answer}.",
+        ]
 
     @staticmethod
     def _fraction_guidance(
