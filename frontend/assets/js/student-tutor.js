@@ -13,17 +13,23 @@
     english_medium: {
       loading: "Vedha is preparing your lesson...",
       error: "We could not prepare the lesson. Please try again.",
-      fallback: "Vedha is showing a basic lesson while the advanced tutor service is unavailable.",\n      practiceLoading: "Vedha is preparing 15 practice questions...",\n      practiceError: "We could not prepare practice. Please try again.",
+      fallback: "Vedha is showing a basic lesson while the advanced tutor service is unavailable.",
+      practiceLoading: "Vedha is preparing 15 practice questions...",
+      practiceError: "We could not prepare practice. Please try again.",
     },
     telugu_assisted_english: {
       loading: "Vedha మీ lesson సిద్ధం చేస్తోంది...",
       error: "Lesson సిద్ధం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
-      fallback: "Advanced tutor service అందుబాటులో లేనందున Vedha ఒక basic lesson చూపిస్తోంది.",\n      practiceLoading: "Vedha 15 practice questions సిద్ధం చేస్తోంది...",\n      practiceError: "Practice సిద్ధం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
+      fallback: "Advanced tutor service అందుబాటులో లేనందున Vedha ఒక basic lesson చూపిస్తోంది.",
+      practiceLoading: "Vedha 15 practice questions సిద్ధం చేస్తోంది...",
+      practiceError: "Practice సిద్ధం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
     },
     pure_telugu: {
       loading: "వేద మీ పాఠాన్ని సిద్ధం చేస్తోంది...",
       error: "పాఠాన్ని సిద్ధం చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.",
-      fallback: "అధునాతన బోధనా సేవ అందుబాటులో లేనందున వేద ప్రాథమిక పాఠాన్ని చూపిస్తోంది.",\n      practiceLoading: "వేద 15 అభ్యాస ప్రశ్నలను సిద్ధం చేస్తోంది...",\n      practiceError: "అభ్యాస ప్రశ్నలను సిద్ధం చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+      fallback: "అధునాతన బోధనా సేవ అందుబాటులో లేనందున వేద ప్రాథమిక పాఠాన్ని చూపిస్తోంది.",
+      practiceLoading: "వేద 15 అభ్యాస ప్రశ్నలను సిద్ధం చేస్తోంది...",
+      practiceError: "అభ్యాస ప్రశ్నలను సిద్ధం చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
     },
   };
 
