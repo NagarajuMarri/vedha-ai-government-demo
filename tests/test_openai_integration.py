@@ -591,3 +591,43 @@ def test_pure_telugu_geometry_fallback_is_concept_specific() -> None:
     assert "త్రిభుజ" in content
     assert "180°" in content
     assert "పునాది భావన" not in result.title
+
+
+def test_pure_telugu_social_studies_fallback_is_concept_specific() -> None:
+    from backend.app.ai.fallback_generator import DeterministicFallbackLessonGenerator
+    from backend.app.ai.lesson_models import LessonGenerationRequest
+
+    lesson = DeterministicFallbackLessonGenerator().generate(
+        LessonGenerationRequest(
+            class_level="9",
+            subject="Social Studies",
+            learning_profile="pure_telugu",
+            student_question="భారత రాజ్యాంగంలోని ప్రాథమిక హక్కులను వివరించండి",
+            concept="Indian Constitution",
+        )
+    )
+
+    assert lesson.source == "fallback"
+    assert lesson.fallback_used is True
+    assert lesson.title == "భారత రాజ్యాంగం"
+    assert "పౌరుల హక్కులు" in lesson.introduction
+    assert "సమానత్వ హక్కు" in lesson.example
+    assert "foundation" not in " ".join(
+        [lesson.title, lesson.introduction, *lesson.explanation_steps, lesson.example]
+    ).casefold()
+
+
+def test_social_studies_prompt_forbids_generic_overview() -> None:
+    from backend.app.ai.prompt_builder import LessonPromptBuilder
+
+    prompt = LessonPromptBuilder().build_request(
+        class_level="9",
+        subject="Social Studies",
+        learning_profile="pure_telugu",
+        student_question="స్థానిక ప్రభుత్వం గురించి వివరించండి",
+        concept="Local Government",
+    )
+
+    assert "Social Studies concept rules" in prompt.instructions
+    assert "Never answer with generic study advice" in prompt.instructions
+    assert "keep every learner-facing sentence in Telugu" in prompt.instructions
