@@ -65,6 +65,7 @@ class HandwritingEvaluationService:
         client = self._client or OpenAI(
             api_key=self._settings.openai_api_key,
             timeout=self._settings.openai_timeout_seconds,
+            max_retries=0,
         )
         instructions = (
             "You are evaluating a student's handwritten solution to one practice question. "
