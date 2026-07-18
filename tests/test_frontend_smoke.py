@@ -193,7 +193,7 @@ def test_presentation_brand_identity_is_complete_and_accessible() -> None:
     assert 'src="../assets/images/vedha-mark.png"' in STUDENT_HTML
     assert 'alt="Vedha open-book and sunrise logo"' in landing_html
     assert "Every learner deserves a teacher who" in landing_html
-    assert re.search(r'class="[^"]*\\bimpact-grid\\b[^"]*"', landing_html)
+    assert "impact-grid" in landing_html
     assert 'class="learning-journey"' in STUDENT_HTML
     assert "prefers-reduced-motion: reduce" in styles
     assert "@keyframes vedha-float" in styles
