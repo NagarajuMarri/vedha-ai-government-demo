@@ -58,6 +58,7 @@ class OpenAIProvider(LessonProvider):
             subject=request.subject,
             learning_profile=request.learning_profile,
             student_question=request.student_question,
+            concept=request.concept,
         )
 
         try:
