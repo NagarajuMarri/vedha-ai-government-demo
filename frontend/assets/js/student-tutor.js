@@ -8,6 +8,56 @@
   const questionForm = byId("question-form");
   const questionInput = byId("question");
   const askButton = byId("ask-button");
+  const subjectInput = byId("subject");
+  const conceptInput = byId("concept");
+
+  const conceptsBySubject = {
+    Mathematics: [
+      ["Fractions", "Fractions", "భిన్నాలు"],
+      ["Decimals", "Decimals", "దశాంశాలు"],
+      ["Geometry", "Geometry", "జ్యామితి"],
+    ],
+    Science: [
+      ["Solar System", "Solar System", "సౌర కుటుంబం"],
+      ["Water Cycle", "Water Cycle", "నీటి చక్రం"],
+      ["Photosynthesis", "Photosynthesis", "కిరణజన్య సంయోగక్రియ"],
+    ],
+    English: [["Grammar", "Grammar", "ఆంగ్ల వ్యాకరణం"]],
+    Telugu: [["Telugu Grammar", "Telugu Grammar", "తెలుగు వ్యాకరణం"]],
+    "Social Studies": [
+      ["Indian Constitution", "Indian Constitution", "భారత రాజ్యాంగం"],
+      ["Indian Freedom Movement", "Indian Freedom Movement", "భారత స్వాతంత్ర్య ఉద్యమం"],
+      ["Andhra Pradesh Geography", "Andhra Pradesh Geography", "ఆంధ్రప్రదేశ్ భూగోళ శాస్త్రం"],
+      ["Local Government", "Local Government", "స్థానిక ప్రభుత్వం"],
+      ["Climate and Natural Resources", "Climate and Natural Resources", "వాతావరణం మరియు సహజ వనరులు"],
+    ],
+  };
+
+  function selectedProfile() {
+    return setupForm.querySelector('input[name="learning_profile"]:checked')?.value || "english_medium";
+  }
+
+  function refreshConceptOptions() {
+    const subject = subjectInput.value;
+    const profile = selectedProfile();
+    const previousValue = conceptInput.value;
+    const choices = conceptsBySubject[subject] || [];
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = subject
+      ? (profile === "pure_telugu" ? "అంశాన్ని ఎంచుకోండి" : "Choose concept")
+      : (profile === "pure_telugu" ? "ముందుగా సబ్జెక్టును ఎంచుకోండి" : "Choose a subject first");
+    conceptInput.replaceChildren(placeholder, ...choices.map(([value, english, telugu]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = profile === "pure_telugu"
+        ? telugu
+        : profile === "telugu_assisted_english" ? `${english} · ${telugu}` : english;
+      return option;
+    }));
+    conceptInput.disabled = !subject;
+    if (choices.some(([value]) => value === previousValue)) conceptInput.value = previousValue;
+  }
 
   const messages = {
     english_medium: {
@@ -274,6 +324,12 @@
     questionInput.setAttribute("aria-invalid", String(Boolean(message)));
     return message ? null : trimmed;
   }
+
+  subjectInput.addEventListener("change", refreshConceptOptions);
+  setupForm.querySelectorAll('input[name="learning_profile"]').forEach((input) => {
+    input.addEventListener("change", refreshConceptOptions);
+  });
+  refreshConceptOptions();
 
   setupForm.addEventListener("submit", (event) => {
     event.preventDefault();
