@@ -2,7 +2,7 @@
 
 (function initializeStudentTutor(document, api) {
   const MAX_QUESTION_LENGTH = 1500;
-  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), error: null, lesson: null, practice: null, submitted: false };
+  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), uploading: new Set(), error: null, lesson: null, practice: null, submitted: false };
   const byId = (id) => document.getElementById(id);
   const setupForm = byId("setup-form");
   const questionForm = byId("question-form");
@@ -18,6 +18,8 @@
       practiceError: "We could not prepare practice. Please try again.",
       answerRequired: "Type an answer before checking.",
       evaluationError: "We could not check this answer. Please try again.",
+      uploadError: "Use a clear JPG or PNG phone photo, 5 MB or smaller.",
+      uploadLoading: "Vedha is reading your handwritten work…",
     },
     telugu_assisted_english: {
       loading: "Vedha మీ lesson సిద్ధం చేస్తోంది...",
@@ -27,6 +29,8 @@
       practiceError: "Practice సిద్ధం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
       answerRequired: "Check చేసే ముందు answer type చేయండి.",
       evaluationError: "ఈ answerను check చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+      uploadError: "Clear JPG లేదా PNG phone photo upload చేయండి; 5 MBలోపు ఉండాలి.",
+      uploadLoading: "Vedha మీ handwritten workను చదువుతోంది…",
     },
     pure_telugu: {
       loading: "వేద మీ పాఠాన్ని సిద్ధం చేస్తోంది...",
@@ -36,6 +40,8 @@
       practiceError: "అభ్యాస ప్రశ్నలను సిద్ధం చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
       answerRequired: "తనిఖీ చేసే ముందు సమాధానం రాయండి.",
       evaluationError: "ఈ సమాధానాన్ని తనిఖీ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+      uploadError: "స్పష్టమైన JPG లేదా PNG ఫోన్ ఫోటోను ఎంచుకోండి; పరిమాణం 5 MBలోపు ఉండాలి.",
+      uploadLoading: "వేద మీ చేతిరాత పరిష్కారాన్ని చదువుతోంది…",
     },
   };
 
@@ -111,6 +117,47 @@
     }
   }
 
+  function readImage(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !["image/jpeg", "image/png"].includes(file.type) || file.size > 5 * 1024 * 1024) {
+        reject(new Error("invalid_image"));
+        return;
+      }
+      const reader = new FileReader();
+      reader.addEventListener("load", () => resolve(String(reader.result)));
+      reader.addEventListener("error", () => reject(new Error("read_failed")));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function evaluateHandwriting(question, item, file) {
+    const uploadButton = item.querySelector(".upload-work");
+    const uploadStatus = item.querySelector(".upload-status");
+    if (state.uploading.has(question.question_id)) return;
+    state.uploading.add(question.question_id);
+    uploadButton.disabled = true;
+    uploadStatus.textContent = messages[state.setup.learning_profile].uploadLoading;
+    uploadStatus.className = "upload-status";
+    try {
+      const imageDataUrl = await readImage(file);
+      const evaluation = await api.requestHandwritingEvaluation({
+        practice_set_id: state.practice.practice_set_id,
+        question_id: question.question_id,
+        image_data_url: imageDataUrl,
+      });
+      uploadStatus.textContent = `Transcribed work: ${evaluation.transcribed_work} · Confidence: ${Math.round(evaluation.confidence * 100)}%`;
+      renderEvaluation(item, evaluation);
+    } catch (_error) {
+      uploadStatus.textContent = messages[state.setup.learning_profile].uploadError;
+      uploadStatus.className = "upload-status answer-incorrect";
+      uploadStatus.focus();
+    } finally {
+      state.uploading.delete(question.question_id);
+      uploadButton.disabled = false;
+      uploadButton.textContent = "Upload Handwritten Work";
+    }
+  }
+
   function renderPractice(practice) {
     ["easy", "medium", "hard"].forEach((difficulty) => {
       const questions = practice.questions.filter((question) => question.difficulty === difficulty);
@@ -124,6 +171,10 @@
         const button = document.createElement("button");
         const feedback = document.createElement("p");
         const guidance = document.createElement("ul");
+        const uploadRow = document.createElement("div");
+        const uploadInput = document.createElement("input");
+        const uploadButton = document.createElement("button");
+        const uploadStatus = document.createElement("p");
         prompt.textContent = question.prompt;
         hint.textContent = `Hint: ${question.hint}`;
         input.type = "text";
@@ -138,6 +189,22 @@
         feedback.setAttribute("aria-live", "polite");
         guidance.className = "corrective-guidance";
         guidance.hidden = true;
+        uploadInput.type = "file";
+        uploadInput.accept = "image/jpeg,image/png";
+        uploadInput.className = "handwriting-input";
+        uploadInput.hidden = true;
+        uploadButton.type = "button";
+        uploadButton.className = "secondary-button upload-work";
+        uploadButton.textContent = "Upload Handwritten Work";
+        uploadStatus.className = "upload-status";
+        uploadStatus.tabIndex = -1;
+        uploadStatus.setAttribute("aria-live", "polite");
+        uploadButton.addEventListener("click", () => uploadInput.click());
+        uploadInput.addEventListener("change", () => {
+          const file = uploadInput.files && uploadInput.files[0];
+          if (file) evaluateHandwriting(question, item, file);
+          uploadInput.value = "";
+        });
         button.addEventListener("click", () => evaluateAnswer(question, item));
         input.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
@@ -147,7 +214,9 @@
         });
         answerRow.className = "practice-answer-row";
         answerRow.append(input, button);
-        item.append(prompt, hint, answerRow, feedback, guidance);
+        uploadRow.className = "handwriting-upload-row";
+        uploadRow.append(uploadInput, uploadButton);
+        item.append(prompt, hint, answerRow, uploadRow, uploadStatus, feedback, guidance);
         return item;
       }));
     });
