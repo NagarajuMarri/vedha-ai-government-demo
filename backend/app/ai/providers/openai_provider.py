@@ -41,6 +41,7 @@ class OpenAIProvider(LessonProvider):
             self._client = OpenAI(
                 api_key=settings.openai_api_key,
                 timeout=settings.openai_timeout_seconds,
+                max_retries=0,
             )
 
     def generate_lesson(self, request: LessonGenerationRequest) -> LessonResult:
