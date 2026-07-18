@@ -133,3 +133,35 @@ def test_unknown_question_cannot_be_evaluated() -> None:
 
 def test_openapi_lists_practice_evaluation_endpoint() -> None:
     assert "/api/v1/practice/evaluate" in app.openapi()["paths"]
+
+
+def test_fraction_wrong_answer_returns_calculation_specific_guidance() -> None:
+    practice = _post(_payload()).json()
+    question = practice["questions"][5]
+    response = _evaluate({
+        "practice_set_id": practice["practice_set_id"],
+        "question_id": question["question_id"],
+        "student_answer": "3/4",
+    })
+    body = response.json()
+    guidance = " ".join(body["corrective_guidance"])
+    assert body["correct"] is False
+    assert "greatest common divisor" in guidance
+    assert "Cross-check equivalence" in guidance
+    assert "3 × 12" in guidance
+    assert body["attempt_number"] == 1
+
+
+def test_practice_attempt_number_increments_for_same_question() -> None:
+    practice = _post(_payload()).json()
+    question = practice["questions"][1]
+    payload = {
+        "practice_set_id": practice["practice_set_id"],
+        "question_id": question["question_id"],
+        "student_answer": "3/4",
+    }
+    first = _evaluate(payload).json()
+    second = _evaluate(payload).json()
+    assert first["attempt_number"] == 1
+    assert second["attempt_number"] == 2
+    assert "Attempt 2" in second["feedback"]
