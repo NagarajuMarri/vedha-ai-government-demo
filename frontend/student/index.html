@@ -147,6 +147,28 @@
             <section><h3>Hard · 5</h3><ol id="practice-hard"></ol></section>
           </div>
         </section>
+
+        <section id="progress-panel" class="progress-panel" aria-labelledby="progress-title" hidden>
+          <div class="progress-heading">
+            <div>
+              <p class="eyebrow">Your learning progress</p>
+              <h2 id="progress-title">Progress this session</h2>
+            </div>
+            <span id="progress-badge" class="progress-badge">Getting started</span>
+          </div>
+          <div class="progress-metrics">
+            <div><strong id="progress-attempted">0</strong><span id="progress-attempted-label">Attempted</span></div>
+            <div><strong id="progress-mastered">0</strong><span id="progress-mastered-label">Mastered</span></div>
+            <div><strong id="progress-accuracy">0%</strong><span id="progress-accuracy-label">Accuracy</span></div>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="Questions mastered" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0">
+            <span id="progress-fill"></span>
+          </div>
+          <div class="progress-footer">
+            <p id="progress-message">Start answering practice questions to see your progress.</p>
+            <strong id="progress-total">0 / 15</strong>
+          </div>
+        </section>
       </section>
     </main>
   </body>
