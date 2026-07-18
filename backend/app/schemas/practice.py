@@ -38,6 +38,7 @@ class EvaluatePracticeAnswerRequest(BaseModel):
     practice_set_id: str = Field(..., min_length=1, max_length=100)
     question_id: str = Field(..., min_length=1, max_length=100)
     student_answer: str = Field(..., min_length=1, max_length=1000)
+    attempt_number: int | None = Field(None, ge=1, le=20)
 
 
 class PracticeEvaluationResponse(BaseModel):
