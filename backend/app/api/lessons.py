@@ -58,6 +58,7 @@ async def explain_lesson(
         subject=payload.subject,
         learning_profile=payload.learning_profile,
         student_question=payload.question,
+        concept=payload.concept,
     )
 
     lesson_result = service.generate_lesson(generation_request)
