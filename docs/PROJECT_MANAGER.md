@@ -13,6 +13,20 @@
 | Sprint goal | Deliver exactly 15 concept questions (5 easy, 5 medium, 5 hard), then connect them to the Student experience |
 | Next task | Complete bilingual demo rehearsal, operator runbook, and final validation checklist |
 
+## Locked government-demo requirements
+
+These requirements were approved by the project sponsor on 2026-07-19 and are non-negotiable for the controlled government demonstration:
+
+1. **Role-wide bilingual voice input:** Student, Teacher, Parent, and Government interfaces accept English and Telugu speech, show an editable transcript before submission, and retain typed-input fallback.
+2. **Spoken output:** Lessons and role-appropriate insights support English/Telugu read-aloud with play, pause, replay, mute, and failure fallback.
+3. **Narrated educational animations:** Concept visuals are instructional rather than decorative. Narration, captions, and highlighted visual steps remain synchronized.
+4. **Accessible learner controls:** Animations provide step-by-step mode, individual-step replay, a readable transcript, and a short understanding check.
+5. **Functional Parent Portal:** Demonstrates linked-child progress, strengths, attention areas, recent activity, and support recommendations using clearly labeled synthetic data.
+6. **Functional Teacher Portal:** Demonstrates class/student performance, concept insights, intervention signals, and assignable remedial actions using clearly labeled synthetic data.
+7. **Integrated government-demo journey:** Student, Parent, Teacher, and Government experiences must work together in the final bilingual rehearsal and runbook.
+
+Decorative background motion, disabled microphone controls, silent animations, and static portal shells do not satisfy these requirements.
+
 ## Current milestone
 
 ### Phase 5 – Practice System
