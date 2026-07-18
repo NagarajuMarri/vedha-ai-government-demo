@@ -32,6 +32,7 @@ class LessonPromptBuilder:
         subject: str,
         learning_profile: str,
         student_question: str,
+        concept: str = "General",
     ) -> BuiltLessonPrompt:
         """Build a versioned prompt while isolating untrusted question text."""
 
@@ -57,6 +58,11 @@ class LessonPromptBuilder:
             f"Teach a Class {class_level} lesson for subject {subject}.\n"
             f"The learner-facing subject name for this profile is {localized_subject}.\n"
             f"The selected learning profile is {learning_profile}.\n"
+            f"The required lesson concept is: {concept}.\n"
+            "Concept alignment is mandatory: every section must directly teach the required lesson concept. "
+            "Use the concept name or its natural translation in the title, introduction, explanation, example, key points, and check question. "
+            "Do not replace the requested concept with a broad subject overview, a generic foundation lesson, or unrelated content. "
+            "If the learner asks to start from scratch, define this exact concept and its essential parts before the example.\n"
             f"Language policy:\n{language_rules}\n"
             f"Subject and teaching rules:\n{subject_rules}{terminology}{scope_rules}\n"
             "Return only the requested Structured Output educational content. "
@@ -69,7 +75,10 @@ class LessonPromptBuilder:
             prompt_id=definition.prompt_id,
             prompt_version=definition.prompt_version,
             instructions=instructions,
-            student_input=f"Student question (untrusted learner text):\n{student_question}",
+            student_input=(
+                f"Selected concept (trusted application context): {concept}\n"
+                f"Student question (untrusted learner text):\n{student_question}"
+            ),
         )
 
     def build(self, **kwargs: str) -> str:
