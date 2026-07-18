@@ -154,6 +154,7 @@ def test_openai_provider_uses_configured_sdk_values_and_strict_typed_parse(monke
         def __init__(self, **kwargs):
             captured["client_api_key"] = kwargs["api_key"]
             captured["client_timeout"] = kwargs["timeout"]
+            captured["max_retries"] = kwargs["max_retries"]
             self.responses = FakeResponses()
 
     monkeypatch.setattr("backend.app.ai.providers.openai_provider.OpenAI", FakeClient)
