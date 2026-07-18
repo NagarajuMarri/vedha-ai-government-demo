@@ -17,6 +17,7 @@ from backend.app.textbooks.models import (
 from backend.app.textbooks.pdf_ingestion import ChapterDetector, PdfInspector
 from backend.app.textbooks.repository import DuplicateTextbookError, TextbookRepository
 from backend.app.textbooks.storage import TextbookStorage
+from backend.app.textbooks.validation import TextbookContentValidator
 
 
 class TextbookIngestionService:
@@ -29,6 +30,9 @@ class TextbookIngestionService:
         inspection = self._inspector.inspect(path)
         if self._repository.get_by_checksum(inspection.checksum):
             raise DuplicateTextbookError("An exact textbook file is already registered")
+        expected_languages = registration.languages or (registration.language,)
+        content_validation = TextbookContentValidator().validate(inspection, expected_languages)
+        extracted_metadata = inspection.book_metadata
 
         now = datetime.now(timezone.utc)
         textbook_id = f"textbook-{uuid4()}"
@@ -38,6 +42,7 @@ class TextbookIngestionService:
         provenance = TextbookProvenance(
             source_type=registration.source.source_type,
             source_reference=registration.source.source_reference,
+            alternate_source_references=registration.source.alternate_source_references,
             checksum=inspection.checksum,
             ingested_at=now,
             ingestion_job_id=job_id,
@@ -59,6 +64,10 @@ class TextbookIngestionService:
         ) for page in inspection.pages)
         chapters = ChapterDetector().detect(inspection.pages)
         edition = registration.edition
+        resolved_title = registration.title or (extracted_metadata.title if extracted_metadata else None)
+        resolved_edition = edition.edition or (extracted_metadata.edition if extracted_metadata else None)
+        resolved_year = edition.publication_year or (extracted_metadata.publication_year if extracted_metadata else None)
+        resolved_publisher = edition.publisher or (extracted_metadata.publisher if extracted_metadata else None)
         metadata = TextbookMetadata(
             textbook_id=textbook_id,
             board=registration.board,
@@ -68,11 +77,12 @@ class TextbookIngestionService:
             subject=registration.subject,
             medium=registration.medium,
             language=registration.language,
+            languages=registration.languages or (registration.language,),
             book_part=registration.book_part,
-            edition=edition.edition,
-            publication_year=edition.publication_year,
-            publisher=edition.publisher,
-            title=registration.title,
+            edition=resolved_edition,
+            publication_year=resolved_year,
+            publisher=resolved_publisher,
+            title=resolved_title,
             source_type=registration.source.source_type,
             source_reference=registration.source.source_reference,
             filename=textbook_file.filename,
@@ -90,11 +100,34 @@ class TextbookIngestionService:
             is_scanned=inspection.is_scanned,
             ocr_required=inspection.ocr_required,
             detection_reason=inspection.detection_reason,
+            detected_language=content_validation.detected_language,
+            sampled_page_numbers=content_validation.sampled_page_numbers,
+            pages_with_text=content_validation.pages_with_text,
+            pages_without_text=content_validation.pages_without_text,
+            pages_with_warnings=content_validation.pages_with_warnings,
+            likely_scanned_pages=content_validation.likely_scanned_pages,
+            image_pages=content_validation.image_pages,
+            table_pages=content_validation.table_pages,
+            text_coverage_percent=content_validation.text_coverage_percent,
+            unicode_valid=content_validation.unicode_valid,
+            replacement_character_count=content_validation.replacement_character_count,
+            english_pages=content_validation.english_pages,
+            telugu_pages=content_validation.telugu_pages,
+            mixed_language_pages=content_validation.mixed_language_pages,
+            unreadable_pages=content_validation.unreadable_pages,
+            english_character_count=content_validation.english_character_count,
+            telugu_character_count=content_validation.telugu_character_count,
+            bilingual_coverage_percent=content_validation.bilingual_coverage_percent,
+            alternating_language_pairs=content_validation.alternating_language_pairs,
             chapters=chapters,
             pages=pages,
-            warnings=inspection.warnings,
+            warnings=inspection.warnings + content_validation.warnings,
             metadata=metadata,
             provenance=provenance,
         )
-        self._repository.add(result)
+        try:
+            self._repository.add(result)
+        except Exception:
+            self._storage.remove(storage_key)
+            raise
         return result

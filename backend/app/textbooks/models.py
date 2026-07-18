@@ -12,6 +12,7 @@ BookPart = Literal[
     "full_year", "semester_1", "semester_2", "volume_1", "volume_2",
     "part_1", "part_2", "custom",
 ]
+LanguageCode = Literal["en", "te"]
 IngestionStatus = Literal["pending", "inspecting", "completed", "failed", "duplicate"]
 
 
@@ -20,14 +21,17 @@ class TextbookModel(BaseModel):
 
 
 class TextbookSource(TextbookModel):
-    source_type: Literal["local_file", "government_portal", "publisher", "manual"]
+    source_type: Literal[
+        "official_textbook_pdf", "local_file", "government_portal", "publisher", "manual",
+    ]
     source_reference: str = Field(..., min_length=1, max_length=500)
+    alternate_source_references: tuple[str, ...] = ()
 
 
 class TextbookEdition(TextbookModel):
-    edition: str = Field(..., min_length=1, max_length=80)
-    publication_year: int = Field(..., ge=1900, le=2200)
-    publisher: str = Field(..., min_length=1, max_length=200)
+    edition: str | None = Field(default=None, min_length=1, max_length=80)
+    publication_year: int | None = Field(default=None, ge=1900, le=2200)
+    publisher: str | None = Field(default=None, min_length=1, max_length=200)
 
 
 class TextbookRegistration(TextbookModel):
@@ -37,16 +41,18 @@ class TextbookRegistration(TextbookModel):
     class_level: int = Field(..., ge=1, le=12)
     subject: str
     medium: str
-    language: str
+    language: LanguageCode
+    languages: tuple[LanguageCode, ...] = ()
     book_part: BookPart
     edition: TextbookEdition
-    title: str
+    title: str | None = None
     source: TextbookSource
 
 
 class TextbookProvenance(TextbookModel):
     source_type: str
     source_reference: str
+    alternate_source_references: tuple[str, ...] = ()
     checksum_algorithm: Literal["sha256"] = "sha256"
     checksum: str = Field(..., pattern=r"^[a-f0-9]{64}$")
     ingested_at: datetime
@@ -104,11 +110,12 @@ class TextbookMetadata(TextbookModel):
     subject: str
     medium: str
     language: str
+    languages: tuple[LanguageCode, ...] = ()
     book_part: BookPart
-    edition: str
-    publication_year: int
-    publisher: str
-    title: str
+    edition: str | None = None
+    publication_year: int | None = None
+    publisher: str | None = None
+    title: str | None = None
     source_type: str
     source_reference: str
     filename: str
@@ -142,6 +149,25 @@ class TextbookIngestionResult(TextbookModel):
     is_scanned: bool
     ocr_required: bool
     detection_reason: str | None = None
+    detected_language: Literal["telugu", "english", "bilingual", "mixed", "unreadable", "empty", "scanned"]
+    sampled_page_numbers: tuple[int, ...] = ()
+    pages_with_text: int = Field(..., ge=0)
+    pages_without_text: int = Field(..., ge=0)
+    pages_with_warnings: int = Field(..., ge=0)
+    likely_scanned_pages: int = Field(..., ge=0)
+    image_pages: int = Field(..., ge=0)
+    table_pages: int = Field(..., ge=0)
+    text_coverage_percent: float = Field(..., ge=0, le=100)
+    unicode_valid: bool
+    replacement_character_count: int = Field(..., ge=0)
+    english_pages: int = Field(default=0, ge=0)
+    telugu_pages: int = Field(default=0, ge=0)
+    mixed_language_pages: int = Field(default=0, ge=0)
+    unreadable_pages: int = Field(default=0, ge=0)
+    english_character_count: int = Field(default=0, ge=0)
+    telugu_character_count: int = Field(default=0, ge=0)
+    bilingual_coverage_percent: float = Field(default=0, ge=0, le=100)
+    alternating_language_pairs: int = Field(default=0, ge=0)
     chapters: tuple[TextbookChapter, ...] = ()
     pages: tuple[TextbookPage, ...]
     warnings: tuple[str, ...] = ()

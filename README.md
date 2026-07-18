@@ -221,22 +221,86 @@ License terms have not yet been selected. Add an approved `LICENSE` file before 
 
 Vedha AI includes a provider-independent textbook repository foundation for
 curriculum PDFs. The pilot treats Andhra Pradesh Class 10 Mathematics Semester
-1/2 Telugu and Semester 1/2 English as four independent textbook records.
+1 and Semester 2 as two bilingual English–Telugu textbook records. The four
+supplied filenames are two checksum-identical alias pairs, not four books.
 
 The ingestion pipeline validates PDF type, size, encryption, readability and
 checksum; stores files behind an opaque local storage key; extracts text one
 page at a time; preserves provenance; detects likely scanned documents without
-running OCR; and detects explicit English/Telugu chapter headings. Exact
-SHA-256 duplicates are rejected, while different editions, languages and book
-parts coexist.
+running OCR; and detects explicit English/Telugu chapter headings. Approved
+checksum-identical filename aliases resolve to one record and storage object;
+different semester checksums remain independent.
 
 Run the disabled-by-default manual command after configuring a private storage
 directory and setting `TEXTBOOK_INGESTION_ENABLED=true`:
 
 ```powershell
-python scripts/ingest_textbook.py textbook.pdf --board andhra_pradesh_state_board --academic-year 2025-2026 --curriculum-version ap-2025-v1 --class-level 10 --subject mathematics --medium telugu --language te --book-part semester_1 --edition first --publication-year 2025
+python scripts/ingest_textbook.py textbook.pdf --board andhra_pradesh_state_board --academic-year 2025-2026 --curriculum-version your-verified-version --class-level 10 --subject mathematics --medium telugu --language te --book-part semester_1
 ```
 
 Textbook PDFs and private storage content must never be committed. OCR,
 embeddings, vector search, OpenAI extraction and lesson grounding remain out of
 scope.
+
+### Sprint 4C.3 pilot validation
+
+Keep the four pilot source aliases outside the repository in a directory chosen and
+explicitly supplied by the operator, using their approved filenames. No source
+directory is assumed or searched automatically. Set `TEXTBOOK_STORAGE_PATH` to
+a private ignored runtime directory and enable ingestion only for the manual
+run. Board and academic year use configured defaults unless supplied. A
+curriculum version must be supplied or configured as
+`DEFAULT_CURRICULUM_VERSION`.
+
+The manual ingestion command validates the PDF signature, readability,
+encryption, checksum, all-page content language, Unicode
+replacement characters, scanned/OCR indicators, images, tables, and chapter
+headings before persisting the record. Filename and displayed file size do not
+establish identity. Exact SHA-256 matches within an approved semester alias pair
+resolve to one bilingual record; Semester 1 and Semester 2 must remain distinct.
+
+Run both bilingual books and their four source aliases through one preflighted command:
+
+```powershell
+$env:TEXTBOOK_INGESTION_ENABLED="true"
+$env:TEXTBOOK_STORAGE_PATH="backend/data/textbooks"
+python scripts/ingest_pilot_textbooks.py --source-directory "C:\operator-supplied\textbooks" --curriculum-version "verified-version"
+```
+
+Replace the examples with the operator-supplied directory and configured or
+verified curriculum identifiers. The command stops before registration if the directory is
+invalid or unreadable, any expected filename is missing or unreadable, alias
+checksums differ, or the two semesters have the same checksum. Existing matching
+records are migrated in place. Review its JSON output for extraction counts,
+Unicode status, warnings, and detected chapter headings. Repository metadata,
+stored PDFs, full extracted text, and `pilot-validation.json` remain under the
+private `TEXTBOOK_STORAGE_PATH`; never commit that directory or a report that
+contains textbook page text.
+
+Official title, publisher, edition, and publication year are extracted locally
+and deterministically from embedded PDF metadata and the cover, copyright, and
+early front-matter pages. These fields are never required CLI inputs. When a
+value cannot be determined confidently, it remains null and the validation
+report includes a warning; missing bibliographic metadata alone never blocks
+ingestion.
+
+Language validation scans every extracted page and reports English, Telugu,
+mixed, and unreadable page counts, Unicode character counts, bilingual coverage,
+and adjacent English/Telugu page pairs. Verified bilingual metadata remains
+distinct from extraction quality: PDFs whose embedded fonts prevent Telugu
+Unicode extraction retain an explicit warning for manual review.
+
+### PDF text-layer diagnostics
+
+Sprint 4C.4 provides a diagnostic-only command that inspects exactly the two
+checksum-unique pilot PDFs and verifies their duplicate aliases without running
+OCR or changing textbook records:
+
+```powershell
+python scripts/investigate_pdf_text_layer.py --source-directory "C:\operator-supplied\textbooks" --output-directory "backend/data/textbooks"
+```
+
+The ignored JSON report contains per-page structural evidence, character counts,
+font subtype/encoding/embedding/ToUnicode findings, image counts, deterministic
+sample-page selections, extractor availability, and root-cause classifications.
+It intentionally contains no extracted page text or substantial excerpts.

@@ -9,9 +9,9 @@
 | Current milestone | Phase 4 - AI Tutor |
 | Progress | Sprints 3A-3C, 4A, 4B and 4C complete |
 | Overall status | Multi-board curriculum metadata and deterministic textbook PDF ingestion foundations are complete; OCR, embeddings and retrieval remain unimplemented |
-| Current sprint | Sprint 4C - Enterprise Textbook Repository and PDF Ingestion Foundation |
-| Sprint goal | Register, validate, store and inspect independent curriculum textbooks with immutable provenance and no AI processing |
-| Next task | Approve and design the post-4C chunking and retrieval phase |
+| Current sprint | Sprint 4C.4 - PDF Text-Layer Investigation |
+| Sprint goal | Classify the bilingual PDFs' text, font, mapping and image layers without OCR or production-data mutation |
+| Next task | Review the diagnostic root cause and approve a later CMap-reconstruction or affected-page OCR design |
 
 ## Current milestone
 
@@ -176,9 +176,9 @@ Add or revise decisions when a choice materially affects architecture, security,
 ## Sprint 4C delivery record
 
 Sprint 4C establishes the enterprise textbook repository and deterministic PDF
-ingestion foundation for the four Andhra Pradesh Class 10 Mathematics pilot
-books. Delivery includes immutable domain contracts, generic book-part support,
+ingestion foundation for two bilingual Andhra Pradesh Class 10 Mathematics
+semester books. Delivery includes immutable domain contracts, generic book-part support,
 provider-independent local storage, SHA-256 duplicate control, page-level
-extraction, provenance, scanned-document detection, bilingual chapter detection
+extraction, alias provenance, scanned-document detection, bilingual chapter detection
 and a disabled-by-default manual command. OCR, embeddings, retrieval and AI
 processing require separately approved future work.

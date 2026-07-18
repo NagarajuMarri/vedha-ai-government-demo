@@ -23,6 +23,9 @@ class TextbookRepository(ABC):
     @abstractmethod
     def list_all(self) -> tuple[TextbookIngestionResult, ...]: ...
 
+    @abstractmethod
+    def replace(self, result: TextbookIngestionResult) -> None: ...
+
 
 class InMemoryTextbookRepository(TextbookRepository):
     """Deterministic adapter for tests and the ingestion foundation."""
@@ -40,6 +43,11 @@ class InMemoryTextbookRepository(TextbookRepository):
 
     def list_all(self) -> tuple[TextbookIngestionResult, ...]:
         return tuple(self._by_checksum.values())
+
+    def replace(self, result: TextbookIngestionResult) -> None:
+        if result.checksum not in self._by_checksum:
+            raise ValueError("Textbook record does not exist")
+        self._by_checksum[result.checksum] = result
 
 
 class JsonTextbookRepository(TextbookRepository):
@@ -72,3 +80,19 @@ class JsonTextbookRepository(TextbookRepository):
             return tuple(TextbookIngestionResult.model_validate(item) for item in payload)
         except (OSError, json.JSONDecodeError, ValueError) as exc:
             raise ValueError("Textbook metadata repository is unreadable") from exc
+
+    def replace(self, result: TextbookIngestionResult) -> None:
+        records = list(self.list_all())
+        index = next((index for index, record in enumerate(records) if record.checksum == result.checksum), None)
+        if index is None:
+            raise ValueError("Textbook record does not exist")
+        records[index] = result
+        self._write(records)
+
+    def _write(self, records: list[TextbookIngestionResult]) -> None:
+        temporary = self._metadata_file.with_suffix(".tmp")
+        temporary.write_text(
+            json.dumps([record.model_dump(mode="json") for record in records], ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        temporary.replace(self._metadata_file)

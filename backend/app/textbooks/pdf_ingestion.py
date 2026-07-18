@@ -27,6 +27,15 @@ class InspectedPage:
 
 
 @dataclass(frozen=True, slots=True)
+class ExtractedBookMetadata:
+    title: str | None
+    publisher: str | None
+    edition: str | None
+    publication_year: int | None
+    warnings: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class PdfInspection:
     checksum: str
     file_size_bytes: int
@@ -36,6 +45,7 @@ class PdfInspection:
     ocr_required: bool
     detection_reason: str | None
     warnings: tuple[str, ...]
+    book_metadata: ExtractedBookMetadata | None = None
 
 
 class ChapterDetector:
@@ -100,6 +110,7 @@ class PdfInspector:
             if not reader.pages:
                 raise TextbookValidationError("Textbook PDF contains no pages")
             pages = tuple(self._extract_page(page, number) for number, page in enumerate(reader.pages, 1))
+            book_metadata = self._extract_book_metadata(reader.metadata, pages)
         except TextbookValidationError:
             raise
         except (PdfReadError, OSError, ValueError, TypeError) as exc:
@@ -118,8 +129,64 @@ class PdfInspector:
             is_scanned=scanned,
             ocr_required=scanned,
             detection_reason=reason,
-            warnings=warnings,
+            warnings=warnings + book_metadata.warnings,
+            book_metadata=book_metadata,
         )
+
+    @staticmethod
+    def _extract_book_metadata(document_metadata, pages: tuple[InspectedPage, ...]) -> ExtractedBookMetadata:
+        metadata = document_metadata or {}
+        front_matter = "\n".join(page.text for page in pages[:8])
+
+        def clean(value) -> str | None:
+            if value is None:
+                return None
+            normalized = " ".join(str(value).replace("\x00", " ").split())
+            return normalized[:240] or None
+
+        title = clean(metadata.get("/Title"))
+        publisher = clean(metadata.get("/Publisher"))
+        edition = clean(metadata.get("/Edition"))
+        publication_year: int | None = None
+
+        if not publisher:
+            match = re.search(r"(?im)^\s*(?:published\s+by|publisher)\s*[:\-]?\s*(.{3,200})\s*$", front_matter)
+            publisher = clean(match.group(1)) if match else None
+        if not edition:
+            match = re.search(
+                r"(?i)\b((?:first|second|third|fourth|revised|\d+(?:st|nd|rd|th))\s+edition)\b",
+                front_matter,
+            )
+            edition = clean(match.group(1)) if match else None
+        year_match = re.search(
+            r"(?i)(?:copyright|©|published|publication|edition)[^\n]{0,50}\b((?:19|20)\d{2})\b",
+            front_matter,
+        )
+        if year_match:
+            publication_year = int(year_match.group(1))
+        elif metadata.get("/CreationDate"):
+            date_match = re.search(r"((?:19|20)\d{2})", str(metadata.get("/CreationDate")))
+            publication_year = int(date_match.group(1)) if date_match else None
+
+        if not title:
+            boilerplate = re.compile(r"(?i)^(copyright|published\s+by|publisher|first\s+edition|contents?)\b")
+            for line in front_matter.splitlines():
+                candidate = clean(line)
+                if candidate and 5 <= len(candidate) <= 200 and not boilerplate.match(candidate):
+                    if sum(character.isalpha() for character in candidate) >= 4:
+                        title = candidate
+                        break
+
+        missing = tuple(
+            name for name, value in (
+                ("title", title),
+                ("publisher", publisher),
+                ("edition", edition),
+                ("publication year", publication_year),
+            ) if value is None
+        )
+        warnings = tuple(f"Textbook {name} could not be determined confidently" for name in missing)
+        return ExtractedBookMetadata(title, publisher, edition, publication_year, warnings)
 
     @staticmethod
     def _checksum(path: Path) -> str:

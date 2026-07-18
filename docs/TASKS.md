@@ -338,7 +338,7 @@ No tasks are currently in review.
 | Field | Value |
 |---|---|
 | Priority | P0 |
-| Description | Register and deterministically inspect four independent AP Class 10 Mathematics textbook variants. |
+| Description | Register and deterministically inspect two bilingual AP Class 10 Mathematics semester textbooks represented by checksum-identical filename aliases. |
 | Dependencies | Sprint 4B curriculum metadata foundation |
 | Owner | Backend + Curriculum Engineering |
 | Status | COMPLETED |

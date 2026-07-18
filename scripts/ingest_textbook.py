@@ -34,10 +34,6 @@ def build_parser() -> argparse.ArgumentParser:
         "full_year", "semester_1", "semester_2", "volume_1", "volume_2",
         "part_1", "part_2", "custom",
     ))
-    parser.add_argument("--edition", required=True)
-    parser.add_argument("--publication-year", required=True, type=int)
-    parser.add_argument("--publisher", default="Andhra Pradesh Government")
-    parser.add_argument("--title")
     return parser
 
 
@@ -55,13 +51,9 @@ def main() -> None:
         medium=args.medium,
         language=args.language,
         book_part=args.book_part,
-        edition=TextbookEdition(
-            edition=args.edition,
-            publication_year=args.publication_year,
-            publisher=args.publisher,
-        ),
-        title=args.title or args.pdf_path.stem,
-        source=TextbookSource(source_type="local_file", source_reference=args.pdf_path.name),
+        edition=TextbookEdition(),
+        title=None,
+        source=TextbookSource(source_type="official_textbook_pdf", source_reference=args.pdf_path.name),
     )
     service = TextbookIngestionService(
         inspector=PdfInspector(
@@ -80,6 +72,17 @@ def main() -> None:
         "page_count": result.page_count,
         "scanned": result.is_scanned,
         "ocr_required": result.ocr_required,
+        "content_language": result.detected_language,
+        "sampled_page_numbers": result.sampled_page_numbers,
+        "pages_with_text": result.pages_with_text,
+        "pages_without_text": result.pages_without_text,
+        "pages_with_warnings": result.pages_with_warnings,
+        "text_coverage_percent": result.text_coverage_percent,
+        "likely_scanned_pages": result.likely_scanned_pages,
+        "image_pages": result.image_pages,
+        "table_pages": result.table_pages,
+        "unicode_valid": result.unicode_valid,
+        "replacement_character_count": result.replacement_character_count,
         "detected_chapters": [chapter.model_dump(mode="json") for chapter in result.chapters],
         "warnings": result.warnings,
     }, ensure_ascii=False, indent=2))

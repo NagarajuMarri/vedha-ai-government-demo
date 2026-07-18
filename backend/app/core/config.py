@@ -73,6 +73,7 @@ class Settings:
     )
     default_board: str = "andhra_pradesh_state_board"
     default_academic_year: str = "2025-2026"
+    default_curriculum_version: str | None = None
     textbook_storage_path: Path = Path(__file__).resolve().parents[2] / "data" / "textbooks"
     textbook_max_file_size_mb: int = 100
     textbook_allowed_mime_types: tuple[str, ...] = ("application/pdf",)
@@ -100,6 +101,7 @@ def get_settings() -> Settings:
     )
     default_board = os.getenv("DEFAULT_BOARD", "andhra_pradesh_state_board").strip()
     default_academic_year = os.getenv("DEFAULT_ACADEMIC_YEAR", "2025-2026").strip()
+    default_curriculum_version = os.getenv("DEFAULT_CURRICULUM_VERSION", "").strip() or None
     textbook_storage_path = Path(os.getenv(
         "TEXTBOOK_STORAGE_PATH",
         str(Path(__file__).resolve().parents[2] / "data" / "textbooks"),
@@ -153,6 +155,7 @@ def get_settings() -> Settings:
         supported_boards=supported_boards,
         default_board=default_board,
         default_academic_year=default_academic_year,
+        default_curriculum_version=default_curriculum_version,
         textbook_storage_path=textbook_storage_path,
         textbook_max_file_size_mb=textbook_max_file_size_mb,
         textbook_allowed_mime_types=textbook_allowed_mime_types,
