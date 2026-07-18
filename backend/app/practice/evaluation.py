@@ -17,11 +17,19 @@ class PracticeEvaluationService:
     def __init__(self, repository: PracticeAnswerRepository = practice_answer_repository) -> None:
         self._repository = repository
 
-    def evaluate(self, *, practice_set_id: str, question_id: str, student_answer: str) -> dict[str, object]:
+    def evaluate(
+        self,
+        *,
+        practice_set_id: str,
+        question_id: str,
+        student_answer: str,
+        client_attempt_number: int | None = None,
+    ) -> dict[str, object]:
         key = self._repository.get(practice_set_id, question_id)
         if key is None:
             raise PracticeQuestionNotFoundError("Practice question was not found or has expired.")
-        attempt_number = self._repository.next_attempt(practice_set_id, question_id)
+        server_attempt_number = self._repository.next_attempt(practice_set_id, question_id)
+        attempt_number = max(server_attempt_number, client_attempt_number or 0)
         correct = self._normalize(student_answer) == self._normalize(key.expected_answer)
         feedback, guidance = self._messages(correct, key, student_answer, attempt_number)
         return {
