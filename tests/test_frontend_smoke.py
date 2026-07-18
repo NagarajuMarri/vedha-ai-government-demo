@@ -256,3 +256,28 @@ def test_progress_styles_support_mobile_and_reduced_motion() -> None:
     assert ".progress-track span" in styles
     assert ".journey-step.is-complete" in styles
     assert "prefers-reduced-motion: reduce" in styles
+
+
+def test_government_dashboard_is_synthetic_private_and_filterable() -> None:
+    dashboard_html = (FRONTEND_ROOT / "government" / "index.html").read_text(encoding="utf-8")
+    dashboard_js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    assert 'src="../assets/js/government-dashboard.js"' in dashboard_html
+    assert "Synthetic demonstration data" in dashboard_html
+    assert "No student records or personal information are displayed" in dashboard_html
+    assert "Aggregate insight, not surveillance" in dashboard_html
+    assert 'id="district-filter"' in dashboard_html
+    assert 'id="class-filter"' in dashboard_html
+    assert 'role="status"' in dashboard_html
+    for metric in ("learners", "lessons", "practice", "mastery", "telugu", "improvement"):
+        assert f'id="metric-{metric}"' in dashboard_html
+    assert "syntheticData" in dashboard_js
+    assert 'byId("district-filter").addEventListener("change", renderDashboard)' in dashboard_js
+    assert "innerHTML" not in dashboard_js
+
+
+def test_government_dashboard_is_responsive_and_motion_safe() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for selector in (".dashboard-metrics", ".dashboard-grid", ".dashboard-card", ".synthetic-banner"):
+        assert selector in styles
+    assert "@keyframes dashboard-bar-grow" in styles
+    assert "prefers-reduced-motion: reduce" in styles
