@@ -3,13 +3,22 @@
 from __future__ import annotations
 
 import asyncio
+import base64
 from collections import Counter
+from dataclasses import replace
+from types import SimpleNamespace
 
 import httpx
 import pytest
 from pydantic import ValidationError
 
+from backend.app.core.config import get_settings
 from backend.app.main import app
+from backend.app.practice.handwriting import (
+    HandwritingEvaluationService,
+    HandwritingImageError,
+    HandwritingVisionResult,
+)
 from backend.app.practice.models import PracticeQuestion, PracticeSet
 
 
@@ -165,3 +174,57 @@ def test_practice_attempt_number_increments_for_same_question() -> None:
     assert first["attempt_number"] == 1
     assert second["attempt_number"] == 2
     assert "Attempt 2" in second["feedback"]
+
+
+def test_handwriting_evaluation_uses_vision_without_persisting_image() -> None:
+    practice = _post(_payload()).json()
+    question = practice["questions"][0]
+    parsed = HandwritingVisionResult(
+        transcribed_work="1/2",
+        correct=True,
+        feedback="The handwritten simplification is correct.",
+        corrective_guidance=["The numerator and denominator were simplified consistently."],
+        confidence=0.96,
+    )
+
+    class FakeResponses:
+        def __init__(self) -> None:
+            self.call: dict[str, object] = {}
+
+        def parse(self, **kwargs):
+            self.call = kwargs
+            return SimpleNamespace(output_parsed=parsed)
+
+    responses = FakeResponses()
+    client = SimpleNamespace(responses=responses)
+    service = HandwritingEvaluationService(
+        settings=replace(get_settings(), openai_api_key="test-key", openai_model="test-vision"),
+        client=client,
+    )
+    image = "data:image/png;base64," + base64.b64encode(b"small-phone-photo").decode()
+    result = service.evaluate(
+        practice_set_id=practice["practice_set_id"],
+        question_id=question["question_id"],
+        image_data_url=image,
+    )
+    assert result["correct"] is True
+    assert result["transcribed_work"] == "1/2"
+    assert result["confidence"] == 0.96
+    assert responses.call["store"] is False
+    assert responses.call["input"][0]["content"][1]["type"] == "input_image"
+
+
+def test_handwriting_rejects_non_image_data() -> None:
+    practice = _post(_payload()).json()
+    question = practice["questions"][0]
+    service = HandwritingEvaluationService(settings=get_settings())
+    with pytest.raises(HandwritingImageError):
+        service.evaluate(
+            practice_set_id=practice["practice_set_id"],
+            question_id=question["question_id"],
+            image_data_url="data:text/plain;base64,SGVsbG8=",
+        )
+
+
+def test_openapi_lists_handwriting_endpoint() -> None:
+    assert "/api/v1/practice/evaluate-handwriting" in app.openapi()["paths"]
