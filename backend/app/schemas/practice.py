@@ -30,3 +30,24 @@ class PracticeSetResponse(BaseModel):
     learning_profile: LearningProfile
     questions: list[PracticeQuestion] = Field(..., min_length=15, max_length=15)
     created_at: datetime
+
+
+class EvaluatePracticeAnswerRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
+
+    practice_set_id: str = Field(..., min_length=1, max_length=100)
+    question_id: str = Field(..., min_length=1, max_length=100)
+    student_answer: str = Field(..., min_length=1, max_length=1000)
+
+
+class PracticeEvaluationResponse(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    request_id: str
+    practice_set_id: str
+    question_id: str
+    correct: bool
+    feedback: str = Field(..., min_length=5, max_length=1000)
+    corrective_guidance: list[str] = Field(..., min_length=1, max_length=5)
+    attempt_number: int = Field(..., ge=1)
+    evaluated_at: datetime
