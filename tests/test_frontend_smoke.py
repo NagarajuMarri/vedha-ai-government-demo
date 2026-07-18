@@ -117,3 +117,24 @@ def test_student_tutor_assets_are_separate_and_responsive() -> None:
     styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
     assert "@media (max-width: 48rem)" in styles
     assert "@media (max-width: 30rem)" in styles
+
+
+def test_student_practice_ui_and_api_integration() -> None:
+    assert 'id="concept"' in STUDENT_HTML
+    assert 'id="generate-practice"' in STUDENT_HTML
+    assert 'id="practice-result"' in STUDENT_HTML
+    for difficulty in ("easy", "medium", "hard"):
+        assert f'id="practice-{difficulty}"' in STUDENT_HTML
+    assert '/api/v1/practice/generate' in API_JS
+    assert 'data.questions.length !== 15' in API_JS
+    assert 'counts.easy !== 5' in API_JS
+    assert 'api.requestPractice(state.setup)' in TUTOR_JS
+    assert 'question.difficulty === difficulty' in TUTOR_JS
+
+
+def test_practice_ui_has_bilingual_states_and_responsive_layout() -> None:
+    for text in ("Vedha is preparing 15 practice questions", "Vedha 15 practice questions సిద్ధం చేస్తోంది", "వేద 15 అభ్యాస ప్రశ్నలను సిద్ధం చేస్తోంది"):
+        assert text in TUTOR_JS
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert ".practice-result" in styles
+    assert "grid-template-columns: repeat(3" in styles
