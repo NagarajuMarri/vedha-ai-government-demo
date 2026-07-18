@@ -2,7 +2,7 @@
 
 (function initializeStudentTutor(document, api) {
   const MAX_QUESTION_LENGTH = 1500;
-  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), uploading: new Set(), attempts: new Map(), error: null, lesson: null, practice: null, submitted: false };
+  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), uploading: new Set(), attempts: new Map(), progress: new Map(), error: null, lesson: null, practice: null, submitted: false };
   const byId = (id) => document.getElementById(id);
   const setupForm = byId("setup-form");
   const questionForm = byId("question-form");
@@ -74,6 +74,7 @@
       difficulties: { easy: "Easy · 5", medium: "Medium · 5", hard: "Hard · 5" },
       hintLabel: "Hint", answerPlaceholder: "Type your answer", checkAnswer: "Check Answer",
       uploadWork: "Upload Handwritten Work", generatePractice: "Generate Practice",
+      progress: { title: "Progress this session", attempted: "Attempted", mastered: "Mastered", accuracy: "Accuracy", start: "Start answering practice questions to see your progress.", active: "Keep going—every correction builds understanding.", complete: "Excellent! You mastered all 15 questions.", badgeStart: "Getting started", badgeActive: "Learning in progress", badgeComplete: "Practice complete" },
     },
     telugu_assisted_english: {
       loading: "Vedha మీ lesson సిద్ధం చేస్తోంది...",
@@ -89,6 +90,7 @@
       difficulties: { easy: "సులభ · 5", medium: "మధ్యస్థ · 5", hard: "కఠిన · 5" },
       hintLabel: "సూచన", answerPlaceholder: "సమాధానం type చేయండి", checkAnswer: "Answer తనిఖీ",
       uploadWork: "చేతిరాత Work Upload", generatePractice: "Practice రూపొందించండి",
+      progress: { title: "ఈ session progress", attempted: "Attempted", mastered: "Mastered", accuracy: "Accuracy", start: "Questions answer చేయడం ప్రారంభిస్తే progress కనిపిస్తుంది.", active: "Continue చేయండి—ప్రతి correction understandingను పెంచుతుంది.", complete: "Excellent! మొత్తం 15 questions mastered.", badgeStart: "Getting started", badgeActive: "Learning in progress", badgeComplete: "Practice complete" },
     },
     pure_telugu: {
       loading: "వేద మీ పాఠాన్ని సిద్ధం చేస్తోంది...",
@@ -104,8 +106,47 @@
       difficulties: { easy: "సులభం · 5", medium: "మధ్యస్థం · 5", hard: "కఠినం · 5" },
       hintLabel: "సూచన", answerPlaceholder: "మీ సమాధానం రాయండి", checkAnswer: "సమాధానం తనిఖీ",
       uploadWork: "చేతిరాత పరిష్కారం జోడించండి", generatePractice: "అభ్యాసం రూపొందించండి",
+      progress: { title: "ఈ అభ్యాసంలోని ప్రగతి", attempted: "ప్రయత్నించినవి", mastered: "నేర్చుకున్నవి", accuracy: "ఖచ్చితత్వం", start: "మీ ప్రగతిని చూడటానికి అభ్యాస ప్రశ్నలకు సమాధానాలు ఇవ్వడం ప్రారంభించండి.", active: "కొనసాగించండి—ప్రతి సవరణ మీ అవగాహనను పెంచుతుంది.", complete: "అద్భుతం! మీరు మొత్తం 15 ప్రశ్నలను నేర్చుకున్నారు.", badgeStart: "ప్రారంభం", badgeActive: "అభ్యాసం కొనసాగుతోంది", badgeComplete: "అభ్యాసం పూర్తయింది" },
     },
   };
+
+  function setJourney(activeStep) {
+    document.querySelectorAll(".journey-step").forEach((step, index) => {
+      step.classList.toggle("is-current", index + 1 === activeStep);
+      step.classList.toggle("is-complete", index + 1 < activeStep);
+    });
+  }
+
+  function renderProgress() {
+    const copy = messages[state.setup.learning_profile].progress;
+    const entries = [...state.progress.values()];
+    const attempted = entries.length;
+    const mastered = entries.filter((entry) => entry.correct).length;
+    const accuracy = attempted ? Math.round((mastered / attempted) * 100) : 0;
+    byId("progress-title").textContent = copy.title;
+    byId("progress-attempted").textContent = String(attempted);
+    byId("progress-mastered").textContent = String(mastered);
+    byId("progress-accuracy").textContent = `${accuracy}%`;
+    byId("progress-attempted-label").textContent = copy.attempted;
+    byId("progress-mastered-label").textContent = copy.mastered;
+    byId("progress-accuracy-label").textContent = copy.accuracy;
+    byId("progress-total").textContent = `${mastered} / 15`;
+    byId("progress-fill").style.width = `${Math.round((mastered / 15) * 100)}%`;
+    const track = document.querySelector(".progress-track");
+    track.setAttribute("aria-valuenow", String(mastered));
+    byId("progress-badge").textContent = mastered === 15 ? copy.badgeComplete : attempted ? copy.badgeActive : copy.badgeStart;
+    byId("progress-message").textContent = mastered === 15 ? copy.complete : attempted ? copy.active : copy.start;
+  }
+
+  function recordProgress(question, evaluation) {
+    const previous = state.progress.get(question.question_id);
+    state.progress.set(question.question_id, {
+      correct: Boolean(evaluation.correct) || Boolean(previous?.correct),
+      attempts: Math.max(evaluation.attempt_number, previous?.attempts || 0),
+    });
+    renderProgress();
+    setJourney(4);
+  }
 
   function setList(element, items) {
     element.replaceChildren(...items.map((text) => {
@@ -172,6 +213,7 @@
       });
       state.attempts.set(question.question_id, Math.max(clientAttemptNumber, evaluation.attempt_number));
       renderEvaluation(item, evaluation);
+      recordProgress(question, evaluation);
     } catch (_error) {
       state.attempts.set(question.question_id, previousAttempts);
       feedback.textContent = messages[state.setup.learning_profile].evaluationError;
@@ -214,6 +256,7 @@
       });
       uploadStatus.textContent = `Transcribed work: ${evaluation.transcribed_work} · Confidence: ${Math.round(evaluation.confidence * 100)}%`;
       renderEvaluation(item, evaluation);
+      recordProgress(question, evaluation);
     } catch (_error) {
       uploadStatus.textContent = messages[state.setup.learning_profile].uploadError;
       uploadStatus.className = "upload-status answer-incorrect";
@@ -227,6 +270,9 @@
 
   function renderPractice(practice) {
     state.attempts.clear();
+    state.progress.clear();
+    byId("progress-panel").hidden = false;
+    setJourney(3);
     const copy = messages[state.setup.learning_profile];
     byId("practice-title").textContent = copy.practiceTitle;
     byId("practice-panel").querySelector(":scope > p").textContent = copy.practiceSummary;
@@ -294,6 +340,7 @@
     });
     byId("practice-result").hidden = false;
     byId("practice-result").focus({ preventScroll: true });
+    renderProgress();
     byId("practice-result").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -351,12 +398,14 @@
     byId("student-context").textContent = `${state.setup.student_name} · Class ${state.setup.class_level} · ${state.setup.subject} · ${state.setup.concept}`;
     byId("setup-view").hidden = true;
     byId("tutor-view").hidden = false;
+    setJourney(2);
     questionInput.focus();
   });
 
   byId("edit-setup").addEventListener("click", () => {
     byId("tutor-view").hidden = true;
     byId("setup-view").hidden = false;
+    setJourney(1);
     byId("student-name").focus();
   });
 
