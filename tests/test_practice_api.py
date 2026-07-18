@@ -249,3 +249,14 @@ def test_second_wrong_attempt_explains_complete_fraction_solution() -> None:
     assert "6 ÷ 6 = 1" in solution
     assert "12 ÷ 6 = 2" in solution
     assert "simplified fraction is 1/2" in solution.lower()
+
+
+def test_pure_telugu_geometry_practice_contains_no_english_letters() -> None:
+    payload = _payload("pure_telugu")
+    payload["concept"] = "Geometry"
+    body = _post(payload).json()
+    for question in body["questions"]:
+        assert not any("A" <= char <= "Z" or "a" <= char <= "z" for char in question["prompt"])
+        assert not any("A" <= char <= "Z" or "a" <= char <= "z" for char in question["hint"])
+        assert "చతురస్రం" in question["prompt"]
+        assert "చుట్టుకొలత" in question["prompt"]
