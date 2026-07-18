@@ -197,3 +197,24 @@ def test_presentation_brand_identity_is_complete_and_accessible() -> None:
     assert 'class="learning-journey"' in STUDENT_HTML
     assert "prefers-reduced-motion: reduce" in styles
     assert "@keyframes vedha-float" in styles
+
+
+def test_subject_specific_concepts_include_pure_telugu_social_studies() -> None:
+    assert 'conceptInput.disabled = !subject' in TUTOR_JS
+    assert 'subjectInput.addEventListener("change", refreshConceptOptions)' in TUTOR_JS
+    for value in (
+        "Indian Constitution",
+        "Indian Freedom Movement",
+        "Andhra Pradesh Geography",
+        "Local Government",
+        "Climate and Natural Resources",
+    ):
+        assert value in TUTOR_JS
+    for telugu in (
+        "భారత రాజ్యాంగం",
+        "భారత స్వాతంత్ర్య ఉద్యమం",
+        "ఆంధ్రప్రదేశ్ భూగోళ శాస్త్రం",
+        "స్థానిక ప్రభుత్వం",
+        "వాతావరణం మరియు సహజ వనరులు",
+    ):
+        assert telugu in TUTOR_JS
