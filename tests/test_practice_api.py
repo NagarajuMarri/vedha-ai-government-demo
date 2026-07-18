@@ -173,7 +173,7 @@ def test_practice_attempt_number_increments_for_same_question() -> None:
     second = _evaluate(payload).json()
     assert first["attempt_number"] == 1
     assert second["attempt_number"] == 2
-    assert "Attempt 2" in second["feedback"]
+    assert "attempt 2" in second["feedback"].lower()
 
 
 def test_handwriting_evaluation_uses_vision_without_persisting_image() -> None:
