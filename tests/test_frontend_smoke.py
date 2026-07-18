@@ -138,3 +138,24 @@ def test_practice_ui_has_bilingual_states_and_responsive_layout() -> None:
     styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
     assert ".practice-result" in styles
     assert "grid-template-columns: repeat(3" in styles
+
+
+def test_practice_answer_evaluation_is_connected_safely() -> None:
+    assert '/api/v1/practice/evaluate' in API_JS
+    assert 'requestPracticeEvaluation' in API_JS
+    assert 'typeof data.correct !== "boolean"' in API_JS
+    assert 'Array.isArray(data.corrective_guidance)' in API_JS
+    assert 'practice_set_id: state.practice.practice_set_id' in TUTOR_JS
+    assert 'student_answer: studentAnswer' in TUTOR_JS
+    assert 'textContent = evaluation.feedback' in TUTOR_JS
+    assert 'innerHTML' not in TUTOR_JS
+
+
+def test_practice_answer_ui_supports_keyboard_feedback_and_retry() -> None:
+    assert 'input.className = "practice-answer"' in TUTOR_JS
+    assert 'button.textContent = "Check Answer"' in TUTOR_JS
+    assert 'event.key === "Enter"' in TUTOR_JS
+    assert 'aria-live", "polite"' in TUTOR_JS
+    assert 'answerRequired' in TUTOR_JS
+    assert 'evaluationError' in TUTOR_JS
+    assert '.answer-correct' in (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
