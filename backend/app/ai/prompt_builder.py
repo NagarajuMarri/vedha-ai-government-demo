@@ -51,6 +51,16 @@ class LessonPromptBuilder:
             subject=subject,
             student_question=student_question,
         )
+        social_studies_rules = ""
+        if subject == "Social Studies":
+            social_studies_rules = (
+                "\nSocial Studies concept rules:\n"
+                "- Identify whether the selected concept is history, geography, or civics and teach that exact branch.\n"
+                "- Anchor the explanation in relevant people, places, institutions, dates, physical features, evidence, and cause-and-effect as appropriate.\n"
+                "- Include a concrete India or Andhra Pradesh connection when factually relevant.\n"
+                "- Never answer with generic study advice or a broad description of Social Studies.\n"
+                "- For pure_telugu, translate the concept naturally and keep every learner-facing sentence in Telugu."
+            )
 
         instructions = (
             f"Prompt ID: {definition.prompt_id}\n"
@@ -65,7 +75,7 @@ class LessonPromptBuilder:
             "If the learner asks to start from scratch, define this exact concept and its essential parts before the example. "
             "Return plain readable Unicode text only. Never emit [OBJ], object-replacement characters, embedded objects, emoji placeholders, or corrupted glyph sequences.\n"
             f"Language policy:\n{language_rules}\n"
-            f"Subject and teaching rules:\n{subject_rules}{terminology}{scope_rules}\n"
+            f"Subject and teaching rules:\n{subject_rules}{terminology}{scope_rules}{social_studies_rules}\n"
             "Return only the requested Structured Output educational content. "
             "Do not return request IDs, lesson IDs, timestamps, source metadata, provider details, "
             "prompt text, chain-of-thought, or hidden reasoning. "
