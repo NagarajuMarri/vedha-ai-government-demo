@@ -2,7 +2,7 @@
 
 (function initializeStudentTutor(document, api) {
   const MAX_QUESTION_LENGTH = 1500;
-  const state = { setup: null, question: "", loading: false, practiceLoading: false, error: null, lesson: null, practice: null, submitted: false };
+  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), error: null, lesson: null, practice: null, submitted: false };
   const byId = (id) => document.getElementById(id);
   const setupForm = byId("setup-form");
   const questionForm = byId("question-form");
@@ -16,6 +16,8 @@
       fallback: "Vedha is showing a basic lesson while the advanced tutor service is unavailable.",
       practiceLoading: "Vedha is preparing 15 practice questions...",
       practiceError: "We could not prepare practice. Please try again.",
+      answerRequired: "Type an answer before checking.",
+      evaluationError: "We could not check this answer. Please try again.",
     },
     telugu_assisted_english: {
       loading: "Vedha మీ lesson సిద్ధం చేస్తోంది...",
@@ -23,6 +25,8 @@
       fallback: "Advanced tutor service అందుబాటులో లేనందున Vedha ఒక basic lesson చూపిస్తోంది.",
       practiceLoading: "Vedha 15 practice questions సిద్ధం చేస్తోంది...",
       practiceError: "Practice సిద్ధం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
+      answerRequired: "Check చేసే ముందు answer type చేయండి.",
+      evaluationError: "ఈ answerను check చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
     },
     pure_telugu: {
       loading: "వేద మీ పాఠాన్ని సిద్ధం చేస్తోంది...",
@@ -30,6 +34,8 @@
       fallback: "అధునాతన బోధనా సేవ అందుబాటులో లేనందున వేద ప్రాథమిక పాఠాన్ని చూపిస్తోంది.",
       practiceLoading: "వేద 15 అభ్యాస ప్రశ్నలను సిద్ధం చేస్తోంది...",
       practiceError: "అభ్యాస ప్రశ్నలను సిద్ధం చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+      answerRequired: "తనిఖీ చేసే ముందు సమాధానం రాయండి.",
+      evaluationError: "ఈ సమాధానాన్ని తనిఖీ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
     },
   };
 
@@ -57,6 +63,54 @@
     byId("lesson-result").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function renderEvaluation(item, evaluation) {
+    const feedback = item.querySelector(".answer-feedback");
+    const guidance = item.querySelector(".corrective-guidance");
+    feedback.textContent = evaluation.feedback;
+    feedback.className = `answer-feedback ${evaluation.correct ? "answer-correct" : "answer-incorrect"}`;
+    guidance.replaceChildren(...evaluation.corrective_guidance.map((text) => {
+      const step = document.createElement("li");
+      step.textContent = text;
+      return step;
+    }));
+    guidance.hidden = false;
+    feedback.focus({ preventScroll: true });
+  }
+
+  async function evaluateAnswer(question, item) {
+    const input = item.querySelector(".practice-answer");
+    const button = item.querySelector(".check-answer");
+    const feedback = item.querySelector(".answer-feedback");
+    const studentAnswer = input.value.trim();
+    if (!studentAnswer) {
+      feedback.textContent = messages[state.setup.learning_profile].answerRequired;
+      feedback.className = "answer-feedback answer-incorrect";
+      feedback.focus();
+      return;
+    }
+    if (state.evaluating.has(question.question_id)) return;
+    state.evaluating.add(question.question_id);
+    button.disabled = true;
+    button.textContent = "Checking…";
+    feedback.textContent = "";
+    try {
+      const evaluation = await api.requestPracticeEvaluation({
+        practice_set_id: state.practice.practice_set_id,
+        question_id: question.question_id,
+        student_answer: studentAnswer,
+      });
+      renderEvaluation(item, evaluation);
+    } catch (_error) {
+      feedback.textContent = messages[state.setup.learning_profile].evaluationError;
+      feedback.className = "answer-feedback answer-incorrect";
+      feedback.focus();
+    } finally {
+      state.evaluating.delete(question.question_id);
+      button.disabled = false;
+      button.textContent = "Check Answer";
+    }
+  }
+
   function renderPractice(practice) {
     ["easy", "medium", "hard"].forEach((difficulty) => {
       const questions = practice.questions.filter((question) => question.difficulty === difficulty);
@@ -65,9 +119,35 @@
         const item = document.createElement("li");
         const prompt = document.createElement("p");
         const hint = document.createElement("small");
+        const answerRow = document.createElement("div");
+        const input = document.createElement("input");
+        const button = document.createElement("button");
+        const feedback = document.createElement("p");
+        const guidance = document.createElement("ul");
         prompt.textContent = question.prompt;
         hint.textContent = `Hint: ${question.hint}`;
-        item.append(prompt, hint);
+        input.type = "text";
+        input.className = "practice-answer";
+        input.placeholder = "Type your answer";
+        input.setAttribute("aria-label", `Answer for: ${question.prompt}`);
+        button.type = "button";
+        button.className = "secondary-button check-answer";
+        button.textContent = "Check Answer";
+        feedback.className = "answer-feedback";
+        feedback.tabIndex = -1;
+        feedback.setAttribute("aria-live", "polite");
+        guidance.className = "corrective-guidance";
+        guidance.hidden = true;
+        button.addEventListener("click", () => evaluateAnswer(question, item));
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            button.click();
+          }
+        });
+        answerRow.className = "practice-answer-row";
+        answerRow.append(input, button);
+        item.append(prompt, hint, answerRow, feedback, guidance);
         return item;
       }));
     });
