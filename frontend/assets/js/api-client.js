@@ -31,7 +31,7 @@
   async function requestLesson(payload, options = {}) {
     const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
     const controller = new AbortController();
-    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 20000);
+    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 45000);
     let response;
     try {
       response = await global.fetch(`${baseUrl}/api/v1/lessons/explain`, {
