@@ -174,3 +174,9 @@ def test_handwritten_phone_photo_evaluation_is_connected() -> None:
     assert 'image_data_url: imageDataUrl' in TUTOR_JS
     assert 'Transcribed work:' in TUTOR_JS
     assert 'innerHTML' not in TUTOR_JS
+
+
+def test_pure_telugu_practice_controls_are_localized() -> None:
+    for text in ("15 ప్రశ్నల అభ్యాసం", "సులభం · 5", "సమాధానం తనిఖీ", "చేతిరాత పరిష్కారం జోడించండి", "అభ్యాసం రూపొందించండి"):
+        assert text in TUTOR_JS
+    assert 'hint.textContent = `${copy.hintLabel}: ${question.hint}`' in TUTOR_JS
