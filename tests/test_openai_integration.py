@@ -20,6 +20,7 @@ from backend.app.ai.exceptions import (
     AIReviewerRejectionError,
     AITimeoutError,
 )
+from backend.app.ai.fallback_generator import DeterministicFallbackLessonGenerator
 from backend.app.ai.language_profiles import localize_subject
 from backend.app.ai.lesson_models import GeneratedLessonContent, LessonGenerationRequest, LessonResult
 from backend.app.ai.prompt_builder import LessonPromptBuilder
