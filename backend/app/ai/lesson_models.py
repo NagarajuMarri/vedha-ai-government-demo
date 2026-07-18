@@ -16,6 +16,7 @@ class LessonGenerationRequest(BaseModel):
     subject: str = Field(..., min_length=3, max_length=80)
     learning_profile: Literal["english_medium", "telugu_assisted_english", "pure_telugu"]
     student_question: str = Field(..., min_length=8, max_length=1500)
+    concept: str = Field("General", min_length=2, max_length=120)
 
 
 class LessonResult(BaseModel):
