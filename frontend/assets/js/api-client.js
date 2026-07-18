@@ -158,8 +158,48 @@
     return validateEvaluation(data);
   }
 
+  function validateHandwritingEvaluation(data) {
+    validateEvaluation(data);
+    if (typeof data.transcribed_work !== "string" || !data.transcribed_work.trim() ||
+        typeof data.confidence !== "number" || data.confidence < 0 || data.confidence > 1) {
+      throw new LessonApiError("malformed_response");
+    }
+    return data;
+  }
+
+  async function requestHandwritingEvaluation(payload, options = {}) {
+    const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
+    const controller = new AbortController();
+    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 60000);
+    let response;
+    try {
+      response = await global.fetch(`${baseUrl}/api/v1/practice/evaluate-handwriting`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      throw new LessonApiError(error && error.name === "AbortError" ? "timeout" : "network");
+    } finally {
+      global.clearTimeout(timeoutId);
+    }
+    let data;
+    try {
+      data = await response.json();
+    } catch (_error) {
+      throw new LessonApiError("non_json_response");
+    }
+    if (!response.ok) {
+      throw new LessonApiError(response.status === 404 ? "expired_practice" :
+        response.status === 422 ? "invalid_image" : response.status >= 500 ? "server" : "request");
+    }
+    return validateHandwritingEvaluation(data);
+  }
+
   global.VedhaLessonApi = {
     requestLesson, validateLesson, requestPractice, validatePractice,
-    requestPracticeEvaluation, validateEvaluation, LessonApiError, DEFAULT_BASE_URL,
+    requestPracticeEvaluation, validateEvaluation, requestHandwritingEvaluation,
+    validateHandwritingEvaluation, LessonApiError, DEFAULT_BASE_URL,
   };
 })(window);
