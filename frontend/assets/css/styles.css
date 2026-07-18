@@ -1416,3 +1416,258 @@ body {
     animation: none;
   }
 }
+
+
+/* Catchy learning-story background and motion layer */
+.hero {
+  background-image:
+    linear-gradient(90deg, rgb(5 25 51 / 98%) 0%, rgb(7 31 61 / 91%) 34%, rgb(7 31 61 / 45%) 61%, rgb(7 31 61 / 8%) 100%),
+    url("../images/vedha-learning-hero.jpg");
+  background-position: center;
+  background-size: cover;
+  animation: hero-camera 18s ease-in-out infinite alternate;
+}
+
+.hero::before {
+  opacity: 0.55;
+  animation: knowledge-grid 12s linear infinite;
+}
+
+.hero-copy {
+  padding: 1.5rem 0;
+  text-shadow: 0 0.2rem 1.2rem rgb(0 0 0 / 24%);
+}
+
+.hero-visual {
+  align-content: end;
+  justify-items: end;
+  padding: 1.25rem;
+}
+
+.logo-stage {
+  width: clamp(10rem, 15vw, 13rem);
+  border-color: rgb(255 255 255 / 24%);
+  background: rgb(7 31 61 / 68%);
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 32%);
+  backdrop-filter: blur(0.75rem);
+}
+
+.orbit-one {
+  animation: orbit-turn 18s linear infinite;
+}
+
+.orbit-two {
+  animation: orbit-turn 12s linear infinite reverse;
+}
+
+.capability-chip {
+  animation: chip-drift 4.5s ease-in-out infinite;
+}
+
+.chip-lesson {
+  top: 31%;
+  left: 7%;
+}
+
+.chip-language {
+  top: 48%;
+  right: -1%;
+  animation-delay: -1.4s;
+}
+
+.chip-writing {
+  right: 8%;
+  bottom: 5%;
+  animation-delay: -2.8s;
+}
+
+.interface-card {
+  animation: card-arrival 600ms both;
+}
+
+.interface-card:nth-child(2) { animation-delay: 80ms; }
+.interface-card:nth-child(3) { animation-delay: 160ms; }
+.interface-card:nth-child(4) { animation-delay: 240ms; }
+
+.impact-grid strong {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background-clip: text;
+  color: transparent;
+}
+
+.subject-cloud {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.subject-symbol {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(7 140 134 / 16%);
+  border-radius: 50%;
+  color: rgb(18 63 115 / 26%);
+  background: rgb(255 255 255 / 45%);
+  box-shadow: 0 0.7rem 1.8rem rgb(18 63 115 / 7%);
+  font-family: Georgia, "Noto Serif Telugu", serif;
+  font-weight: 700;
+  animation: subject-float 6s ease-in-out infinite;
+}
+
+.symbol-fraction {
+  top: 8%;
+  right: 9%;
+  width: 3.2rem;
+  height: 3.2rem;
+  font-size: 1.35rem;
+}
+
+.symbol-geometry {
+  top: 42%;
+  right: 4%;
+  width: 2.7rem;
+  height: 2.7rem;
+  animation-delay: -1.2s;
+}
+
+.symbol-science {
+  right: 16%;
+  bottom: 8%;
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 0.95rem;
+  animation-delay: -2.4s;
+}
+
+.symbol-language {
+  top: 17%;
+  left: 3%;
+  width: 2.8rem;
+  height: 2.8rem;
+  font-size: 1.2rem;
+  animation-delay: -3.6s;
+}
+
+.symbol-spark {
+  bottom: 13%;
+  left: 6%;
+  width: 2rem;
+  height: 2rem;
+  color: rgb(210 140 47 / 42%);
+  animation-delay: -4.5s;
+}
+
+.student-panel > :not(.subject-cloud) {
+  position: relative;
+  z-index: 1;
+}
+
+.lesson-result:not([hidden]) {
+  animation: result-reveal 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.practice-result:not([hidden]) section {
+  animation: result-reveal 480ms both;
+}
+
+.practice-result:not([hidden]) section:nth-child(2) { animation-delay: 100ms; }
+.practice-result:not([hidden]) section:nth-child(3) { animation-delay: 200ms; }
+
+.status-message:not(:empty)::before {
+  display: inline-block;
+  margin-right: 0.45rem;
+  color: var(--color-secondary);
+  content: "✦";
+  animation: vedha-sparkle 1.2s ease-in-out infinite;
+}
+
+@keyframes hero-camera {
+  from { background-size: 100% auto; }
+  to { background-size: 104% auto; }
+}
+
+@keyframes knowledge-grid {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 3rem 3rem, 3rem 3rem; }
+}
+
+@keyframes orbit-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes chip-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-0.45rem); }
+}
+
+@keyframes subject-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-4deg); }
+  50% { transform: translate3d(0.35rem, -0.65rem, 0) rotate(5deg); }
+}
+
+@keyframes card-arrival {
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes result-reveal {
+  from { opacity: 0; transform: translateY(0.8rem) scale(0.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 58rem) {
+  .hero {
+    background-image:
+      linear-gradient(180deg, rgb(5 25 51 / 97%) 0%, rgb(7 31 61 / 84%) 52%, rgb(7 31 61 / 28%) 100%),
+      url("../images/vedha-learning-hero.jpg");
+    background-position: 62% center;
+    animation: none;
+  }
+
+  .hero-visual {
+    min-height: 16rem;
+  }
+
+  .logo-stage {
+    justify-self: center;
+  }
+
+  .chip-lesson { left: 12%; }
+  .chip-language { right: 10%; }
+}
+
+@media (max-width: 36rem) {
+  .hero {
+    background-position: 68% center;
+    background-size: auto 100%;
+  }
+
+  .hero-visual {
+    min-height: 13rem;
+  }
+
+  .logo-stage {
+    width: 9rem;
+  }
+
+  .subject-symbol {
+    opacity: 0.65;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .hero::before,
+  .orbit,
+  .capability-chip,
+  .interface-card,
+  .subject-symbol,
+  .lesson-result:not([hidden]),
+  .practice-result:not([hidden]) section,
+  .status-message:not(:empty)::before {
+    animation: none;
+  }
+}
