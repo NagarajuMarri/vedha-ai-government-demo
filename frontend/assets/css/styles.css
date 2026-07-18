@@ -756,3 +756,46 @@ button:disabled {
     flex-direction: column;
   }
 }
+
+
+.practice-answer-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.practice-answer {
+  min-height: 2.65rem;
+}
+
+.answer-feedback {
+  min-height: 1.5rem;
+  margin-top: 0.65rem !important;
+  font-weight: 700;
+}
+
+.answer-correct {
+  color: #17643a;
+}
+
+.answer-incorrect {
+  color: var(--color-error);
+}
+
+.corrective-guidance {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 30rem) {
+  .practice-answer-row {
+    grid-template-columns: 1fr;
+  }
+
+  .check-answer {
+    width: 100%;
+  }
+}
