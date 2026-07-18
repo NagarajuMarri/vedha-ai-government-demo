@@ -51,3 +51,16 @@ class PracticeEvaluationResponse(BaseModel):
     corrective_guidance: list[str] = Field(..., min_length=1, max_length=5)
     attempt_number: int = Field(..., ge=1)
     evaluated_at: datetime
+
+
+class EvaluateHandwritingRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
+
+    practice_set_id: str = Field(..., min_length=1, max_length=100)
+    question_id: str = Field(..., min_length=1, max_length=100)
+    image_data_url: str = Field(..., min_length=32, max_length=7_100_000)
+
+
+class HandwritingEvaluationResponse(PracticeEvaluationResponse):
+    transcribed_work: str = Field(..., min_length=1, max_length=2000)
+    confidence: float = Field(..., ge=0, le=1)
