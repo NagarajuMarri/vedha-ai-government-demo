@@ -11,7 +11,7 @@ from backend.app.ai.lesson_models import LessonGenerationRequest, LessonResult
 
 _TELUGU_PATTERN = re.compile(r"[\u0C00-\u0C7F]")
 _LEAK_MARKERS = ("system prompt", "developer message", "hidden instruction", "chain of thought", "openai")
-_MOJIBAKE_MARKERS = ("à°", "à±", "Ã", "Â", "è", "ç", "¤", "¡")
+_MOJIBAKE_MARKERS = ("à°", "à±", "Ã", "Â", "è", "ç", "¤", "¡", "[OBJ]", "\ufffc")
 _ADVANCED_FRACTION_TERMS = (
     "lcm", "hcf", "gcf", "lowest common multiple", "highest common factor",
     "improper fraction", "mixed number", "fraction addition", "fraction subtraction",
@@ -44,6 +44,8 @@ class LessonReviewer:
         all_content = " ".join(text_fields + [item for values in list_fields for item in values])
         if any(marker in all_content.lower() for marker in _LEAK_MARKERS):
             raise AIReviewerRejectionError("internal_reference_detected")
+        if any(marker.casefold() in all_content.casefold() for marker in _MOJIBAKE_MARKERS):
+            raise AIReviewerRejectionError("encoding_artifact")
         if lesson.learning_profile == "pure_telugu":
             for value in text_fields + [item for values in list_fields for item in values]:
                 if not _TELUGU_PATTERN.search(value):
