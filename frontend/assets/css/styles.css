@@ -1671,3 +1671,137 @@ body {
     animation: none;
   }
 }
+
+
+/* Sprint 4D session progress */
+.journey-step.is-complete {
+  color: var(--color-primary);
+}
+
+.journey-step.is-complete b {
+  border-color: var(--color-secondary);
+  color: transparent;
+  background: var(--color-secondary);
+}
+
+.journey-step.is-complete b::after {
+  color: #fff;
+  content: "✓";
+}
+
+.progress-panel {
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid #cbd9e8;
+  border-top: 0.25rem solid var(--color-secondary);
+  border-radius: var(--radius-medium);
+  background:
+    radial-gradient(circle at 95% 0%, rgb(7 140 134 / 11%), transparent 15rem),
+    #fff;
+  box-shadow: var(--shadow-card);
+  animation: result-reveal 480ms both;
+}
+
+.progress-panel[hidden] {
+  display: none;
+}
+
+.progress-heading,
+.progress-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.progress-heading .eyebrow {
+  color: var(--color-secondary);
+}
+
+.progress-badge {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #b8ddd8;
+  border-radius: 999px;
+  color: #075f5b;
+  background: #ebf9f7;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.progress-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+  margin-block: 1.5rem;
+}
+
+.progress-metrics > div {
+  display: grid;
+  gap: 0.1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.8rem;
+  background: #f8fbfe;
+}
+
+.progress-metrics strong {
+  color: var(--color-primary);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1;
+}
+
+.progress-metrics span,
+.progress-footer p {
+  color: var(--color-muted);
+  font-size: 0.86rem;
+}
+
+.progress-track {
+  overflow: hidden;
+  height: 0.75rem;
+  border-radius: 999px;
+  background: #e2e9f2;
+}
+
+.progress-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-secondary), #53c9a8, var(--color-gold));
+  box-shadow: 0 0 1rem rgb(7 140 134 / 25%);
+  transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.progress-footer {
+  margin-top: 0.7rem;
+}
+
+.progress-footer p {
+  margin: 0;
+}
+
+.progress-footer strong {
+  flex: 0 0 auto;
+  color: var(--color-primary);
+}
+
+@media (max-width: 36rem) {
+  .progress-heading,
+  .progress-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .progress-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-panel,
+  .progress-track span {
+    animation: none;
+    transition: none;
+  }
+}
