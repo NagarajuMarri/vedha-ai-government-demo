@@ -218,3 +218,10 @@ def test_subject_specific_concepts_include_pure_telugu_social_studies() -> None:
         "వాతావరణం మరియు సహజ వనరులు",
     ):
         assert telugu in TUTOR_JS
+
+
+def test_frontend_tracks_attempts_per_question_for_solution_reveal() -> None:
+    assert "attempts: new Map()" in TUTOR_JS
+    assert "const clientAttemptNumber = previousAttempts + 1" in TUTOR_JS
+    assert "attempt_number: clientAttemptNumber" in TUTOR_JS
+    assert "state.attempts.clear()" in TUTOR_JS
