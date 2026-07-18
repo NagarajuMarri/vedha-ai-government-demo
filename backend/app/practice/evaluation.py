@@ -1,11 +1,12 @@
-"""Deterministic typed-answer evaluation with corrective teaching guidance."""
+"""Deterministic typed-answer evaluation with question-specific corrective guidance."""
 
 from __future__ import annotations
 
+from math import gcd
 import re
 
 from backend.app.practice.models import LearningProfile
-from backend.app.practice.repository import PracticeAnswerRepository, practice_answer_repository
+from backend.app.practice.repository import AnswerKey, PracticeAnswerRepository, practice_answer_repository
 
 
 class PracticeQuestionNotFoundError(LookupError):
@@ -20,24 +21,126 @@ class PracticeEvaluationService:
         key = self._repository.get(practice_set_id, question_id)
         if key is None:
             raise PracticeQuestionNotFoundError("Practice question was not found or has expired.")
+        attempt_number = self._repository.next_attempt(practice_set_id, question_id)
         correct = self._normalize(student_answer) == self._normalize(key.expected_answer)
-        feedback, guidance = self._messages(correct, key.learning_profile, key.hint)
-        return {"correct": correct, "feedback": feedback, "corrective_guidance": guidance, "attempt_number": 1}
+        feedback, guidance = self._messages(correct, key, student_answer, attempt_number)
+        return {
+            "correct": correct,
+            "feedback": feedback,
+            "corrective_guidance": guidance,
+            "attempt_number": attempt_number,
+        }
 
     @staticmethod
     def _normalize(value: str) -> str:
         return re.sub(r"[^\w./-]+", "", value.casefold(), flags=re.UNICODE)
 
-    @staticmethod
-    def _messages(correct: bool, profile: LearningProfile, hint: str) -> tuple[str, list[str]]:
-        if profile == "pure_telugu":
-            if correct:
-                return "సరైన సమాధానం! మీరు పద్ధతిని బాగా అర్థం చేసుకున్నారు.", ["మీరు ఉపయోగించిన దశలను మరోసారి పరిశీలించండి."]
-            return "ఈ ప్రయత్నంలో చిన్న పొరపాటు ఉంది. తుది సమాధానం చెప్పకుండా మళ్లీ ప్రయత్నిద్దాం.", [hint, "ప్రశ్నలో ఇచ్చిన సంఖ్యలు లేదా ముఖ్య పదాలను గుర్తించండి.", "ఒక్కో దశను విడిగా పూర్తి చేసి సమాధానాన్ని తనిఖీ చేయండి."]
-        if profile == "telugu_assisted_english":
-            if correct:
-                return "Correct answer! మీరు methodను బాగా అర్థం చేసుకున్నారు.", ["మీ stepsను మరోసారి review చేయండి."]
-            return "ఈ attemptలో చిన్న mistake ఉంది. Final answer reveal చేయకుండా మళ్లీ guide చేస్తాను.", [hint, "Questionలోని numbers లేదా key wordsను గుర్తించండి.", "ఒక్కో step complete చేసి answerను check చేయండి."]
+    @classmethod
+    def _messages(
+        cls,
+        correct: bool,
+        key: AnswerKey,
+        student_answer: str,
+        attempt_number: int,
+    ) -> tuple[str, list[str]]:
+        profile = key.learning_profile
         if correct:
-            return "Correct answer! You have understood the method.", ["Review the steps you used so you can repeat the method."]
-        return "There is a small mistake in this attempt. Let us correct the method without revealing only the final answer.", [hint, "Identify the important numbers or key words in the question.", "Complete one step at a time and check your result."]
+            if profile == "pure_telugu":
+                return f"సరైన సమాధానం! {attempt_number}వ ప్రయత్నంలో పద్ధతిని సరిగ్గా ఉపయోగించారు.", [
+                    "ప్రశ్నలోని సంఖ్యలపై ఇదే పద్ధతిని ఎలా ఉపయోగించారో ఒకసారి గుర్తుచేసుకోండి."
+                ]
+            if profile == "telugu_assisted_english":
+                return f"Correct answer! {attempt_number}వ attemptలో methodను సరిగ్గా use చేశారు.", [
+                    "ఇదే methodను next questionలో repeat చేయండి."
+                ]
+            return f"Correct answer on attempt {attempt_number}! You used the method successfully.", [
+                "Briefly review the calculation so you can repeat the method."
+            ]
+
+        normalized_concept = key.concept.casefold()
+        if normalized_concept == "fractions":
+            return cls._fraction_guidance(key, student_answer, attempt_number)
+        return cls._concept_guidance(key, student_answer, attempt_number)
+
+    @staticmethod
+    def _fraction_guidance(
+        key: AnswerKey,
+        student_answer: str,
+        attempt_number: int,
+    ) -> tuple[str, list[str]]:
+        source_match = re.search(r"(\d+)\s*/\s*(\d+)", key.source_prompt)
+        answer_match = re.fullmatch(r"\s*(\d+)\s*/\s*(\d+)\s*", student_answer)
+        profile = key.learning_profile
+        if not source_match:
+            return PracticeEvaluationService._concept_guidance(key, student_answer, attempt_number)
+        numerator, denominator = (int(source_match.group(1)), int(source_match.group(2)))
+        divisor = gcd(numerator, denominator)
+
+        if not answer_match:
+            if profile == "pure_telugu":
+                return f"{attempt_number}వ ప్రయత్నాన్ని ఇంకా తనిఖీ చేయాలి.", [
+                    "సమాధానాన్ని లవం/హారం రూపంలో రాయండి, ఉదాహరణకు 3/4.",
+                    f"ఇచ్చిన లవం {numerator}, హారం {denominator}కు గరిష్ఠ సామాన్య కారణాంకాన్ని కనుగొనండి.",
+                    "లవం, హారం రెండింటినీ అదే కారణాంకంతో భాగించి మళ్లీ నమోదు చేయండి.",
+                ]
+            if profile == "telugu_assisted_english":
+                return f"Attempt {attempt_number}ను ఇంకా check చేయాలి.", [
+                    "Answerను numerator/denominator formatలో enter చేయండి, example 3/4.",
+                    f"Given numerator {numerator}, denominator {denominator}కి GCF find చేయండి.",
+                    "రెండింటినీ same GCFతో divide చేసి retry చేయండి.",
+                ]
+            return f"Attempt {attempt_number} needs a fraction in a checkable format.", [
+                "Enter the answer as numerator/denominator, for example 3/4.",
+                f"Find the greatest common divisor of {numerator} and {denominator}.",
+                "Divide both numbers by that same divisor, then retry.",
+            ]
+
+        attempted_numerator, attempted_denominator = (
+            int(answer_match.group(1)),
+            int(answer_match.group(2)),
+        )
+        left_product = attempted_numerator * denominator
+        right_product = attempted_denominator * numerator
+
+        if profile == "pure_telugu":
+            return f"{attempt_number}వ ప్రయత్నం సరిపోలలేదు. మీ {student_answer.strip()} సమాధానాన్ని దశలవారీగా తనిఖీ చేద్దాం.", [
+                f"మొదటి భిన్నంలోని లవం {numerator}, హారం {denominator}. వాటి గరిష్ఠ సామాన్య కారణాంకం {divisor}.",
+                f"సమానత్వ తనిఖీ: {attempted_numerator} × {denominator} = {left_product}; {attempted_denominator} × {numerator} = {right_product}. ఈ ఫలితాలు సమానంగా ఉండాలి.",
+                "మూల లవం, హారం రెండింటినీ ఒకే గరిష్ఠ సామాన్య కారణాంకంతో భాగించి కొత్త భిన్నాన్ని నమోదు చేయండి.",
+            ]
+        if profile == "telugu_assisted_english":
+            return f"Attempt {attempt_number}లో {student_answer.strip()} match కాలేదు. Calculationను step-by-step check చేద్దాం.", [
+                f"Original numerator {numerator}, denominator {denominator}; వాటి GCF {divisor}.",
+                f"Equivalence check: {attempted_numerator} × {denominator} = {left_product}; {attempted_denominator} × {numerator} = {right_product}. రెండు results equal కావాలి.",
+                "Original numerator, denominator రెండింటినీ same GCFతో divide చేసి retry చేయండి.",
+            ]
+        return f"Attempt {attempt_number} ({student_answer.strip()}) is not equivalent to the question fraction.", [
+            f"The original numerator is {numerator}, the denominator is {denominator}, and their greatest common divisor is {divisor}.",
+            f"Cross-check equivalence: {attempted_numerator} × {denominator} = {left_product}, while {attempted_denominator} × {numerator} = {right_product}. These must match.",
+            "Divide the original numerator and denominator by the same greatest common divisor, then enter the simplified fraction.",
+        ]
+
+    @staticmethod
+    def _concept_guidance(
+        key: AnswerKey,
+        student_answer: str,
+        attempt_number: int,
+    ) -> tuple[str, list[str]]:
+        concept = key.concept
+        if key.learning_profile == "pure_telugu":
+            return f"{attempt_number}వ ప్రయత్నంలోని “{student_answer.strip()}” సమాధానం సరిపోలలేదు.", [
+                f"ప్రశ్నను మళ్లీ చదవండి: {key.source_prompt}",
+                f"{concept}కు సంబంధించిన ఈ సూచనను ఉపయోగించండి: {key.hint}",
+                "ప్రశ్నలో అడిగిన ప్రక్రియ, లక్షణం లేదా గణనను గుర్తించి మళ్లీ సమాధానం ఇవ్వండి.",
+            ]
+        if key.learning_profile == "telugu_assisted_english":
+            return f"Attempt {attempt_number}లో “{student_answer.strip()}” answer match కాలేదు.", [
+                f"Questionను మళ్లీ read చేయండి: {key.source_prompt}",
+                f"{concept} hintను apply చేయండి: {key.hint}",
+                "Asked process, property లేదా calculationను identify చేసి retry చేయండి.",
+            ]
+        return f"Attempt {attempt_number} ({student_answer.strip()}) does not match this {concept} question.", [
+            f"Read the exact question again: {key.source_prompt}",
+            f"Apply this concept-specific hint: {key.hint}",
+            "Identify whether the question asks for a process, property, term, or calculation, then retry.",
+        ]
