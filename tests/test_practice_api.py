@@ -80,3 +80,56 @@ def test_domain_rejects_wrong_difficulty_composition() -> None:
 
 def test_openapi_lists_practice_endpoint() -> None:
     assert "/api/v1/practice/generate" in app.openapi()["paths"]
+
+
+def _evaluate(payload: dict[str, object]) -> httpx.Response:
+    async def request() -> httpx.Response:
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            return await client.post("/api/v1/practice/evaluate", json=payload)
+    return asyncio.run(request())
+
+
+def test_correct_typed_answer_receives_positive_feedback() -> None:
+    practice = _post(_payload()).json()
+    question = practice["questions"][0]
+    response = _evaluate({
+        "practice_set_id": practice["practice_set_id"],
+        "question_id": question["question_id"],
+        "student_answer": "1/2",
+    })
+    assert response.status_code == 200
+    body = response.json()
+    assert body["correct"] is True
+    assert body["feedback"]
+    assert body["corrective_guidance"]
+
+
+def test_wrong_answer_teaches_without_only_revealing_final_answer() -> None:
+    practice = _post(_payload("pure_telugu")).json()
+    question = practice["questions"][0]
+    response = _evaluate({
+        "practice_set_id": practice["practice_set_id"],
+        "question_id": question["question_id"],
+        "student_answer": "3/4",
+    })
+    assert response.status_code == 200
+    body = response.json()
+    assert body["correct"] is False
+    assert len(body["corrective_guidance"]) >= 2
+    assert "1/2" not in body["feedback"]
+    assert all("1/2" not in step for step in body["corrective_guidance"])
+    assert any("\u0c00" <= char <= "\u0c7f" for char in body["feedback"])
+
+
+def test_unknown_question_cannot_be_evaluated() -> None:
+    response = _evaluate({
+        "practice_set_id": "practice-missing",
+        "question_id": "question-missing",
+        "student_answer": "answer",
+    })
+    assert response.status_code == 404
+
+
+def test_openapi_lists_practice_evaluation_endpoint() -> None:
+    assert "/api/v1/practice/evaluate" in app.openapi()["paths"]
