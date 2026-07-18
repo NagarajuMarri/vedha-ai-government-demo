@@ -65,8 +65,9 @@ class PracticeGenerationService:
         prompt_en, expected_answer = cls._question_and_answer(concept, global_position)
         if profile == "pure_telugu":
             labels = {"easy": "సులభ", "medium": "మధ్యస్థ", "hard": "కఠిన"}
-            prompt = f"{labels[difficulty]} ప్రశ్న {position}: {prompt_en} సమాధానాన్ని నమోదు చేయండి."
-            hint = f"{subject}లో {concept} నియమాన్ని గుర్తుచేసుకుని ఒక్కో దశగా పరిష్కరించండి."
+            prompt_te, expected_answer = cls._question_and_answer_telugu(concept, global_position)
+            prompt = f"{labels[difficulty]} ప్రశ్న {position}: {prompt_te} సమాధానాన్ని నమోదు చేయండి."
+            hint = cls._telugu_hint(concept)
         elif profile == "telugu_assisted_english":
             labels = {"easy": "సులభ", "medium": "మధ్యస్థ", "hard": "కఠిన"}
             prompt = f"{labels[difficulty]} question {position}: {prompt_en} Answerను enter చేయండి."
@@ -75,6 +76,40 @@ class PracticeGenerationService:
             prompt = f"{difficulty.title()} question {position}: {prompt_en} Enter your final response after working through the steps."
             hint = f"Recall the key {subject} rule for {concept}, then solve it in small steps."
         return prompt, hint, expected_answer
+
+    @staticmethod
+    def _telugu_hint(concept: str) -> str:
+        hints = {
+            "fractions": "లవం, హారం రెండింటినీ ఒకే సామాన్య కారణాంకంతో భాగించండి.",
+            "decimals": "దశాంశ బిందువులను ఒకే నిలువు వరుసలో ఉంచి గణించండి.",
+            "geometry": "చతురస్రం చుట్టుకొలతకు ఒక భుజం పొడవును నాలుగుతో గుణించండి.",
+            "solar system": "గ్రహాల స్థానం మరియు ప్రత్యేక లక్షణాలను గుర్తుచేసుకోండి.",
+            "water cycle": "నీరు ఒక స్థితి నుండి మరొక స్థితికి మారే ప్రక్రియను గుర్తించండి.",
+            "photosynthesis": "మొక్కలు కాంతి సహాయంతో ఆహారం తయారు చేసే ప్రక్రియను గుర్తుచేసుకోండి.",
+            "grammar": "పదం వాక్యంలో చేసే పనిని గుర్తించండి.",
+        }
+        return hints.get(concept.casefold(), "ప్రశ్నలోని ముఖ్య భావనను గుర్తించి ఒక్కో దశగా పరిష్కరించండి.")
+
+    @staticmethod
+    def _question_and_answer_telugu(concept: str, index: int) -> tuple[str, str]:
+        normalized = concept.casefold()
+        if normalized == "fractions":
+            return f"{index}/{index * 2} భిన్నాన్ని సరళీకరించండి.", "1/2"
+        if normalized == "decimals":
+            return f"{index}.0 + 0.5 విలువను కనుగొనండి.", f"{index}.5"
+        if normalized == "geometry":
+            return f"ఒక చతురస్రం భుజం పొడవు {index} సెం.మీ. అయితే దాని చుట్టుకొలత ఎన్ని సెం.మీ.?", str(index * 4)
+        banks = {
+            "solar system": [("ఎర్ర గ్రహం అని ఏ గ్రహాన్ని అంటారు?", "అంగారక గ్రహం"), ("సూర్యునికి అత్యంత సమీపంలోని గ్రహం ఏది?", "బుధ గ్రహం"), ("అతి పెద్ద గ్రహం ఏది?", "గురు గ్రహం")],
+            "water cycle": [("ద్రవ నీరు నీటి ఆవిరిగా మారే ప్రక్రియ ఏది?", "ఆవిరీకరణ"), ("నీటి ఆవిరి మేఘాలుగా మారే ప్రక్రియ ఏది?", "సంఘననం"), ("వర్షం భూమికి తిరిగి వచ్చే దశ ఏది?", "అవపాతం")],
+            "photosynthesis": [("కిరణజన్య సంయోగక్రియలో మొక్కలు ఏ వాయువును గ్రహిస్తాయి?", "కార్బన్ డయాక్సైడ్"), ("కాంతిని గ్రహించే ఆకుపచ్చ వర్ణద్రవ్యం ఏది?", "పత్రహరితం"), ("ఈ ప్రక్రియలో విడుదలయ్యే వాయువు ఏది?", "ఆక్సిజన్")],
+            "grammar": [("‘వేగంగా’ అనే పదం ఏ పదభేదం?", "క్రియావిశేషణం"), ("‘అందమైన’ అనే పదం ఏ పదభేదం?", "విశేషణం"), ("‘ఉపాధ్యాయుడు’ అనే పదం ఏ పదభేదం?", "నామవాచకం")],
+        }
+        bank = banks.get(normalized)
+        if bank:
+            question, answer = bank[(index - 1) % len(bank)]
+            return f"{question} (అభ్యాస అంశం {index})", answer
+        return f"ఈ అభ్యాసంలోని భావన పేరు ఏమిటి: {concept}?", concept
 
     @staticmethod
     def _question_and_answer(concept: str, index: int) -> tuple[str, str]:
