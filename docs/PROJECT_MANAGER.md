@@ -6,57 +6,49 @@
 
 | Field | Current state |
 |---|---|
-| Current milestone | Phase 4 - AI Tutor |
-| Progress | Sprints 3A-3C, 4A, 4B and 4C complete |
-| Overall status | Multi-board curriculum metadata and deterministic textbook PDF ingestion foundations are complete; OCR, embeddings and retrieval remain unimplemented |
-| Current sprint | Sprint 4C.4 - PDF Text-Layer Investigation |
-| Sprint goal | Classify the bilingual PDFs' text, font, mapping and image layers without OCR or production-data mutation |
-| Next task | Review the diagnostic root cause and approve a later CMap-reconstruction or affected-page OCR design |
+| Current milestone | Phase 5 - Practice System |
+| Progress | Sprints 3A-3C, 4A, 4B and 4C complete; Sprint 4D practice vertical slice in progress |
+| Overall status | Student lesson, bilingual exact-composition practice, typed/photo evaluation, second-attempt solutions, and session progress are operational for the controlled demo |
+| Current sprint | Sprint 4D - Exact-Composition Practice Vertical Slice |
+| Sprint goal | Deliver exactly 15 concept questions (5 easy, 5 medium, 5 hard), then connect them to the Student experience |
+| Next task | Complete bilingual demo rehearsal, operator runbook, and final validation checklist |
+
+## Locked government-demo requirements
+
+These requirements were approved by the project sponsor on 2026-07-19 and are non-negotiable for the controlled government demonstration:
+
+1. **Role-wide bilingual voice input:** Student, Teacher, Parent, and Government interfaces accept English and Telugu speech, show an editable transcript before submission, and retain typed-input fallback.
+2. **Spoken output:** Lessons and role-appropriate insights support English/Telugu read-aloud with play, pause, replay, mute, and failure fallback.
+3. **Narrated educational animations:** Concept visuals are instructional rather than decorative. Narration, captions, and highlighted visual steps remain synchronized.
+4. **Accessible learner controls:** Animations provide step-by-step mode, individual-step replay, a readable transcript, and a short understanding check.
+5. **Functional Parent Portal:** Demonstrates linked-child progress, strengths, attention areas, recent activity, and support recommendations using clearly labeled synthetic data.
+6. **Functional Teacher Portal:** Demonstrates class/student performance, concept insights, intervention signals, and assignable remedial actions using clearly labeled synthetic data.
+7. **Integrated government-demo journey:** Student, Parent, Teacher, and Government experiences must work together in the final bilingual rehearsal and runbook.
+
+Decorative background motion, disabled microphone controls, silent animations, and static portal shells do not satisfy these requirements.
 
 ## Current milestone
 
-### Phase 2 – Project Skeleton
+### Phase 5 – Practice System
 
-Foundation Documentation is 100% complete. The current milestone is to generate the complete architecture-aligned project skeleton and foundational configuration without implementing product features. Skeleton work begins only within explicitly approved scope.
+Sprint 4D is active on `feature/sprint-4d-practice-vertical-slice`. The first backend slice enforces the approved invariant of exactly 15 unique questions per concept: 5 easy, 5 medium, and 5 hard. It supports English Medium, Telugu Assisted English, and Pure Telugu profiles. Student UI integration, typed and handwritten answer evaluation, corrective feedback, second-attempt solution reveal, and session-only progress are complete. Cross-session persistence and identity-scoped ownership remain pending and must not be implied by the demo.
 
 ## Completed milestones
 
 - Phase 1 — Foundation Documentation
+- Phase 2 — Backend and project foundation
+- Phase 3 — Responsive interface foundation and Student text-tutor integration
+- Phase 4 — Governed OpenAI text tutor plus curriculum/textbook ingestion foundations
 
 ## Pending milestones
 
-1. Phase 2 — Project Skeleton (current transition into backend foundation)
-2. Phase 3 — Frontend Development
-3. Phase 4 — AI Tutor
-4. Phase 5 — Practice System
-5. Phase 6 — Assessment
-6. Phase 7 — Parent Portal
-7. Phase 8 — Teacher Portal
-8. Phase 9 — Government Dashboard
-9. Phase 10 — Testing
-10. Phase 11 — Deployment
-
-## Current sprint
-
-**Name:** Project Skeleton Sprint 1  
-**Status:** Ready for approved start  
-**Duration:** To be agreed by the human project sponsor  
-**Goal:** Generate the complete project skeleton and foundational configuration aligned with the approved architecture, without product-feature implementation.
-
-**Sprint scope:**
-
-- Create the approved frontend, backend, test, and configuration directory skeleton.
-- Add only foundational entry points, safe environment templates, repository hygiene files, and test scaffolding approved for the skeleton task.
-- Preserve the modular-monolith layers and four separate interface boundaries defined in `ARCHITECTURE.md`.
-- Verify that the empty skeleton is structurally valid without implementing product features.
-
-**Exit criteria:**
-
-- Every created path maps to the approved architecture and has a documented purpose.
-- Frontend HTML, CSS, and JavaScript boundaries remain separate.
-- Backend API, domain, service, repository, integration, and test boundaries are represented without feature logic.
-- Environment templates contain no secrets and fail-safe configuration behavior is planned.
-- Relevant structural checks pass and the final diff contains no product-feature implementation.
+1. Phase 5 — Practice System (current)
+2. Phase 6 — Assessment and Progress
+3. Phase 7 — Parent Portal
+4. Phase 8 — Teacher Portal
+5. Phase 9 — Government Dashboard
+6. Phase 10 — System Validation
+7. Phase 11 — Controlled Deployment
 
 ## Development priorities
 
@@ -132,7 +124,7 @@ A task or feature is done only when:
 
 ## Next recommended task
 
-**Generate complete project skeleton.** After explicit approval to begin implementation, create the architecture-aligned frontend, backend, testing, configuration, and documentation skeleton required by the approved task. Do not implement product features during skeleton generation, install unapproved dependencies, or introduce secrets.
+**Connect the Sprint 4D practice API to the Student interface.** Render all 15 questions grouped into Easy, Medium, and Hard sections, preserve English/Telugu profiles, implement safe loading/error states, and add frontend regression coverage. Answer submission and evaluation remain the following approved slice.
 
 ## Project risks
 
@@ -182,3 +174,7 @@ provider-independent local storage, SHA-256 duplicate control, page-level
 extraction, alias provenance, scanned-document detection, bilingual chapter detection
 and a disabled-by-default manual command. OCR, embeddings, retrieval and AI
 processing require separately approved future work.
+
+## Sprint 4D delivery record
+
+Sprint 4D started on 2026-07-18. The initial branch adds validated practice-domain models, a deterministic bilingual-safe generator, `POST /api/v1/practice/generate`, exact 5/5/5 composition and uniqueness enforcement, API regression tests, and repaired GitHub Actions configuration. Both CI workflows passed on the current branch. Student UI integration remains the next slice.

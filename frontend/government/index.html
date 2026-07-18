@@ -3,16 +3,104 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Privacy-conscious synthetic education indicators for the Vedha AI government demonstration">
     <title>Government Dashboard | Vedha AI Government Demo</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/government-dashboard.js" defer></script>
   </head>
-  <body class="interface-shell">
-    <main class="shell-panel">
-      <p class="eyebrow">Government experience</p>
-      <h1>Government Dashboard</h1>
-      <p lang="te">ప్రభుత్వ డ్యాష్‌బోర్డ్</p>
-      <p>The interface shell is ready. Analytics features are not implemented in Sprint 1.</p>
-      <a class="back-link" href="../">← Return to interface gateway</a>
+  <body class="government-app">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="site-header dashboard-header">
+      <div class="container header-content">
+        <a class="brand brand-link" href="../" aria-label="Vedha AI home">
+          <img class="brand-logo" src="../assets/images/vedha-mark.png" alt="">
+          <span class="brand-name">Vedha <em>AI</em></span>
+        </a>
+        <span class="demo-label"><span class="live-dot" aria-hidden="true"></span> Government Decision Studio</span>
+      </div>
+    </header>
+
+    <main id="main-content" class="dashboard-main container">
+      <section class="dashboard-intro" aria-labelledby="dashboard-title">
+        <div>
+          <p class="eyebrow">Andhra Pradesh learning intelligence</p>
+          <h1 id="dashboard-title">From learning activity to actionable insight.</h1>
+          <p>Privacy-conscious aggregate indicators designed to help education leaders see reach, engagement and concept mastery.</p>
+        </div>
+        <div class="dashboard-scope-card">
+          <span>Current scope</span>
+          <strong id="dashboard-scope">Andhra Pradesh</strong>
+          <small id="class-scope">Classes 6–10</small>
+        </div>
+      </section>
+
+      <aside class="synthetic-banner" role="note">
+        <span aria-hidden="true">ⓘ</span>
+        <div>
+          <strong>Synthetic demonstration data</strong>
+          <p>Every figure on this screen is fictional and created only for the Vedha government demo. No student records or personal information are displayed.</p>
+        </div>
+      </aside>
+
+      <section class="dashboard-controls" aria-label="Dashboard filters">
+        <div>
+          <label for="district-filter">District</label>
+          <select id="district-filter">
+            <option value="statewide">All Andhra Pradesh</option>
+            <option value="visakhapatnam">Visakhapatnam</option>
+            <option value="guntur">Guntur</option>
+            <option value="kurnool">Kurnool</option>
+            <option value="tirupati">Tirupati</option>
+            <option value="east_godavari">East Godavari</option>
+          </select>
+        </div>
+        <div>
+          <label for="class-filter">Class band</label>
+          <select id="class-filter">
+            <option>Classes 6–10</option>
+            <option>Classes 6–8</option>
+            <option>Classes 9–10</option>
+          </select>
+        </div>
+        <p id="filter-announcement" class="sr-only" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="dashboard-metrics" aria-label="Key synthetic indicators">
+        <article><span class="metric-icon reach" aria-hidden="true">◎</span><small>Learners reached</small><strong id="metric-learners">0</strong><em>Across selected scope</em></article>
+        <article><span class="metric-icon lessons" aria-hidden="true">▤</span><small>AI lessons completed</small><strong id="metric-lessons">0</strong><em>Guided explanations</em></article>
+        <article><span class="metric-icon practice" aria-hidden="true">✓</span><small>Practice completion</small><strong id="metric-practice">0%</strong><em>15-question sets</em></article>
+        <article><span class="metric-icon mastery" aria-hidden="true">✦</span><small>Concept mastery</small><strong id="metric-mastery">0%</strong><em>Current session outcomes</em></article>
+        <article><span class="metric-icon telugu" aria-hidden="true">అ</span><small>Telugu learning share</small><strong id="metric-telugu">0%</strong><em>Telugu-first or assisted</em></article>
+        <article><span class="metric-icon growth" aria-hidden="true">↗</span><small>Improvement signal</small><strong id="metric-improvement">0%</strong><em>After corrective guidance</em></article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="dashboard-card chart-card">
+          <header><div><p class="eyebrow">Learning outcomes</p><h2>Subject mastery</h2></div><span>Synthetic %</span></header>
+          <div id="subject-performance" class="dashboard-bars" aria-label="Subject mastery comparison"></div>
+        </article>
+
+        <article class="dashboard-card chart-card">
+          <header><div><p class="eyebrow">Regional view</p><h2>District comparison</h2></div><span>Mastery %</span></header>
+          <div id="district-performance" class="dashboard-bars" aria-label="District mastery comparison"></div>
+        </article>
+
+        <article class="dashboard-card insight-card">
+          <header><div><p class="eyebrow">Decision support</p><h2>What leaders can act on</h2></div></header>
+          <ul>
+            <li><span class="insight-dot positive"></span><div><strong>Telugu-first learning is highly adopted</strong><p>Language accessibility is supporting broader participation in district cohorts.</p></div></li>
+            <li><span class="insight-dot attention"></span><div><strong>English needs targeted reinforcement</strong><p>Recommend additional guided examples and teacher-supported practice for lower-performing cohorts.</p></div></li>
+            <li><span class="insight-dot positive"></span><div><strong>Corrective guidance improves outcomes</strong><p>Students show stronger mastery after step-by-step retry support.</p></div></li>
+          </ul>
+        </article>
+
+        <article class="dashboard-card privacy-card">
+          <header><div><p class="eyebrow">Privacy by design</p><h2>Aggregate insight, not surveillance</h2></div></header>
+          <div class="privacy-shield" aria-hidden="true">✓</div>
+          <p>This demo intentionally provides no student-level drill-down. A production dashboard would enforce approved organizational scope, minimum cohort thresholds and auditable role-based access.</p>
+          <a href="../">← Return to experience gateway</a>
+        </article>
+      </section>
     </main>
   </body>
 </html>

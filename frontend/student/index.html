@@ -14,24 +14,49 @@
     <header class="site-header">
       <div class="container header-content">
         <a class="brand brand-link" href="../" aria-label="Vedha AI home">
-          <span class="brand-mark" aria-hidden="true">V</span><span>Vedha AI</span>
+          <img class="brand-logo" src="../assets/images/vedha-mark.png" alt="">
+          <span class="brand-name">Vedha <em>AI</em></span>
         </a>
-        <span class="demo-label">Student Tutor · Government Demo</span>
+        <span class="demo-label"><span class="live-dot" aria-hidden="true"></span> Student Learning Studio</span>
       </div>
     </header>
 
     <main id="main-content" class="student-main container">
+      <nav class="learning-journey" aria-label="Learning journey">
+        <span class="journey-step is-current"><b>1</b><span>Choose</span></span>
+        <span class="journey-line" aria-hidden="true"></span>
+        <span class="journey-step"><b>2</b><span>Learn</span></span>
+        <span class="journey-line" aria-hidden="true"></span>
+        <span class="journey-step"><b>3</b><span>Practise</span></span>
+        <span class="journey-line" aria-hidden="true"></span>
+        <span class="journey-step"><b>4</b><span>Improve</span></span>
+      </nav>
+
       <section id="setup-view" class="student-panel" aria-labelledby="setup-title">
+        <div class="subject-cloud" aria-hidden="true">
+          <span class="subject-symbol symbol-fraction">½</span>
+          <span class="subject-symbol symbol-geometry">△</span>
+          <span class="subject-symbol symbol-science">H₂O</span>
+          <span class="subject-symbol symbol-language">అ</span>
+          <span class="subject-symbol symbol-spark">✦</span>
+        </div>
         <div class="student-heading">
-          <p class="eyebrow">Start learning independently</p>
-          <h1 id="setup-title">Set up your lesson</h1>
-          <p>Tell Vedha how you would like to learn. You can change these details before starting.</p>
+          <div class="setup-logo" aria-hidden="true"><img src="../assets/images/vedha-mark.png" alt=""></div>
+          <p class="eyebrow">Your learning, your way</p>
+          <h1 id="setup-title">What shall we discover today?</h1>
+          <p>Choose your class, concept and preferred language. Vedha will shape every explanation around you.</p>
         </div>
 
         <form id="setup-form" class="setup-form">
           <div class="form-field form-field-wide">
             <label for="student-name">Student name</label>
             <input id="student-name" name="student_name" type="text" minlength="2" maxlength="80" autocomplete="name" required>
+          </div>
+          <div class="form-field">
+            <label for="concept">Concept</label>
+            <select id="concept" name="concept" required disabled>
+              <option value="">Choose a subject first</option>
+            </select>
           </div>
           <div class="form-field">
             <label for="class-level">Class</label>
@@ -62,16 +87,21 @@
         </form>
       </section>
 
-      <section id="tutor-view" class="tutor-view" aria-labelledby="tutor-title" hidden>
+      <section id="tutor-view" class="tutor-view learning-workspace" aria-labelledby="tutor-title" hidden>
         <div class="tutor-header">
           <div>
-            <p class="eyebrow">Your learning space</p>
-            <h1 id="tutor-title">Ask Vedha</h1>
+            <p class="eyebrow">Your personal AI learning companion</p>
+            <h1 id="tutor-title">Ask Vedha <span class="sparkle" aria-hidden="true">✦</span></h1>
           </div>
           <button id="edit-setup" class="secondary-button" type="button">Change setup</button>
         </div>
 
         <div id="student-context" class="context-bar" aria-label="Current lesson setup"></div>
+
+        <div class="workspace-banner">
+          <span class="workspace-icon" aria-hidden="true">✦</span>
+          <div><strong>Learn without hesitation</strong><span>Ask in simple words. Vedha will explain, practise and guide you step by step.</span></div>
+        </div>
 
         <form id="question-form" class="question-card" novalidate>
           <label for="question">What would you like to understand?</label>
@@ -102,6 +132,43 @@
           <section aria-labelledby="points-title"><h3 id="points-title">Key Points</h3><ul id="lesson-points"></ul></section>
           <section class="check-section" aria-labelledby="check-title"><h3 id="check-title">Check Your Understanding</h3><p id="lesson-check"></p></section>
         </article>
+
+        <section id="practice-panel" class="practice-panel" aria-labelledby="practice-title">
+          <div class="practice-heading">
+            <div><p class="eyebrow">Practice the concept</p><h2 id="practice-title">15-question practice</h2></div>
+            <button id="generate-practice" class="primary-button" type="button">Generate Practice</button>
+          </div>
+          <p>Vedha prepares exactly 5 Easy, 5 Medium, and 5 Hard questions.</p>
+          <div id="practice-status" class="status-message" role="status" aria-live="polite"></div>
+          <div id="practice-error" class="error-message" role="alert" tabindex="-1" hidden></div>
+          <div id="practice-result" class="practice-result" tabindex="-1" hidden>
+            <section><h3>Easy · 5</h3><ol id="practice-easy"></ol></section>
+            <section><h3>Medium · 5</h3><ol id="practice-medium"></ol></section>
+            <section><h3>Hard · 5</h3><ol id="practice-hard"></ol></section>
+          </div>
+        </section>
+
+        <section id="progress-panel" class="progress-panel" aria-labelledby="progress-title" hidden>
+          <div class="progress-heading">
+            <div>
+              <p class="eyebrow">Your learning progress</p>
+              <h2 id="progress-title">Progress this session</h2>
+            </div>
+            <span id="progress-badge" class="progress-badge">Getting started</span>
+          </div>
+          <div class="progress-metrics">
+            <div><strong id="progress-attempted">0</strong><span id="progress-attempted-label">Attempted</span></div>
+            <div><strong id="progress-mastered">0</strong><span id="progress-mastered-label">Mastered</span></div>
+            <div><strong id="progress-accuracy">0%</strong><span id="progress-accuracy-label">Accuracy</span></div>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="Questions mastered" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0">
+            <span id="progress-fill"></span>
+          </div>
+          <div class="progress-footer">
+            <p id="progress-message">Start answering practice questions to see your progress.</p>
+            <strong id="progress-total">0 / 15</strong>
+          </div>
+        </section>
       </section>
     </main>
   </body>

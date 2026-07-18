@@ -31,7 +31,7 @@
   async function requestLesson(payload, options = {}) {
     const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
     const controller = new AbortController();
-    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 20000);
+    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 45000);
     let response;
     try {
       response = await global.fetch(`${baseUrl}/api/v1/lessons/explain`, {
@@ -58,5 +58,148 @@
     return validateLesson(data);
   }
 
-  global.VedhaLessonApi = { requestLesson, validateLesson, LessonApiError, DEFAULT_BASE_URL };
+  function validatePractice(data) {
+    const validDifficulties = new Set(["easy", "medium", "hard"]);
+    if (!data || typeof data !== "object" || typeof data.practice_set_id !== "string" ||
+        typeof data.concept !== "string" || !Array.isArray(data.questions) || data.questions.length !== 15) {
+      throw new LessonApiError("malformed_response");
+    }
+    const counts = { easy: 0, medium: 0, hard: 0 };
+    const ids = new Set();
+    const prompts = new Set();
+    data.questions.forEach((question) => {
+      if (!question || !validDifficulties.has(question.difficulty) ||
+          typeof question.question_id !== "string" || typeof question.prompt !== "string" ||
+          typeof question.hint !== "string" || !question.prompt.trim() || !question.hint.trim()) {
+        throw new LessonApiError("malformed_response");
+      }
+      counts[question.difficulty] += 1;
+      ids.add(question.question_id);
+      prompts.add(question.prompt);
+    });
+    if (counts.easy !== 5 || counts.medium !== 5 || counts.hard !== 5 || ids.size !== 15 || prompts.size !== 15) {
+      throw new LessonApiError("malformed_response");
+    }
+    return data;
+  }
+
+  async function requestPractice(payload, options = {}) {
+    const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
+    const controller = new AbortController();
+    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 20000);
+    let response;
+    try {
+      response = await global.fetch(`${baseUrl}/api/v1/practice/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      throw new LessonApiError(error && error.name === "AbortError" ? "timeout" : "network");
+    } finally {
+      global.clearTimeout(timeoutId);
+    }
+    let data;
+    try {
+      data = await response.json();
+    } catch (_error) {
+      throw new LessonApiError("non_json_response");
+    }
+    if (!response.ok) {
+      throw new LessonApiError(response.status === 422 ? "validation" : response.status >= 500 ? "server" : "request");
+    }
+    return validatePractice(data);
+  }
+
+  function validateEvaluation(data) {
+    if (!data || typeof data !== "object" ||
+        typeof data.request_id !== "string" ||
+        typeof data.practice_set_id !== "string" ||
+        typeof data.question_id !== "string" ||
+        typeof data.correct !== "boolean" ||
+        typeof data.feedback !== "string" || !data.feedback.trim() ||
+        !Array.isArray(data.corrective_guidance) || data.corrective_guidance.length === 0 ||
+        !data.corrective_guidance.every((step) => typeof step === "string" && step.trim()) ||
+        !Number.isInteger(data.attempt_number) || data.attempt_number < 1 ||
+        typeof data.evaluated_at !== "string") {
+      throw new LessonApiError("malformed_response");
+    }
+    return data;
+  }
+
+  async function requestPracticeEvaluation(payload, options = {}) {
+    const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
+    const controller = new AbortController();
+    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 15000);
+    let response;
+    try {
+      response = await global.fetch(`${baseUrl}/api/v1/practice/evaluate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      throw new LessonApiError(error && error.name === "AbortError" ? "timeout" : "network");
+    } finally {
+      global.clearTimeout(timeoutId);
+    }
+    let data;
+    try {
+      data = await response.json();
+    } catch (_error) {
+      throw new LessonApiError("non_json_response");
+    }
+    if (!response.ok) {
+      throw new LessonApiError(response.status === 404 ? "expired_practice" :
+        response.status === 422 ? "validation" : response.status >= 500 ? "server" : "request");
+    }
+    return validateEvaluation(data);
+  }
+
+  function validateHandwritingEvaluation(data) {
+    validateEvaluation(data);
+    if (typeof data.transcribed_work !== "string" || !data.transcribed_work.trim() ||
+        typeof data.confidence !== "number" || data.confidence < 0 || data.confidence > 1) {
+      throw new LessonApiError("malformed_response");
+    }
+    return data;
+  }
+
+  async function requestHandwritingEvaluation(payload, options = {}) {
+    const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
+    const controller = new AbortController();
+    const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 60000);
+    let response;
+    try {
+      response = await global.fetch(`${baseUrl}/api/v1/practice/evaluate-handwriting`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      throw new LessonApiError(error && error.name === "AbortError" ? "timeout" : "network");
+    } finally {
+      global.clearTimeout(timeoutId);
+    }
+    let data;
+    try {
+      data = await response.json();
+    } catch (_error) {
+      throw new LessonApiError("non_json_response");
+    }
+    if (!response.ok) {
+      throw new LessonApiError(response.status === 404 ? "expired_practice" :
+        response.status === 422 ? "invalid_image" : response.status >= 500 ? "server" : "request");
+    }
+    return validateHandwritingEvaluation(data);
+  }
+
+  global.VedhaLessonApi = {
+    requestLesson, validateLesson, requestPractice, validatePractice,
+    requestPracticeEvaluation, validateEvaluation, requestHandwritingEvaluation,
+    validateHandwritingEvaluation, LessonApiError, DEFAULT_BASE_URL,
+  };
 })(window);

@@ -8,7 +8,9 @@ import re
 import httpx
 
 from backend.app.ai.lesson_models import LessonGenerationRequest, LessonResult
+from backend.app.ai.prompt_builder import LessonPromptBuilder
 from backend.app.main import app
+from backend.app.schemas.lessons import ExplainLessonRequest
 
 
 def _post(payload: dict[str, object]) -> httpx.Response:
@@ -163,3 +165,32 @@ def test_openapi_lists_lesson_endpoint() -> None:
     assert response.status_code == 200
     openapi = app.openapi()
     assert "/api/v1/lessons/explain" in openapi["paths"]
+
+
+def test_lesson_request_carries_selected_concept_into_generation() -> None:
+    payload = {
+        "student_name": "Asha",
+        "class_level": 9,
+        "subject": "Mathematics",
+        "concept": "Fractions",
+        "learning_profile": "pure_telugu",
+        "question": "Explain fractions from scratch.",
+    }
+    request = ExplainLessonRequest.model_validate(payload)
+    generation = LessonGenerationRequest(
+        class_level=str(request.class_level),
+        subject=request.subject,
+        learning_profile=request.learning_profile,
+        student_question=request.question,
+        concept=request.concept,
+    )
+    prompt = LessonPromptBuilder().build_request(
+        class_level=generation.class_level,
+        subject=generation.subject,
+        learning_profile=generation.learning_profile,
+        student_question=generation.student_question,
+        concept=generation.concept,
+    )
+    assert "required lesson concept is: Fractions" in prompt.instructions
+    assert "Do not replace the requested concept with a broad subject overview" in prompt.instructions
+    assert "Selected concept (trusted application context): Fractions" in prompt.student_input

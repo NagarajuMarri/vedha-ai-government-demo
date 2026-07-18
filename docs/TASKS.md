@@ -8,6 +8,20 @@
 - Effort is an initial working estimate and should be refined during sprint planning.
 - New scope requires a new task ID and alignment with the roadmap.
 
+## Locked government-demo requirements
+
+These requirements were approved by the project sponsor on 2026-07-19 and are non-negotiable for the controlled government demonstration:
+
+1. **Role-wide bilingual voice input:** Student, Teacher, Parent, and Government interfaces accept English and Telugu speech, show an editable transcript before submission, and retain typed-input fallback.
+2. **Spoken output:** Lessons and role-appropriate insights support English/Telugu read-aloud with play, pause, replay, mute, and failure fallback.
+3. **Narrated educational animations:** Concept visuals are instructional rather than decorative. Narration, captions, and highlighted visual steps remain synchronized.
+4. **Accessible learner controls:** Animations provide step-by-step mode, individual-step replay, a readable transcript, and a short understanding check.
+5. **Functional Parent Portal:** Demonstrates linked-child progress, strengths, attention areas, recent activity, and support recommendations using clearly labeled synthetic data.
+6. **Functional Teacher Portal:** Demonstrates class/student performance, concept insights, intervention signals, and assignable remedial actions using clearly labeled synthetic data.
+7. **Integrated government-demo journey:** Student, Parent, Teacher, and Government experiences must work together in the final bilingual rehearsal and runbook.
+
+Decorative background motion, disabled microphone controls, silent animations, and static portal shells do not satisfy these requirements.
+
 ## TODO
 
 ### VGD-002 — Approve architecture and threat model
@@ -206,6 +220,15 @@
 - Invalid or duplicate-heavy output is rejected or safely regenerated.
 - Only the owning student can access and submit a practice session.
 
+**Sprint 4D controlled-demo status:**
+
+- Student UI generates and renders exactly 5 Easy, 5 Medium, and 5 Hard questions.
+- English, Telugu Assisted English, and Pure Telugu paths are covered.
+- Typed answers and approved JPG/PNG phone photos receive corrective guidance.
+- A second wrong attempt reveals a worked solution; question-scoped retry tracking is explicit.
+- Session-only progress shows attempted, mastered, accuracy, and completion.
+- Persistent ownership and cross-session progress remain outside this demo slice.
+
 ### VGD-012 — Implement assessment, uploads, and progress
 
 | Field | Value |
@@ -273,6 +296,14 @@
 - Government users see only their approved organizational scope.
 - Aggregates are accurate, performant, and protected by privacy thresholds.
 - All synthetic/demo data is clearly identified.
+
+**Controlled-demo status:**
+
+- A responsive executive dashboard presents fictional statewide and district indicators.
+- District and class-band filters update synthetic aggregate metrics and charts.
+- Synthetic-data labelling is persistent and explicit.
+- The demo provides no student-level drill-down and explains the intended privacy boundary.
+- Production authentication, approved organizational scope, privacy thresholds, and live data integration remain pending.
 
 ### VGD-016 — Complete system validation and demo rehearsal
 

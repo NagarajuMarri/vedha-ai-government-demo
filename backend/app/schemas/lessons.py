@@ -16,6 +16,7 @@ class ExplainLessonRequest(BaseModel):
     student_name: str = Field(..., min_length=2, max_length=80)
     class_level: int = Field(..., ge=1, le=12)
     subject: str = Field(..., min_length=3, max_length=80)
+    concept: str = Field("General", min_length=2, max_length=120)
     learning_profile: Literal["english_medium", "telugu_assisted_english", "pure_telugu"]
     question: str = Field(..., min_length=8, max_length=1500)
 

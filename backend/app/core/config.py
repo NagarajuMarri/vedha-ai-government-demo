@@ -145,7 +145,7 @@ def get_settings() -> Settings:
         log_level=log_level,
         cors_origins=_read_csv(
             "VEDHA_CORS_ORIGINS",
-            "http://localhost:8080,http://127.0.0.1:8080",
+            "http://localhost:5500,http://127.0.0.1:5500,http://localhost:8080,http://127.0.0.1:8080",
         ),
         openai_api_key=openai_api_key,
         openai_model=openai_model,
