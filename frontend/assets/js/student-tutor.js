@@ -20,6 +20,10 @@
       evaluationError: "We could not check this answer. Please try again.",
       uploadError: "Use a clear JPG or PNG phone photo, 5 MB or smaller.",
       uploadLoading: "Vedha is reading your handwritten work…",
+      practiceTitle: "15-question practice", practiceSummary: "Vedha prepares exactly 5 Easy, 5 Medium, and 5 Hard questions.",
+      difficulties: { easy: "Easy · 5", medium: "Medium · 5", hard: "Hard · 5" },
+      hintLabel: "Hint", answerPlaceholder: "Type your answer", checkAnswer: "Check Answer",
+      uploadWork: "Upload Handwritten Work", generatePractice: "Generate Practice",
     },
     telugu_assisted_english: {
       loading: "Vedha మీ lesson సిద్ధం చేస్తోంది...",
@@ -31,6 +35,10 @@
       evaluationError: "ఈ answerను check చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
       uploadError: "Clear JPG లేదా PNG phone photo upload చేయండి; 5 MBలోపు ఉండాలి.",
       uploadLoading: "Vedha మీ handwritten workను చదువుతోంది…",
+      practiceTitle: "15 ప్రశ్నల practice", practiceSummary: "Vedha 5 సులభ, 5 మధ్యస్థ, 5 కఠిన questions సిద్ధం చేస్తుంది.",
+      difficulties: { easy: "సులభ · 5", medium: "మధ్యస్థ · 5", hard: "కఠిన · 5" },
+      hintLabel: "సూచన", answerPlaceholder: "సమాధానం type చేయండి", checkAnswer: "Answer తనిఖీ",
+      uploadWork: "చేతిరాత Work Upload", generatePractice: "Practice రూపొందించండి",
     },
     pure_telugu: {
       loading: "వేద మీ పాఠాన్ని సిద్ధం చేస్తోంది...",
@@ -42,6 +50,10 @@
       evaluationError: "ఈ సమాధానాన్ని తనిఖీ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
       uploadError: "స్పష్టమైన JPG లేదా PNG ఫోన్ ఫోటోను ఎంచుకోండి; పరిమాణం 5 MBలోపు ఉండాలి.",
       uploadLoading: "వేద మీ చేతిరాత పరిష్కారాన్ని చదువుతోంది…",
+      practiceTitle: "15 ప్రశ్నల అభ్యాసం", practiceSummary: "వేద 5 సులభ, 5 మధ్యస్థ, 5 కఠిన ప్రశ్నలను సిద్ధం చేస్తుంది.",
+      difficulties: { easy: "సులభం · 5", medium: "మధ్యస్థం · 5", hard: "కఠినం · 5" },
+      hintLabel: "సూచన", answerPlaceholder: "మీ సమాధానం రాయండి", checkAnswer: "సమాధానం తనిఖీ",
+      uploadWork: "చేతిరాత పరిష్కారం జోడించండి", generatePractice: "అభ్యాసం రూపొందించండి",
     },
   };
 
@@ -113,7 +125,7 @@
     } finally {
       state.evaluating.delete(question.question_id);
       button.disabled = false;
-      button.textContent = "Check Answer";
+      button.textContent = messages[state.setup.learning_profile].checkAnswer;
     }
   }
 
@@ -154,14 +166,18 @@
     } finally {
       state.uploading.delete(question.question_id);
       uploadButton.disabled = false;
-      uploadButton.textContent = "Upload Handwritten Work";
+      uploadButton.textContent = messages[state.setup.learning_profile].uploadWork;
     }
   }
 
   function renderPractice(practice) {
+    const copy = messages[state.setup.learning_profile];
+    byId("practice-title").textContent = copy.practiceTitle;
+    byId("practice-panel").querySelector(":scope > p").textContent = copy.practiceSummary;
     ["easy", "medium", "hard"].forEach((difficulty) => {
       const questions = practice.questions.filter((question) => question.difficulty === difficulty);
       const list = byId(`practice-${difficulty}`);
+      list.parentElement.querySelector("h3").textContent = copy.difficulties[difficulty];
       list.replaceChildren(...questions.map((question) => {
         const item = document.createElement("li");
         const prompt = document.createElement("p");
@@ -176,14 +192,14 @@
         const uploadButton = document.createElement("button");
         const uploadStatus = document.createElement("p");
         prompt.textContent = question.prompt;
-        hint.textContent = `Hint: ${question.hint}`;
+        hint.textContent = `${copy.hintLabel}: ${question.hint}`;
         input.type = "text";
         input.className = "practice-answer";
-        input.placeholder = "Type your answer";
+        input.placeholder = copy.answerPlaceholder;
         input.setAttribute("aria-label", `Answer for: ${question.prompt}`);
         button.type = "button";
         button.className = "secondary-button check-answer";
-        button.textContent = "Check Answer";
+        button.textContent = copy.checkAnswer;
         feedback.className = "answer-feedback";
         feedback.tabIndex = -1;
         feedback.setAttribute("aria-live", "polite");
@@ -195,7 +211,7 @@
         uploadInput.hidden = true;
         uploadButton.type = "button";
         uploadButton.className = "secondary-button upload-work";
-        uploadButton.textContent = "Upload Handwritten Work";
+        uploadButton.textContent = copy.uploadWork;
         uploadStatus.className = "upload-status";
         uploadStatus.tabIndex = -1;
         uploadStatus.setAttribute("aria-live", "polite");
@@ -229,7 +245,7 @@
     state.practiceLoading = isLoading;
     const button = byId("generate-practice");
     button.disabled = isLoading;
-    button.textContent = isLoading ? "Preparing 15 questions…" : "Generate Practice";
+    button.textContent = isLoading ? messages[state.setup.learning_profile].practiceLoading : messages[state.setup.learning_profile].generatePractice;
     byId("practice-status").textContent = isLoading ? messages[state.setup.learning_profile].practiceLoading : "";
   }
 
