@@ -159,3 +159,7 @@ def test_practice_answer_ui_supports_keyboard_feedback_and_retry() -> None:
     assert 'answerRequired' in TUTOR_JS
     assert 'evaluationError' in TUTOR_JS
     assert '.answer-correct' in (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+
+
+def test_lesson_browser_timeout_exceeds_backend_provider_timeout() -> None:
+    assert "options.timeoutMs || 45000" in API_JS
