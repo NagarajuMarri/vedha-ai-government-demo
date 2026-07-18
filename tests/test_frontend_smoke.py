@@ -180,3 +180,20 @@ def test_pure_telugu_practice_controls_are_localized() -> None:
     for text in ("15 ప్రశ్నల అభ్యాసం", "సులభం · 5", "సమాధానం తనిఖీ", "చేతిరాత పరిష్కారం జోడించండి", "అభ్యాసం రూపొందించండి"):
         assert text in TUTOR_JS
     assert 'hint.textContent = `${copy.hintLabel}: ${question.hint}`' in TUTOR_JS
+
+
+def test_presentation_brand_identity_is_complete_and_accessible() -> None:
+    landing_html = (FRONTEND_ROOT / "index.html").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    logo_path = FRONTEND_ROOT / "assets" / "images" / "vedha-mark.png"
+
+    assert logo_path.is_file()
+    assert logo_path.stat().st_size > 10_000
+    assert 'src="assets/images/vedha-mark.png"' in landing_html
+    assert 'src="../assets/images/vedha-mark.png"' in STUDENT_HTML
+    assert 'alt="Vedha open-book and sunrise logo"' in landing_html
+    assert "Every learner deserves a teacher who" in landing_html
+    assert 'class="impact-grid"' in landing_html
+    assert 'class="learning-journey"' in STUDENT_HTML
+    assert "prefers-reduced-motion: reduce" in styles
+    assert "@keyframes vedha-float" in styles
