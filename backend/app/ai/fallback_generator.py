@@ -35,6 +35,40 @@ class DeterministicFallbackLessonGenerator:
 
     def _build_content(self, profile: str, request: LessonGenerationRequest) -> dict[str, str | list[str]]:
         subject = localize_subject(request.subject, profile)
+        concept = request.concept.casefold()
+        if profile == "pure_telugu" and concept == "geometry":
+            return {
+                "title": "జ్యామితి: బిందువులు, రేఖలు, కోణాలు",
+                "introduction": "జ్యామితి అనేది ఆకారాలు, పరిమాణాలు, స్థానాలు మరియు వాటి మధ్య సంబంధాలను అధ్యయనం చేసే గణిత విభాగం.",
+                "explanation_steps": [
+                    "బిందువు ఒక ఖచ్చితమైన స్థానాన్ని సూచిస్తుంది; దానికి పొడవు లేదా వెడల్పు ఉండదు.",
+                    "రేఖ రెండు దిశల్లో కొనసాగుతుంది; రేఖాఖండానికి రెండు చివరి బిందువులు ఉంటాయి.",
+                    "ఒకే బిందువు నుండి బయలుదేరే రెండు కిరణాల మధ్య ఏర్పడే విస్తారాన్ని కోణం అంటారు.",
+                    "మూడు రేఖాఖండాలతో ఏర్పడే మూసిన ఆకారాన్ని త్రిభుజం అంటారు; దాని అంతర్గత కోణాల మొత్తం 180°.",
+                ],
+                "example": "ఒక త్రిభుజంలోని రెండు కోణాలు 50° మరియు 60° అయితే, మూడవ కోణం 180° − 50° − 60° = 70°.",
+                "key_points": [
+                    "బిందువు స్థానాన్ని సూచిస్తుంది.",
+                    "రేఖాఖండానికి రెండు చివరి బిందువులు ఉంటాయి.",
+                    "కోణాన్ని డిగ్రీలలో కొలుస్తారు.",
+                    "త్రిభుజంలోని కోణాల మొత్తం 180°.",
+                ],
+                "check_question": "ఒక త్రిభుజంలోని రెండు కోణాలు 40° మరియు 80° అయితే మూడవ కోణం ఎంత?",
+            }
+        if profile == "telugu_assisted_english" and concept == "geometry":
+            return {
+                "title": "Geometry: బిందువులు, రేఖలు మరియు కోణాలు",
+                "introduction": "Geometryలో shapes, sizes, positions మరియు వాటి relationshipsను అధ్యయనం చేస్తాము.",
+                "explanation_steps": [
+                    "Point ఒక exact positionను సూచిస్తుంది.",
+                    "Line రెండు directionsలో కొనసాగుతుంది; line segmentకు రెండు end points ఉంటాయి.",
+                    "ఒకే point నుండి వచ్చే రెండు rays మధ్య ఏర్పడేది angle.",
+                    "Triangle మూడు line segmentsతో ఏర్పడుతుంది; interior angles మొత్తం 180°.",
+                ],
+                "example": "Triangleలో రెండు angles 50° మరియు 60° అయితే, third angle = 180° − 50° − 60° = 70°.",
+                "key_points": ["Point స్థానాన్ని చూపుతుంది.", "Angleను degreesలో కొలుస్తారు.", "Triangle angles మొత్తం 180°."],
+                "check_question": "Triangleలో రెండు angles 40° మరియు 80° అయితే third angle ఎంత?",
+            }
         if profile == "english_medium":
             return {
                 "title": f"Understanding the foundation of {subject}",
