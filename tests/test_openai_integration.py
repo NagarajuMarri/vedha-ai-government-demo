@@ -162,6 +162,7 @@ def test_openai_provider_uses_configured_sdk_values_and_strict_typed_parse(monke
     assert captured["model"] == "configured-test-model"
     assert captured["client_api_key"] == "unit-test-key"
     assert captured["client_timeout"] == 30
+    assert captured["max_retries"] == 0
     assert captured["text_format"] is GeneratedLessonContent
     assert captured["store"] is False
     assert result.source == "openai"
@@ -528,3 +529,44 @@ def test_fallback_reason_is_attached_to_safe_lesson_log(monkeypatch) -> None:
     assert captured["message"] == "Lesson generation completed"
     assert captured["fallback_reason"] == "missing_configuration"
     assert "openai_api_key" not in captured
+
+
+def test_reviewer_rejects_object_replacement_artifacts_in_assisted_telugu() -> None:
+    content = _content(
+        title="Geometryను సులభంగా నేర్చుకుందాం",
+        introduction="Geometry shapes మరియు angles గురించి వివరిస్తుంది.",
+        explanation_steps=["Triangle interior angles మొత్తం 180°. [OBJ][OBJ][OBJ]"],
+        example="Triangleలో 50° + 60° ఉంటే third angleను కనుగొనాలి.",
+        key_points=["Anglesను జాగ్రత్తగా కలపాలి."],
+        check_question="Triangleలో మూడవ angle ఎంత?",
+        learning_profile="telugu_assisted_english",
+    )
+    lesson = LessonResult(
+        **content.model_dump(),
+        source="openai",
+        fallback_used=False,
+        prompt_id="vedha_mathematics_teacher_v1",
+        prompt_version="1.1.0",
+    )
+    request = LessonGenerationRequest(
+        class_level="5",
+        subject="Mathematics",
+        learning_profile="telugu_assisted_english",
+        student_question="Explain geometry from scratch.",
+        concept="Geometry",
+    )
+    with pytest.raises(AIReviewerRejectionError) as exc_info:
+        LessonReviewer().review(lesson, request)
+    assert exc_info.value.validation_rule == "encoding_artifact"
+
+
+def test_prompt_forbids_object_replacement_glyphs() -> None:
+    prompt = LessonPromptBuilder().build_request(
+        class_level="9",
+        subject="Mathematics",
+        learning_profile="telugu_assisted_english",
+        student_question="Explain geometry from scratch.",
+        concept="Geometry",
+    )
+    assert "Never emit [OBJ]" in prompt.instructions
+    assert "plain readable Unicode text only" in prompt.instructions
