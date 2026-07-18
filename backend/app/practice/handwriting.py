@@ -101,7 +101,9 @@ class HandwritingEvaluationService:
 
         attempt = self._repository.next_attempt(practice_set_id, question_id)
         combined = " ".join([parsed.feedback, *parsed.corrective_guidance])
-        if not parsed.correct and self._contains_expected_answer(combined, key.expected_answer):
+        if not parsed.correct and (
+            attempt >= 2 or self._contains_expected_answer(combined, key.expected_answer)
+        ):
             feedback, guidance = PracticeEvaluationService._messages(
                 False, key, parsed.transcribed_work, attempt
             )
