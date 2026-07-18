@@ -225,3 +225,34 @@ def test_frontend_tracks_attempts_per_question_for_solution_reveal() -> None:
     assert "const clientAttemptNumber = previousAttempts + 1" in TUTOR_JS
     assert "attempt_number: clientAttemptNumber" in TUTOR_JS
     assert "state.attempts.clear()" in TUTOR_JS
+
+
+def test_student_session_progress_is_accessible_bilingual_and_question_scoped() -> None:
+    for element_id in (
+        "progress-panel",
+        "progress-attempted",
+        "progress-mastered",
+        "progress-accuracy",
+        "progress-fill",
+        "progress-message",
+        "progress-total",
+    ):
+        assert f'id="{element_id}"' in STUDENT_HTML
+    assert 'role="progressbar"' in STUDENT_HTML
+    assert 'aria-valuemax="15"' in STUDENT_HTML
+    assert "progress: new Map()" in TUTOR_JS
+    assert "function recordProgress(question, evaluation)" in TUTOR_JS
+    assert "state.progress.set(question.question_id" in TUTOR_JS
+    assert 'byId("progress-panel").hidden = false' in TUTOR_JS
+    assert 'setJourney(4)' in TUTOR_JS
+    for telugu in ("ఈ అభ్యాసంలోని ప్రగతి", "ప్రయత్నించినవి", "నేర్చుకున్నవి", "ఖచ్చితత్వం"):
+        assert telugu in TUTOR_JS
+
+
+def test_progress_styles_support_mobile_and_reduced_motion() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert ".progress-panel" in styles
+    assert ".progress-metrics" in styles
+    assert ".progress-track span" in styles
+    assert ".journey-step.is-complete" in styles
+    assert "prefers-reduced-motion: reduce" in styles
