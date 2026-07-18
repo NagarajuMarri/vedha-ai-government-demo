@@ -115,6 +115,21 @@
           <section aria-labelledby="points-title"><h3 id="points-title">Key Points</h3><ul id="lesson-points"></ul></section>
           <section class="check-section" aria-labelledby="check-title"><h3 id="check-title">Check Your Understanding</h3><p id="lesson-check"></p></section>
         </article>
+
+        <section id="practice-panel" class="practice-panel" aria-labelledby="practice-title">
+          <div class="practice-heading">
+            <div><p class="eyebrow">Practice the concept</p><h2 id="practice-title">15-question practice</h2></div>
+            <button id="generate-practice" class="primary-button" type="button">Generate Practice</button>
+          </div>
+          <p>Vedha prepares exactly 5 Easy, 5 Medium, and 5 Hard questions.</p>
+          <div id="practice-status" class="status-message" role="status" aria-live="polite"></div>
+          <div id="practice-error" class="error-message" role="alert" tabindex="-1" hidden></div>
+          <div id="practice-result" class="practice-result" tabindex="-1" hidden>
+            <section><h3>Easy · 5</h3><ol id="practice-easy"></ol></section>
+            <section><h3>Medium · 5</h3><ol id="practice-medium"></ol></section>
+            <section><h3>Hard · 5</h3><ol id="practice-hard"></ol></section>
+          </div>
+        </section>
       </section>
     </main>
   </body>
