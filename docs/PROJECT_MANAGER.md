@@ -8,16 +8,16 @@
 |---|---|
 | Current milestone | Phase 5 - Practice System |
 | Progress | Sprints 3A-3C, 4A, 4B and 4C complete; Sprint 4D practice vertical slice in progress |
-| Overall status | Student text tutoring and textbook ingestion foundations are complete; exact-composition practice API is implemented and Student UI integration is next |
+| Overall status | Student lesson, bilingual exact-composition practice, typed/photo evaluation, second-attempt solutions, and session progress are operational for the controlled demo |
 | Current sprint | Sprint 4D - Exact-Composition Practice Vertical Slice |
 | Sprint goal | Deliver exactly 15 concept questions (5 easy, 5 medium, 5 hard), then connect them to the Student experience |
-| Next task | Integrate the practice API into the Student UI with bilingual loading, success and error states |
+| Next task | Build the privacy-labelled synthetic Government Dashboard demo slice |
 
 ## Current milestone
 
 ### Phase 5 – Practice System
 
-Sprint 4D is active on `feature/sprint-4d-practice-vertical-slice`. The first backend slice enforces the approved invariant of exactly 15 unique questions per concept: 5 easy, 5 medium, and 5 hard. It supports English Medium, Telugu Assisted English, and Pure Telugu profiles. Student UI integration, answer submission, evaluation, persistence, and progress remain pending.
+Sprint 4D is active on `feature/sprint-4d-practice-vertical-slice`. The first backend slice enforces the approved invariant of exactly 15 unique questions per concept: 5 easy, 5 medium, and 5 hard. It supports English Medium, Telugu Assisted English, and Pure Telugu profiles. Student UI integration, typed and handwritten answer evaluation, corrective feedback, second-attempt solution reveal, and session-only progress are complete. Cross-session persistence and identity-scoped ownership remain pending and must not be implied by the demo.
 
 ## Completed milestones
 
