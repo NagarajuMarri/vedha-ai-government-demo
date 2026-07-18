@@ -34,7 +34,13 @@ class PracticeGenerationService:
                 self._repository.save(
                     practice_set_id,
                     question_id,
-                    AnswerKey(expected_answer=expected_answer, hint=hint, learning_profile=learning_profile),
+                    AnswerKey(
+                        expected_answer=expected_answer,
+                        hint=hint,
+                        learning_profile=learning_profile,
+                        concept=concept,
+                        source_prompt=prompt_en,
+                    ),
                 )
         return PracticeSet(
             practice_set_id=practice_set_id,
