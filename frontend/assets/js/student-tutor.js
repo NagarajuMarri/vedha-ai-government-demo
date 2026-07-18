@@ -2,7 +2,7 @@
 
 (function initializeStudentTutor(document, api) {
   const MAX_QUESTION_LENGTH = 1500;
-  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), uploading: new Set(), error: null, lesson: null, practice: null, submitted: false };
+  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), uploading: new Set(), attempts: new Map(), error: null, lesson: null, practice: null, submitted: false };
   const byId = (id) => document.getElementById(id);
   const setupForm = byId("setup-form");
   const questionForm = byId("question-form");
@@ -158,6 +158,8 @@
     }
     if (state.evaluating.has(question.question_id)) return;
     state.evaluating.add(question.question_id);
+    const previousAttempts = state.attempts.get(question.question_id) || 0;
+    const clientAttemptNumber = previousAttempts + 1;
     button.disabled = true;
     button.textContent = "Checking…";
     feedback.textContent = "";
@@ -166,9 +168,12 @@
         practice_set_id: state.practice.practice_set_id,
         question_id: question.question_id,
         student_answer: studentAnswer,
+        attempt_number: clientAttemptNumber,
       });
+      state.attempts.set(question.question_id, Math.max(clientAttemptNumber, evaluation.attempt_number));
       renderEvaluation(item, evaluation);
     } catch (_error) {
+      state.attempts.set(question.question_id, previousAttempts);
       feedback.textContent = messages[state.setup.learning_profile].evaluationError;
       feedback.className = "answer-feedback answer-incorrect";
       feedback.focus();
@@ -221,6 +226,7 @@
   }
 
   function renderPractice(practice) {
+    state.attempts.clear();
     const copy = messages[state.setup.learning_profile];
     byId("practice-title").textContent = copy.practiceTitle;
     byId("practice-panel").querySelector(":scope > p").textContent = copy.practiceSummary;
