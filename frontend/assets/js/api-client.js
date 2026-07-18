@@ -84,7 +84,7 @@
   }
 
   async function requestPractice(payload, options = {}) {
-    const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\\\/$/, "");
+    const baseUrl = (options.baseUrl || global.VEDHA_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
     const controller = new AbortController();
     const timeoutId = global.setTimeout(() => controller.abort(), options.timeoutMs || 20000);
     let response;
