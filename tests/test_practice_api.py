@@ -228,3 +228,24 @@ def test_handwriting_rejects_non_image_data() -> None:
 
 def test_openapi_lists_handwriting_endpoint() -> None:
     assert "/api/v1/practice/evaluate-handwriting" in app.openapi()["paths"]
+
+
+def test_second_wrong_attempt_explains_complete_fraction_solution() -> None:
+    practice = _post(_payload()).json()
+    question = practice["questions"][5]
+    payload = {
+        "practice_set_id": practice["practice_set_id"],
+        "question_id": question["question_id"],
+        "student_answer": "3/4",
+    }
+    first = _evaluate(payload).json()
+    second = _evaluate(payload).json()
+    assert first["correct"] is False
+    assert "1/2" not in first["feedback"]
+    assert all("1/2" not in step for step in first["corrective_guidance"])
+    assert second["attempt_number"] == 2
+    assert "correct answer is 1/2" in second["feedback"].lower()
+    solution = " ".join(second["corrective_guidance"])
+    assert "6 ÷ 6 = 1" in solution
+    assert "12 ÷ 6 = 2" in solution
+    assert "simplified fraction is 1/2" in solution.lower()
