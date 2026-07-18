@@ -112,6 +112,7 @@
       student_name: String(form.get("student_name")).trim(),
       class_level: Number(form.get("class_level")),
       subject: String(form.get("subject")),
+      concept: String(form.get("concept")),
       learning_profile: String(form.get("learning_profile")),
     };
     byId("student-context").textContent = `${state.setup.student_name} · Class ${state.setup.class_level} · ${state.setup.subject} · ${state.setup.concept}`;
