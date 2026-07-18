@@ -11,7 +11,7 @@
 | Overall status | Student lesson, bilingual exact-composition practice, typed/photo evaluation, second-attempt solutions, and session progress are operational for the controlled demo |
 | Current sprint | Sprint 4D - Exact-Composition Practice Vertical Slice |
 | Sprint goal | Deliver exactly 15 concept questions (5 easy, 5 medium, 5 hard), then connect them to the Student experience |
-| Next task | Build the privacy-labelled synthetic Government Dashboard demo slice |
+| Next task | Complete bilingual demo rehearsal, operator runbook, and final validation checklist |
 
 ## Current milestone
 
