@@ -77,6 +77,7 @@ def evaluate_practice_answer(
             practice_set_id=payload.practice_set_id,
             question_id=payload.question_id,
             student_answer=payload.student_answer,
+            client_attempt_number=payload.attempt_number,
         )
     except PracticeQuestionNotFoundError as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error)) from error
