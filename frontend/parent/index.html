@@ -5,13 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Parent Portal | Vedha AI Government Demo</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+      <script src="../assets/js/voice-assistant.js" defer></script>
   </head>
   <body class="interface-shell">
     <main class="shell-panel">
       <p class="eyebrow">Parent experience</p>
       <h1>Parent Portal</h1>
       <p lang="te">తల్లిదండ్రుల పోర్టల్</p>
-      <p>The interface shell is ready. Parent features are not implemented in Sprint 1.</p>
+      <section class="role-voice-console" aria-labelledby="parent-voice-title">
+        <p class="eyebrow">Bilingual voice access</p>
+        <h2 id="parent-voice-title">Ask about your child’s learning</h2>
+        <p>Example: “Where does my child need support?” or “నా బిడ్డకు ఎక్కడ సహాయం అవసరం?”</p>
+        <div class="role-voice-composer">
+          <label class="sr-only" for="parent-voice-query">Parent request</label>
+          <textarea id="parent-voice-query" rows="3" placeholder="Speak or type your request"></textarea>
+          <select id="parent-voice-language" aria-label="Voice language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
+          <button class="voice-trigger" type="button" data-voice-target="#parent-voice-query" data-voice-status="#parent-voice-status" data-voice-language-source="#parent-voice-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
+        </div>
+        <p id="parent-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
+        <p class="demo-disclosure">The transcript is editable. Portal insights and actions are delivered in the following approved sprint using synthetic demo data.</p>
+      </section>
       <a class="back-link" href="../">← Return to interface gateway</a>
     </main>
   </body>
