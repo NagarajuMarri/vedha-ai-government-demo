@@ -186,3 +186,7 @@ Sprint 4G adds a functional controlled-demo Parent Portal on `feature/sprint-4g-
 ## Sprint 4H delivery record
 
 Sprint 4H adds a functional controlled-demo Teacher Portal on `feature/sprint-4h-teacher-portal`. It uses explicitly synthetic assigned classes and students, with concept performance, student progress, intervention signals, subject filters, remedial assignment simulation, teacher approval of an AI-generated question, three learning-language profiles, editable voice input and spoken insights. Production identity, authorization, persistence and live assessment reconciliation remain pending and are not implied.
+
+## Sprint 4I delivery record
+
+Sprint 4I integrates the controlled demonstration across Student, Parent, Teacher and Government interfaces. The gateway provides a timed ministerial journey, the Government Dashboard adds three-profile voice input and spoken aggregate insight, and `docs/DEMO_RUNBOOK.md` defines the bilingual rehearsal, privacy message, recovery procedures and readiness gate. Manual rehearsal and controlled deployment remain separate approval gates.
