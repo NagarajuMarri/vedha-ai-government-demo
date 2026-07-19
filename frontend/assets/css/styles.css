@@ -3107,3 +3107,92 @@ body {
   .freedom-event{width:4.4rem;height:4.4rem}.event-label{display:none}
   .resource-earth{font-size:8rem}.conservation-ring{width:13rem;height:13rem}
 }
+
+
+/* Sentence-synchronized scene phases */
+.animation-stage .plant-flow,
+.animation-stage .plant-food,
+.animation-stage .place-card,
+.animation-stage .sentence-token,
+.animation-stage .civic-pillar,
+.animation-stage .freedom-event,
+.animation-stage .ap-river,
+.animation-stage .ap-ghats,
+.animation-stage .service,
+.animation-stage .resource-card {
+  opacity: .22;
+  filter: saturate(.45);
+  transition: opacity .65s ease, filter .65s ease, scale .65s ease, translate .65s ease;
+}
+
+/* Photosynthesis: each narrated input visibly travels through the plant. */
+.animation-stage[data-concept="photosynthesis"][data-phase="sunlight"] .plant-sun,
+.animation-stage[data-concept="photosynthesis"][data-phase="progress-1"] .plant-sun { scale:1.2; filter:drop-shadow(0 0 3rem #fff06a); }
+.animation-stage[data-concept="photosynthesis"][data-phase="roots-water"] .water-flow { opacity:1; filter:none; animation:water-into-roots 1.5s ease-in-out infinite; }
+.animation-stage[data-concept="photosynthesis"][data-phase="roots-water"] .plant-roots { filter:drop-shadow(0 0 1rem #45caff); scale:1.12; }
+.animation-stage[data-concept="photosynthesis"][data-phase="carbon"] .carbon-flow { opacity:1; filter:none; animation:gas-into-leaf 1.5s ease-in-out infinite; }
+.animation-stage[data-concept="photosynthesis"][data-phase="carbon"] .leaf-right { filter:drop-shadow(0 0 1.2rem #7df26d); scale:-1.14 1.14; }
+.animation-stage[data-concept="photosynthesis"][data-phase="food"] .plant-food { opacity:1; filter:none; scale:1.25; box-shadow:0 0 2rem #ffd166; }
+.animation-stage[data-concept="photosynthesis"][data-phase="oxygen"] .oxygen-flow { opacity:1; filter:none; animation:oxygen-release 1.4s ease-in-out infinite; }
+
+/* Decimal place values illuminate only when that place is explained. */
+.animation-stage[data-concept="decimals"][data-phase="point"] .decimal-point-marker,
+.animation-stage[data-concept="decimals"][data-phase="places"] .place-card,
+.animation-stage[data-concept="decimals"][data-phase="tenths"] .tenths-card,
+.animation-stage[data-concept="decimals"][data-phase="hundredths"] .hundredths-card { opacity:1; filter:none; scale:1.08; }
+
+/* Grammar builds the sentence role by role. */
+.animation-stage[data-phase="subject"] .token-1,
+.animation-stage[data-phase="verb"] .token-2,
+.animation-stage[data-phase="object"] .token-3,
+.animation-stage[data-phase="sentence"] .sentence-token,
+.animation-stage[data-phase="punctuation"] .sentence-token { opacity:1; filter:none; translate:0 -.5rem; }
+
+/* Civics, history and geography focus the exact narrated element. */
+.animation-stage[data-phase="rights"] .rights-pillar,
+.animation-stage[data-phase="duties"] .duties-pillar,
+.animation-stage[data-phase="democracy"] .democracy-pillar,
+.animation-stage[data-phase="institutions"] .constitution-book { opacity:1; filter:none; scale:1.12; }
+.animation-stage[data-phase="resistance"] .event-1,
+.animation-stage[data-phase="non-cooperation"] .event-2,
+.animation-stage[data-phase="salt"] .event-3,
+.animation-stage[data-phase="quit-india"] .event-4,
+.animation-stage[data-phase="freedom"] .event-5 { opacity:1; filter:none; scale:1.18; box-shadow:0 0 2.5rem #ffd166; }
+.animation-stage[data-phase="krishna"] .krishna-river,
+.animation-stage[data-phase="godavari"] .godavari-river,
+.animation-stage[data-phase="ghats"] .ap-ghats { opacity:1; filter:none; scale:1.12; }
+.animation-stage[data-phase="coast"] .ap-coast { border-right-width:1rem; filter:drop-shadow(0 0 1rem #fff); }
+.animation-stage[data-phase="panchayat"] .panchayat-building,
+.animation-stage[data-phase="urban"] .panchayat-building { scale:1.08; box-shadow:0 0 2.5rem #fff5a8; }
+.animation-stage[data-phase="water"] .service-water,
+.animation-stage[data-phase="road"] .service-road,
+.animation-stage[data-phase="light"] .service-light { opacity:1; filter:none; scale:1.25; }
+
+/* Natural resources and core science scenes change with each sentence. */
+.animation-stage[data-concept="climate-and-natural-resources"][data-phase="water"] .resource-water,
+.animation-stage[data-concept="climate-and-natural-resources"][data-phase="soil"] .resource-soil,
+.animation-stage[data-concept="climate-and-natural-resources"][data-phase="forests"] .resource-forest,
+.animation-stage[data-concept="climate-and-natural-resources"][data-phase="minerals"] .resource-mineral { opacity:1; filter:none; scale:1.2; }
+.animation-stage[data-phase="conserve"] .conservation-ring { border-style:solid; box-shadow:0 0 2rem #65f0bd; }
+.animation-stage[data-concept="water-cycle"][data-phase="evaporation"] .cycle-flow.evaporation,
+.animation-stage[data-concept="water-cycle"][data-phase="cloud"] .cycle-flow.condensation,
+.animation-stage[data-concept="water-cycle"][data-phase="rain"] .rain-system { opacity:1; }
+.animation-stage[data-concept="water-cycle"][data-phase="collection"] .cycle-water { filter:brightness(1.35); box-shadow:inset 0 1.2rem 0 #b9efff99; }
+.animation-stage[data-concept="solar-system"][data-phase="sun"] .solar-sun { scale:1.2; }
+.animation-stage[data-concept="solar-system"][data-phase="orbit"] .solar-orbit { border-color:#c6e3ff; animation-duration:5s; }
+.animation-stage[data-concept="solar-system"][data-phase="rotation"] .planet-2 .planet-surface { animation:earth-rotate 2.2s linear infinite; }
+.animation-stage[data-concept="geometry"][data-phase="sides"] .triangle-edge,
+.animation-stage[data-concept="geometry"][data-phase="shape"] .triangle-edge { box-shadow:0 0 2rem #fff; height:.42rem; }
+.animation-stage[data-concept="geometry"][data-phase="vertices"] .triangle-vertex { scale:1.35; background:#f0a202; }
+.animation-stage[data-concept="geometry"][data-phase="angles"] .angle { opacity:1; scale:1.25; }
+
+@keyframes water-into-roots { 0%{translate:0 1.5rem;opacity:.25} 55%{translate:1.7rem -1.5rem;opacity:1} 100%{translate:3rem -4rem;opacity:.25} }
+@keyframes gas-into-leaf { 0%{translate:2rem 0;opacity:.25} 60%{translate:-2rem 0;opacity:1} 100%{translate:-4rem 0;opacity:.25} }
+@keyframes oxygen-release { 0%{translate:0 2rem;opacity:.25} 60%{translate:0 -2rem;opacity:1} 100%{translate:0 -4rem;opacity:.25} }
+@keyframes earth-rotate { to{rotate:360deg} }
+
+@media (prefers-reduced-motion: reduce) {
+  .animation-stage .plant-flow,
+  .animation-stage .plant-food,
+  .animation-stage .planet-surface { animation:none !important; }
+}
