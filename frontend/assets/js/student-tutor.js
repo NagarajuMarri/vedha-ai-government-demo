@@ -2,7 +2,7 @@
 
 (function initializeStudentTutor(document, api) {
   const MAX_QUESTION_LENGTH = 1500;
-  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), uploading: new Set(), attempts: new Map(), progress: new Map(), error: null, lesson: null, practice: null, submitted: false };
+  const state = { setup: null, question: "", loading: false, practiceLoading: false, evaluating: new Set(), uploading: new Set(), attempts: new Map(), progress: new Map(), error: null, lesson: null, practice: null, practiceIndex: 0, submitted: false };
   const byId = (id) => document.getElementById(id);
   const setupForm = byId("setup-form");
   const questionForm = byId("question-form");
@@ -73,7 +73,7 @@
       practiceTitle: "15-question practice", practiceSummary: "Vedha prepares exactly 5 Easy, 5 Medium, and 5 Hard questions.",
       difficulties: { easy: "Easy · 5", medium: "Medium · 5", hard: "Hard · 5" },
       hintLabel: "Hint", answerPlaceholder: "Type your answer", checkAnswer: "Check Answer",
-      uploadWork: "Upload Handwritten Work", voiceAnswer: "Speak Answer", generatePractice: "Generate Practice",
+      uploadWork: "Upload Handwritten Work", voiceAnswer: "Speak Answer", generatePractice: "Generate Practice", nextQuestion: "Next Question", finishPractice: "Finish Practice",
       progress: { title: "Progress this session", attempted: "Attempted", mastered: "Mastered", accuracy: "Accuracy", start: "Start answering practice questions to see your progress.", active: "Keep going—every correction builds understanding.", complete: "Excellent! You mastered all 15 questions.", badgeStart: "Getting started", badgeActive: "Learning in progress", badgeComplete: "Practice complete" },
     },
     telugu_assisted_english: {
@@ -89,7 +89,7 @@
       practiceTitle: "15 ప్రశ్నల practice", practiceSummary: "Vedha 5 సులభ, 5 మధ్యస్థ, 5 కఠిన questions సిద్ధం చేస్తుంది.",
       difficulties: { easy: "సులభ · 5", medium: "మధ్యస్థ · 5", hard: "కఠిన · 5" },
       hintLabel: "సూచన", answerPlaceholder: "సమాధానం type చేయండి", checkAnswer: "Answer తనిఖీ",
-      uploadWork: "చేతిరాత Work Upload", voiceAnswer: "Answer మాట్లాడండి", generatePractice: "Practice రూపొందించండి",
+      uploadWork: "చేతిరాత Work Upload", voiceAnswer: "Answer మాట్లాడండి", generatePractice: "Practice రూపొందించండి", nextQuestion: "Next Question", finishPractice: "Practice పూర్తి చేయండి",
       progress: { title: "ఈ session progress", attempted: "Attempted", mastered: "Mastered", accuracy: "Accuracy", start: "Questions answer చేయడం ప్రారంభిస్తే progress కనిపిస్తుంది.", active: "Continue చేయండి—ప్రతి correction understandingను పెంచుతుంది.", complete: "Excellent! మొత్తం 15 questions mastered.", badgeStart: "Getting started", badgeActive: "Learning in progress", badgeComplete: "Practice complete" },
     },
     pure_telugu: {
@@ -105,7 +105,7 @@
       practiceTitle: "15 ప్రశ్నల అభ్యాసం", practiceSummary: "వేద 5 సులభ, 5 మధ్యస్థ, 5 కఠిన ప్రశ్నలను సిద్ధం చేస్తుంది.",
       difficulties: { easy: "సులభం · 5", medium: "మధ్యస్థం · 5", hard: "కఠినం · 5" },
       hintLabel: "సూచన", answerPlaceholder: "మీ సమాధానం రాయండి", checkAnswer: "సమాధానం తనిఖీ",
-      uploadWork: "చేతిరాత పరిష్కారం జోడించండి", voiceAnswer: "సమాధానం చెప్పండి", generatePractice: "అభ్యాసం రూపొందించండి",
+      uploadWork: "చేతిరాత పరిష్కారం జోడించండి", voiceAnswer: "సమాధానం చెప్పండి", generatePractice: "అభ్యాసం రూపొందించండి", nextQuestion: "తదుపరి ప్రశ్న", finishPractice: "అభ్యాసం పూర్తి చేయండి",
       progress: { title: "ఈ అభ్యాసంలోని ప్రగతి", attempted: "ప్రయత్నించినవి", mastered: "నేర్చుకున్నవి", accuracy: "ఖచ్చితత్వం", start: "మీ ప్రగతిని చూడటానికి అభ్యాస ప్రశ్నలకు సమాధానాలు ఇవ్వడం ప్రారంభించండి.", active: "కొనసాగించండి—ప్రతి సవరణ మీ అవగాహనను పెంచుతుంది.", complete: "అద్భుతం! మీరు మొత్తం 15 ప్రశ్నలను నేర్చుకున్నారు.", badgeStart: "ప్రారంభం", badgeActive: "అభ్యాసం కొనసాగుతోంది", badgeComplete: "అభ్యాసం పూర్తయింది" },
     },
   };
@@ -215,6 +215,7 @@
       state.attempts.set(question.question_id, Math.max(clientAttemptNumber, evaluation.attempt_number));
       renderEvaluation(item, evaluation);
       recordProgress(question, evaluation);
+      unlockNextQuestion(item, evaluation);
     } catch (_error) {
       state.attempts.set(question.question_id, previousAttempts);
       feedback.textContent = messages[state.setup.learning_profile].evaluationError;
@@ -258,6 +259,7 @@
       uploadStatus.textContent = `Transcribed work: ${evaluation.transcribed_work} · Confidence: ${Math.round(evaluation.confidence * 100)}%`;
       renderEvaluation(item, evaluation);
       recordProgress(question, evaluation);
+      unlockNextQuestion(item, evaluation);
     } catch (_error) {
       uploadStatus.textContent = messages[state.setup.learning_profile].uploadError;
       uploadStatus.className = "upload-status answer-incorrect";
@@ -269,12 +271,44 @@
     }
   }
 
+  function showPracticeQuestion(index) {
+    const questions = state.practice?.questions || [];
+    state.practiceIndex = Math.max(0, Math.min(index, questions.length - 1));
+    document.querySelectorAll("#practice-result > section").forEach((section) => { section.hidden = true; });
+    document.querySelectorAll("#practice-result li[data-practice-index]").forEach((item) => { item.hidden = true; });
+    const active = document.querySelector(`#practice-result li[data-practice-index="${state.practiceIndex}"]`);
+    if (!active) return;
+    active.hidden = false;
+    active.closest("section").hidden = false;
+    const question = questions[state.practiceIndex];
+    const difficulty = messages[state.setup.learning_profile].difficulties[question.difficulty].split(" · ")[0];
+    active.closest("section").querySelector("h3").textContent =
+      `${difficulty} · Question ${state.practiceIndex + 1} of ${questions.length}`;
+    active.querySelector(".practice-answer")?.focus({ preventScroll: true });
+    active.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function unlockNextQuestion(item, evaluation) {
+    if (!evaluation.correct && evaluation.attempt_number < 2) return;
+    item.querySelectorAll("input, .check-answer, .practice-voice-answer, .upload-work").forEach((control) => {
+      control.disabled = true;
+    });
+    const nextButton = item.querySelector(".next-question");
+    nextButton.hidden = false;
+    nextButton.focus({ preventScroll: true });
+  }
+
   function renderPractice(practice) {
     state.attempts.clear();
     state.progress.clear();
     byId("progress-panel").hidden = false;
     setJourney(3);
     const copy = messages[state.setup.learning_profile];
+    state.practiceIndex = 0;
+    const orderedQuestions = ["easy", "medium", "hard"].flatMap((difficulty) =>
+      practice.questions.filter((question) => question.difficulty === difficulty));
+    state.practice.questions = orderedQuestions;
+    const questionIndexes = new Map(orderedQuestions.map((question, index) => [question.question_id, index]));
     byId("practice-title").textContent = copy.practiceTitle;
     byId("practice-panel").querySelector(":scope > p").textContent = copy.practiceSummary;
     ["easy", "medium", "hard"].forEach((difficulty) => {
@@ -296,6 +330,9 @@
         const uploadInput = document.createElement("input");
         const uploadButton = document.createElement("button");
         const uploadStatus = document.createElement("p");
+        const nextButton = document.createElement("button");
+        item.dataset.practiceIndex = String(questionIndexes.get(question.question_id));
+        item.className = "focused-practice-question";
         prompt.textContent = question.prompt;
         hint.textContent = `${copy.hintLabel}: ${question.hint}`;
         input.type = "text";
@@ -336,6 +373,19 @@
         uploadStatus.className = "upload-status";
         uploadStatus.tabIndex = -1;
         uploadStatus.setAttribute("aria-live", "polite");
+        nextButton.type = "button";
+        nextButton.className = "primary-button next-question";
+        nextButton.textContent = questionIndexes.get(question.question_id) === orderedQuestions.length - 1
+          ? copy.finishPractice : copy.nextQuestion;
+        nextButton.hidden = true;
+        nextButton.addEventListener("click", () => {
+          const currentIndex = questionIndexes.get(question.question_id);
+          if (currentIndex < orderedQuestions.length - 1) showPracticeQuestion(currentIndex + 1);
+          else {
+            byId("progress-panel").scrollIntoView({ behavior: "smooth", block: "center" });
+            setJourney(4);
+          }
+        });
         uploadButton.addEventListener("click", () => uploadInput.click());
         uploadInput.addEventListener("change", () => {
           const file = uploadInput.files && uploadInput.files[0];
@@ -353,12 +403,14 @@
         answerRow.append(input, voiceButton, button);
         uploadRow.className = "handwriting-upload-row";
         uploadRow.append(uploadInput, uploadButton);
-        item.append(prompt, hint, answerRow, voiceStatus, uploadRow, uploadStatus, feedback, guidance);
+        item.append(prompt, hint, answerRow, voiceStatus, uploadRow, uploadStatus, feedback, guidance, nextButton);
         return item;
       }));
     });
+    byId("practice-result").classList.add("sequential-practice");
     byId("practice-result").hidden = false;
     byId("practice-result").focus({ preventScroll: true });
+    showPracticeQuestion(0);
     renderProgress();
     byId("practice-result").scrollIntoView({ behavior: "smooth", block: "start" });
   }
