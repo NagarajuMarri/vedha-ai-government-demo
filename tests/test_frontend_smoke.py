@@ -510,7 +510,7 @@ def test_photosynthesis_animation_progressively_shows_inputs_and_outputs() -> No
     assert 'node("sunlight-rays")' in animation_js
     assert 'node(`sunlight-ray sunlight-ray-${index + 1}`)' in animation_js
     assert 'node("water-particles")' in animation_js
-    assert 'stage.classList.add(`seen-${visualPhase' in animation_js
+    assert 'stage.classList.add(`seen-${resolvedVisualPhase' in animation_js
     for selector in (
         ".seen-sunlight .sunlight-rays",
         ".seen-roots-water .water-particles",
@@ -521,3 +521,17 @@ def test_photosynthesis_animation_progressively_shows_inputs_and_outputs() -> No
         assert selector in styles
     assert "@keyframes sunbeam-fall" in styles
     assert "@keyframes water-up-stem" in styles
+
+
+def test_every_narration_point_renders_a_fresh_storyboard_action() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert "const fallbackPhaseSequence" in animation_js
+    assert "function resolvedVisualPhase(concept, caption, index, total)" in animation_js
+    assert "function renderPointAction(stage, concept, phase, index)" in animation_js
+    assert 'stage.querySelector(".point-action-layer")?.remove()' in animation_js
+    assert "renderPointAction(stage, state.concept, activePhase, state.index)" in animation_js
+    assert ".point-action-layer" in styles
+    assert "@keyframes storyboard-enter" in styles
+    for phase in ("sunlight", "roots-water", "carbon", "food", "oxygen"):
+        assert f'data-action="{phase}"' in styles
