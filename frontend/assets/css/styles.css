@@ -3010,3 +3010,100 @@ body {
   .piece-number,
   .fraction-story { transition: none; }
 }
+
+
+/* All-lesson animation gallery and voice-answer controls */
+.practice-answer-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) auto auto;
+  align-items: stretch;
+  gap: 0.55rem;
+}
+.practice-answer-row .voice-trigger {
+  min-width: 3.15rem;
+  border: 1px solid #0d4a82;
+  border-radius: 0.7rem;
+  background: #eef8ff;
+  color: #0d4a82;
+  font-weight: 850;
+}
+.practice-answer-row .voice-trigger:hover,
+.practice-answer-row .voice-trigger.is-listening {
+  background: #0d4a82;
+  color: #fff;
+}
+.practice-answer-row input { min-width: 0; }
+
+/* Shared cinematic cards */
+.decimal-scene, .plant-scene, .grammar-scene, .constitution-scene,
+.freedom-scene, .ap-scene, .local-government-scene, .resources-scene {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.animation-stage[data-concept="decimals"] { background: linear-gradient(145deg,#062e55,#0b68a4); }
+.decimal-scene { display:grid; place-content:center; grid-template-columns:repeat(3,minmax(8rem,11rem)); gap:1rem; padding:4rem 2rem 2rem; }
+.decimal-number { grid-column:1/-1; color:#fff; font:950 clamp(4rem,11vw,8rem)/1 ui-monospace,monospace; text-align:center; text-shadow:0 0 2rem #43d7ff88; }
+.decimal-point-marker { position:absolute; left:50.2%; top:42%; color:#ffd166; font-size:2rem; animation:studio-live 1.4s infinite; }
+.place-card { border:1px solid #ffffff55; border-radius:1rem; background:#ffffff18; color:#fff; padding:1.2rem .8rem; text-align:center; font-weight:900; backdrop-filter:blur(8px); }
+.tenths-card { background:#17b8a655; } .hundredths-card { background:#f0a20255; }
+
+.animation-stage[data-concept="photosynthesis"] { background:linear-gradient(#63c8ef 0 60%,#734628 60%); }
+.plant-sun { position:absolute; left:10%; top:13%; font-size:5.5rem; filter:drop-shadow(0 0 1.5rem #ffe15a); animation:sun-breathe 3s infinite; }
+.plant-ground { position:absolute; inset:60% 0 0; background:linear-gradient(#795132,#3d281e); }
+.plant-stem { position:absolute; left:50%; top:34%; width:1.2rem; height:37%; border-radius:1rem; background:#27823b; }
+.plant-leaf { position:absolute; top:39%; width:7rem; height:3.8rem; border-radius:100% 0 100% 0; background:linear-gradient(135deg,#7be65d,#17843d); box-shadow:inset 0 0 1rem #0b5128; }
+.leaf-left { left:calc(50% - 7rem); rotate:18deg; } .leaf-right { left:50%; rotate:-18deg; scale:-1 1; }
+.plant-roots { position:absolute; left:calc(50% - 4rem); top:67%; width:8rem; height:6rem; border-left:.4rem solid #e1b073; border-right:.4rem solid #e1b073; border-radius:50%; }
+.plant-flow,.plant-food { position:absolute; border-radius:999px; background:#062e55cc; color:#fff; padding:.55rem .8rem; font-weight:900; animation:float-label 2.5s ease-in-out infinite; }
+.water-flow{left:29%;bottom:15%}.carbon-flow{right:12%;top:36%}.oxygen-flow{right:14%;top:15%}.plant-food{left:52%;top:50%;background:#d88408e8}
+
+.animation-stage[data-concept="grammar"], .animation-stage[data-concept="telugu-grammar"] { background:radial-gradient(circle at top,#4b6cb7,#182848); }
+.grammar-scene { display:grid; place-content:center; gap:2rem; padding:4rem 2rem 2rem; }
+.grammar-heading,.sentence-result { color:#fff; text-align:center; font-size:clamp(1.3rem,3vw,2.1rem); font-weight:950; }
+.sentence-builder { display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; }
+.sentence-token { position:relative; min-width:8rem; border-radius:1rem; background:#fff; color:#102342; padding:1.5rem 1rem 2.7rem; text-align:center; font-size:1.45rem; font-weight:900; box-shadow:0 1rem 2rem #06122677; animation:word-rise .8s both; }
+.token-2{animation-delay:.25s}.token-3{animation-delay:.5s}.token-role{position:absolute; inset:auto .5rem .5rem; border-radius:999px; background:#12a594; color:#fff; padding:.3rem; font-size:.68rem; letter-spacing:.08em}
+
+.animation-stage[data-concept="indian-constitution"] { background:linear-gradient(135deg,#f59e0b,#fff 48%,#169b62); }
+.constitution-scene { display:flex; align-items:center; justify-content:center; gap:clamp(1rem,4vw,3rem); padding:4rem 2rem 2rem; }
+.constitution-book { display:grid; place-items:center; width:14rem; height:18rem; border:.7rem double #f7d76f; border-radius:.5rem 1.5rem 1.5rem .5rem; background:#153b72; color:#f9df82; box-shadow:1.3rem 1.4rem 2rem #1c274766; text-align:center; }
+.book-emblem{font-size:4rem}.book-title{max-width:10rem;font-weight:950}
+.civic-pillar { display:grid; place-items:center; width:8rem; height:8rem; border-radius:50%; background:#ffffffdd; color:#153b72; font-weight:950; box-shadow:0 1rem 2rem #24304b33; animation:float-label 3s infinite; }
+
+.animation-stage[data-concept="indian-freedom-movement"] { background:linear-gradient(145deg,#251915,#603d2b); }
+.freedom-flag{position:absolute;right:7%;top:9%;font-size:5rem;filter:drop-shadow(0 .7rem .7rem #0008)}
+.freedom-timeline{position:absolute;left:6%;right:6%;top:52%;height:.4rem;background:linear-gradient(90deg,#ff9933,#fff,#138808)}
+.freedom-event{position:absolute;top:50%;translate:-50% -50%;display:grid;place-items:center;width:6.5rem;height:6.5rem;border:3px solid #f0c66a;border-radius:50%;background:#251915;color:#fff;text-align:center;box-shadow:0 0 1.5rem #f0c66a55}
+.event-1{left:0}.event-2{left:25%}.event-3{left:50%}.event-4{left:75%}.event-5{left:100%}
+.event-year{font-size:1.2rem;font-weight:950}.event-label{font-size:.62rem}
+
+.animation-stage[data-concept="andhra-pradesh-geography"] { background:linear-gradient(145deg,#bfe8ff,#e6f6dd); }
+.ap-map-shape{position:absolute;left:34%;top:13%;width:29%;height:72%;background:linear-gradient(145deg,#78c65a,#318d47);clip-path:polygon(48% 0,66% 9%,72% 27%,91% 47%,74% 64%,67% 86%,42% 100%,25% 82%,35% 60%,9% 42%,30% 27%);filter:drop-shadow(0 1.2rem 1rem #164e2c66)}
+.ap-coast{position:absolute;left:59%;top:24%;height:55%;border-right:.5rem solid #33a5dd;border-radius:50%;rotate:-8deg}
+.ap-river{position:absolute;color:#dff8ff;font-weight:950;text-shadow:0 1px 5px #06415d;background:#168bc999;border-radius:999px;padding:.3rem .7rem}.krishna-river{left:39%;top:54%}.godavari-river{left:42%;top:38%}
+.ap-ghats{position:absolute;left:13%;bottom:9%;border-radius:1rem;background:#14532dcc;color:#fff;padding:.8rem 1rem;font-weight:900}
+
+.animation-stage[data-concept="local-government"] { background:linear-gradient(#76c8ed 0 57%,#81b85e 57%); }
+.village-homes{position:absolute;left:8%;bottom:17%;color:#fff2d0;font-size:5rem;text-shadow:0 .7rem 0 #9a502f,0 1rem 1rem #2347}
+.panchayat-building{position:absolute;left:50%;top:42%;translate:-50% -50%;display:grid;place-items:center;width:17rem;height:10rem;border:.5rem solid #f0a202;background:#fff2cc;color:#123b67;font-size:1.2rem;font-weight:950;box-shadow:0 1.2rem 1.5rem #1237}
+.service{position:absolute;display:grid;place-items:center;width:4rem;height:4rem;border-radius:50%;background:#fff;color:#0b4f85;font-size:2rem;box-shadow:0 .7rem 1.3rem #1236;animation:float-label 2.6s infinite}.service-water{right:20%;top:20%}.service-road{right:10%;bottom:15%}.service-light{left:18%;top:17%}
+
+.animation-stage[data-concept="climate-and-natural-resources"] { background:radial-gradient(circle,#3b86a8,#062d4c); }
+.resource-earth{position:absolute;left:50%;top:48%;translate:-50% -50%;font-size:11rem;filter:drop-shadow(0 1rem 2rem #001a)}
+.resource-card{position:absolute;border:1px solid #ffffff66;border-radius:999px;background:#ffffffdd;color:#063765;padding:.7rem 1rem;font-weight:950;box-shadow:0 .8rem 1.5rem #0017;animation:float-label 3s infinite}.resource-water{left:9%;top:20%}.resource-soil{left:12%;bottom:16%}.resource-forest{right:9%;top:20%}.resource-mineral{right:10%;bottom:16%}
+.conservation-ring{position:absolute;left:50%;top:49%;translate:-50% -50%;display:grid;place-items:end center;width:18rem;height:18rem;border:.35rem dashed #9af0ca;border-radius:50%;color:#fff;padding:1rem;font-weight:950;animation:slow-spin 14s linear infinite}
+
+@keyframes float-label { 50% { translate:0 -.6rem; } }
+@keyframes word-rise { from { opacity:0; translate:0 1.5rem; } }
+@keyframes slow-spin { to { rotate:360deg; } }
+
+@media (max-width:48rem) {
+  .practice-answer-row { grid-template-columns:1fr auto; }
+  .practice-answer-row .check-answer { grid-column:1/-1; }
+  .decimal-scene { grid-template-columns:1fr; align-content:center; }
+  .decimal-number { grid-column:auto; font-size:4rem; }
+  .decimal-point-marker { display:none; }
+  .constitution-scene { flex-wrap:wrap; align-content:center; }
+  .constitution-book{width:10rem;height:12rem}.civic-pillar{width:5.5rem;height:5.5rem;font-size:.72rem}
+  .freedom-event{width:4.4rem;height:4.4rem}.event-label{display:none}
+  .resource-earth{font-size:8rem}.conservation-ring{width:13rem;height:13rem}
+}
