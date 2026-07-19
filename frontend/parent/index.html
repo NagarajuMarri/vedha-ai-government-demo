@@ -11,23 +11,27 @@
   <body class="parent-portal">
     <header class="parent-topbar">
       <a class="parent-brand" href="../"><img src="../assets/images/vedha-mark.png" alt=""><span>Vedha</span></a>
-      <div><span class="synthetic-pill">Synthetic demonstration data</span><a class="back-link" href="../">Interface gateway</a></div>
+      <div><span class="synthetic-pill" id="synthetic-label">Synthetic demonstration data</span><a class="back-link" id="gateway-label" href="../">Interface gateway</a></div>
     </header>
     <main class="parent-main">
       <section class="parent-hero">
         <div><p class="eyebrow">Parent learning companion</p><h1 id="parent-heading">See progress. Support with confidence.</h1>
           <p id="parent-intro">A clear weekly view of your linked child’s learning, strengths and next support steps.</p></div>
         <div class="parent-controls">
-          <label for="parent-language">Language</label>
-          <select id="parent-language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
-          <label for="report-period">Report</label>
+          <label id="language-label" for="parent-language">Language</label>
+          <select id="parent-language">
+            <option value="english_medium">English</option>
+            <option value="pure_telugu">తెలుగు</option>
+            <option value="telugu_assisted_english">తెలుగులో English terms తో</option>
+          </select>
+          <label id="report-label" for="report-period">Report</label>
           <select id="report-period"><option value="weekly">Weekly report</option><option value="monthly">Monthly report</option></select>
-          <label for="child-selector">Linked child</label>
+          <label id="child-label" for="child-selector">Linked child</label>
           <select id="child-selector"><option value="ananya">Ananya · Class 9</option><option value="arjun">Arjun · Class 6</option></select>
         </div>
       </section>
 
-      <section class="parent-privacy-note"><strong>Controlled demo:</strong> All children, activities and scores shown here are fictional. A production parent would only see explicitly linked children.</section>
+      <section class="parent-privacy-note"><strong id="privacy-title">Controlled demo:</strong> <span id="privacy-text">All children, activities and scores shown here are fictional. A production parent would only see explicitly linked children.</span></section>
 
       <section class="parent-summary" aria-labelledby="child-name">
         <div class="child-profile"><div class="child-avatar" id="child-avatar">A</div><div><p id="week-label">This week</p><h2 id="child-name">Ananya</h2><p id="child-context">Class 9 · AP State Board</p></div></div>
