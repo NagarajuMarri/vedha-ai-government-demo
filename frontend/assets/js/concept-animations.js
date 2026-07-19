@@ -10,6 +10,7 @@
   const lessons = {
     Fractions: {
       title: { en: "Fractions: equal parts of a whole", te: "భిన్నాలు: మొత్తంలోని సమాన భాగాలు" },
+      durationSeconds: 120,
       steps: {
         en: [
           "This pizza is one complete whole. Nothing has been cut or removed yet.",
@@ -35,6 +36,7 @@
     },
     Geometry: {
       title: { en: "Geometry: understanding a triangle", te: "జ్యామితి: త్రిభుజాన్ని అర్థం చేసుకుందాం" },
+      durationSeconds: 75,
       steps: {
         en: [
           "Three line segments join to make a closed shape called a triangle.",
@@ -52,6 +54,7 @@
     },
     "Water Cycle": {
       title: { en: "The continuous water cycle", te: "నిరంతర నీటి చక్రం" },
+      durationSeconds: 100,
       steps: {
         en: [
           "The Sun heats water in oceans, lakes, and rivers.",
@@ -69,6 +72,7 @@
     },
     "Solar System": {
       title: { en: "Our Solar System", te: "మన సౌర కుటుంబం" },
+      durationSeconds: 100,
       steps: {
         en: [
           "The Sun is the star at the centre of our Solar System.",
@@ -86,7 +90,7 @@
     },
   };
 
-  const state = { lesson: null, concept: null, profile: "english_medium", language: "en", index: 0, playing: false, timer: null };
+  const state = { lesson: null, concept: null, profile: "english_medium", language: "en", index: 0, playing: false, timer: null, stepStartedAt: 0 };
   const byId = (id) => document.getElementById(id);
 
   function node(className, text = "") {
@@ -222,6 +226,14 @@
     byId("animation-play").textContent = state.language === "te" ? "▶ కొనసాగించండి" : "▶ Continue";
   }
 
+  function scheduleAdvanceAfterNarration() {
+    if (!state.playing) return;
+    const steps = state.lesson.steps[state.language];
+    const minimumStepMs = (state.lesson.durationSeconds * 1000) / steps.length;
+    const elapsedMs = Date.now() - state.stepStartedAt;
+    state.timer = window.setTimeout(advanceAfterNarration, Math.max(0, minimumStepMs - elapsedMs));
+  }
+
   function advanceAfterNarration() {
     if (!state.playing) return;
     if (state.index >= state.lesson.steps[state.language].length - 1) {
@@ -237,8 +249,9 @@
   async function narrateCurrentStep() {
     clearTimer();
     const caption = state.lesson.steps[state.language][state.index];
+    state.stepStartedAt = Date.now();
     const spoken = await window.VedhaVoice?.speakText(caption, state.profile, {
-      onEnd: advanceAfterNarration,
+      onEnd: scheduleAdvanceAfterNarration,
       onUnavailable: () => {
         byId("animation-status").textContent = state.language === "te"
           ? "తెలుగు వాయిస్ అందుబాటులో లేదు. దృశ్యం, సమకాలిక వాక్యంతో కొనసాగుతోంది."
@@ -246,7 +259,9 @@
       },
     });
     if (!spoken && state.playing) {
-      state.timer = window.setTimeout(advanceAfterNarration, Math.max(3500, caption.length * 55));
+      const steps = state.lesson.steps[state.language];
+      const minimumStepMs = (state.lesson.durationSeconds * 1000) / steps.length;
+      state.timer = window.setTimeout(advanceAfterNarration, Math.max(minimumStepMs, caption.length * 55));
     }
   }
 
@@ -297,6 +312,10 @@
       return;
     }
     byId("animation-title").textContent = state.lesson.title[state.language];
+    const minutes = Math.ceil(state.lesson.durationSeconds / 60);
+    byId("animation-duration").textContent = state.language === "te"
+      ? `సుమారు ${minutes} నిమిషాలు`
+      : `About ${minutes} min`;
     byId("animation-status").textContent = "";
     byId("animation-check").textContent = state.language === "te"
       ? "ఈ వివరణను చూసిన తర్వాత భావనను మీ మాటల్లో చెప్పండి."
