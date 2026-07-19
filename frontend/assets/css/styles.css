@@ -3328,3 +3328,81 @@ body {
 @media (prefers-reduced-motion:reduce) {
   .sunlight-ray,.water-particles{animation:none}
 }
+
+
+/* Point-by-point animated storyboard */
+.point-action-layer {
+  position:absolute;
+  z-index:18;
+  left:50%;
+  bottom:1.35rem;
+  translate:-50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(.8rem,3vw,2.2rem);
+  min-width:min(82%,42rem);
+  border:1px solid #ffffff66;
+  border-radius:1.1rem;
+  background:linear-gradient(135deg,#041c37e8,#0b4f85dc);
+  color:#fff;
+  padding:.9rem 1.25rem;
+  box-shadow:0 1rem 2.5rem #03101f88,inset 0 1px #ffffff44;
+  backdrop-filter:blur(12px);
+  animation:storyboard-enter .6s cubic-bezier(.2,.9,.2,1) both;
+}
+.point-action-item {
+  display:grid;
+  place-items:center;
+  min-width:4.4rem;
+  min-height:3rem;
+  font-size:clamp(1rem,2.6vw,1.7rem);
+  font-weight:950;
+  text-align:center;
+  text-shadow:0 2px 8px #001;
+}
+.action-item-1{animation:action-source 1.8s ease-in-out infinite}
+.action-item-2{color:#ffe266;font-size:2.2rem;animation:action-arrow 1.2s ease-in-out infinite}
+.action-item-3{animation:action-result 1.8s .35s ease-in-out infinite}
+.action-pulse{position:absolute;inset:-.3rem;border:2px solid #77f5d1;border-radius:1.25rem;pointer-events:none;animation:action-pulse 1.8s ease-out infinite}
+
+/* The active photosynthesis process changes the physical scene and storyboard together. */
+.point-action-layer[data-action="sunlight"]{background:linear-gradient(135deg,#7d4e00e8,#d88700e8)}
+.point-action-layer[data-action="roots-water"]{background:linear-gradient(135deg,#064d70e8,#078eb5e8)}
+.point-action-layer[data-action="carbon"]{background:linear-gradient(135deg,#334155e8,#587083e8)}
+.point-action-layer[data-action="food"]{background:linear-gradient(135deg,#6f4a00e8,#c17b00e8)}
+.point-action-layer[data-action="oxygen"]{background:linear-gradient(135deg,#075c4ae8,#0aa57ce8)}
+
+.animation-stage[data-concept="photosynthesis"][data-phase="sunlight"] .sunlight-rays{opacity:1}
+.animation-stage[data-concept="photosynthesis"][data-phase="sunlight"] .sunlight-ray{animation-duration:.8s}
+.animation-stage[data-concept="photosynthesis"][data-phase="sunlight"] .leaf-chlorophyll{opacity:1;scale:1.25;box-shadow:0 0 2rem #bbff65}
+.animation-stage[data-concept="photosynthesis"][data-phase="roots-water"] .water-particles{opacity:1;width:.8rem;filter:drop-shadow(0 0 1rem #bff4ff)}
+.animation-stage[data-concept="photosynthesis"][data-phase="roots-water"] .plant-stem{box-shadow:0 0 1.3rem #50d9ff}
+.animation-stage[data-concept="photosynthesis"][data-phase="carbon"] .carbon-flow{font-size:1.3rem;box-shadow:0 0 1.5rem #e8f5ff}
+.animation-stage[data-concept="photosynthesis"][data-phase="food"] .plant-leaf{filter:brightness(1.35);box-shadow:0 0 2.5rem #d6ff70}
+.animation-stage[data-concept="photosynthesis"][data-phase="oxygen"] .oxygen-flow{font-size:1.4rem;box-shadow:0 0 1.8rem #baffea}
+
+/* Every next point restarts a visibly new storyboard movement. */
+.animation-stage[data-sequence="0"] .point-action-layer{transform-origin:left center}
+.animation-stage[data-sequence="1"] .point-action-layer{transform-origin:center center}
+.animation-stage[data-sequence="2"] .point-action-layer{transform-origin:right center}
+.animation-stage[data-sequence="3"] .point-action-layer{filter:hue-rotate(8deg)}
+.animation-stage[data-sequence="4"] .point-action-layer{filter:hue-rotate(-8deg)}
+
+@keyframes storyboard-enter{
+  from{opacity:0;translate:-50% 2.2rem;scale:.92}
+  to{opacity:1;translate:-50% 0;scale:1}
+}
+@keyframes action-source{50%{scale:1.16;filter:drop-shadow(0 0 .8rem #fff)}}
+@keyframes action-arrow{50%{translate:.7rem 0;opacity:.45}}
+@keyframes action-result{0%,35%{opacity:.35;scale:.82}65%,100%{opacity:1;scale:1.12}}
+@keyframes action-pulse{from{opacity:.8;scale:.96}to{opacity:0;scale:1.06}}
+
+@media(max-width:48rem){
+  .point-action-layer{min-width:92%;gap:.45rem;padding:.7rem .6rem}
+  .point-action-item{min-width:2.8rem;font-size:.82rem}
+  .action-item-2{font-size:1.4rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .point-action-layer,.point-action-item,.action-pulse{animation:none}
+}
