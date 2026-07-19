@@ -404,3 +404,33 @@ def test_animation_scenes_use_rich_concept_specific_motion_graphics() -> None:
         assert f".{visual}" in styles
     for animation in ("rain-fall", "star-twinkle", "sun-breathe", "water-rise"):
         assert f"@keyframes {animation}" in styles
+
+
+def test_fraction_animation_cuts_whole_pizza_in_narrated_sequence() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert 'node("pizza-cut cut-vertical")' in animation_js
+    assert 'node("pizza-cut cut-horizontal")' in animation_js
+    assert "ముందుగా మధ్యలో నిలువుగా ఒక కోత" in animation_js
+    assert "మధ్యలో అడ్డంగా రెండవ కోత" in animation_js
+    assert '.animation-stage[data-concept="fractions"][data-step="2"] .cut-vertical' in styles
+    assert '.animation-stage[data-concept="fractions"][data-step="3"] .cut-horizontal' in styles
+    assert 'node("piece-number", String(index + 1))' in animation_js
+
+
+def test_all_animated_lessons_are_between_one_and_five_minutes() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    durations = [int(value) for value in re.findall(r"durationSeconds: (\d+)", animation_js)]
+    assert len(durations) == 4
+    assert all(60 <= duration <= 300 for duration in durations)
+    assert "minimumStepMs" in animation_js
+    assert 'id="animation-duration"' in STUDENT_HTML
+
+
+def test_fraction_animation_has_extended_eight_step_instruction() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    fraction_block = animation_js.split("Fractions:", 1)[1].split("Geometry:", 1)[0]
+    english_steps = fraction_block.split("en: [", 1)[1].split("],", 1)[0]
+    assert english_steps.count('",') >= 7
+    assert "Three is the numerator" in fraction_block
+    assert "four equal pieces" in fraction_block
