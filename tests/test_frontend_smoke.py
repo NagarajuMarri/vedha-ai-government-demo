@@ -528,11 +528,11 @@ def test_every_narration_point_renders_a_fresh_storyboard_action() -> None:
     styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
     assert "const fallbackPhaseSequence" in animation_js
     assert "function resolvedVisualPhase(concept, caption, index, total)" in animation_js
-    assert "function renderPointAction(stage, concept, phase, index)" in animation_js
-    assert 'stage.querySelector(".point-action-layer")?.remove()' in animation_js
-    assert "renderPointAction(stage, state.concept, activePhase, state.index)" in animation_js
-    assert ".point-action-layer" in styles
-    assert "@keyframes storyboard-enter" in styles
+    assert "function renderSentenceScene(stage, concept, phase, index)" in animation_js
+    assert 'stage.querySelector(".sentence-scene")?.remove()' in animation_js
+    assert "renderSentenceScene(stage, state.concept, activePhase, state.index)" in animation_js
+    assert ".sentence-scene" in styles
+    assert "@keyframes sentence-scene-cut" in styles
     for phase in ("sunlight", "roots-water", "carbon", "food", "oxygen"):
         assert f'data-action="{phase}"' in styles
 
@@ -559,3 +559,21 @@ def test_focused_practice_card_keeps_all_answer_methods_responsive() -> None:
     assert "@keyframes question-card-enter" in styles
     assert "Upload Handwritten Work" in TUTOR_JS
     assert "Speak Answer" in TUTOR_JS
+
+
+def test_photosynthesis_uses_separate_full_scenes_for_each_process() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for visual in (
+        "process-rays", "root-soil-cutaway", "leaf-closeup",
+        "chloroplast-factory", "oxygen-bubbles",
+    ):
+        assert visual in animation_js
+        assert f".{visual}" in styles
+    for phase in ("sunlight", "roots-water", "carbon", "food", "oxygen"):
+        assert f"sentence-phase-{phase}" in styles
+    for animation in (
+        "light-hit-leaf", "drop-to-root", "co2-enter",
+        "o2-release-scene", "sentence-scene-cut",
+    ):
+        assert f"@keyframes {animation}" in styles
