@@ -427,6 +427,101 @@
     return sequence[position];
   }
 
+  const dedicatedAnimatedConcepts = new Set([
+    "Fractions", "Decimals", "Geometry", "Water Cycle", "Solar System",
+    "Grammar", "Telugu Grammar", "Indian Constitution",
+    "Indian Freedom Movement", "Andhra Pradesh Geography",
+    "Local Government", "Climate and Natural Resources",
+  ]);
+
+  function appendParticles(parent, className, label, count = 8) {
+    for (let index = 0; index < count; index += 1) {
+      parent.append(node(`${className} ${className}-${index + 1}`, label));
+    }
+  }
+
+  function renderDedicatedLessonScene(scene, concept, phase) {
+    scene.classList.add("dedicated-lesson-scene", `dedicated-${concept.toLowerCase().replaceAll(" ", "-")}`);
+    if (concept === "Fractions") {
+      const pizza = node("story-pizza");
+      for (let piece = 0; piece < 4; piece += 1) pizza.append(node(`story-pizza-piece story-piece-${piece + 1}`, String(piece + 1)));
+      scene.append(pizza, node("story-cut cut-one"), node("story-cut cut-two"), node("story-math-label", phaseVisuals[phase]?.join("  ") || "1 → 4 equal parts"));
+    } else if (concept === "Decimals") {
+      const table = node("place-value-table");
+      [["ONES", "2"], ["TENTHS", "3"], ["HUNDREDTHS", "5"]].forEach(([label, value]) => {
+        const cell = node(`place-value-cell place-${label.toLowerCase()}`);
+        cell.append(node("place-name", label), node("place-digit", value));
+        table.append(cell);
+      });
+      scene.append(node("decimal-focus-number", "2.35"), table, node("decimal-focus-arrow", "↓"));
+    } else if (concept === "Geometry") {
+      const board = node("geometry-story-board");
+      board.append(node("geo-point point-a", "A"), node("geo-point point-b", "B"), node("geo-point point-c", "C"),
+        node("geo-line line-ab"), node("geo-line line-bc"), node("geo-line line-ca"),
+        node("geo-angle geo-angle-a", "50°"), node("geo-angle geo-angle-b", "60°"), node("geo-angle geo-angle-c", "70°"));
+      scene.append(board, node("geometry-story-equation", "50° + 60° + 70° = 180°"));
+    } else if (concept === "Water Cycle") {
+      const world = node("cycle-story-world");
+      world.append(node("cycle-story-sun", "☀"), node("cycle-story-ocean", "OCEAN"), node("cycle-story-cloud", "☁"),
+        node("cycle-story-mountain", "▲"), node("cycle-story-flow"));
+      const drops = node("cycle-story-particles");
+      appendParticles(drops, "cycle-particle", "●", 12);
+      scene.append(world, drops, node("cycle-story-label", phase.toUpperCase()));
+    } else if (concept === "Solar System") {
+      const system = node("solar-story-system");
+      system.append(node("solar-story-sun", "☀"));
+      ["MERCURY", "VENUS", "EARTH", "MARS", "JUPITER"].forEach((name, index) => {
+        const orbit = node(`solar-story-orbit solar-story-orbit-${index + 1}`);
+        orbit.append(node(`solar-story-planet solar-story-planet-${index + 1}`, name));
+        system.append(orbit);
+      });
+      scene.append(system, node("solar-story-label", phase.toUpperCase()));
+    } else if (concept === "Grammar" || concept === "Telugu Grammar") {
+      const telugu = concept === "Telugu Grammar";
+      const words = telugu ? [["రాము", "కర్త"], ["పుస్తకం", "కర్మ"], ["చదివాడు", "క్రియ"]] : [["Ravi", "SUBJECT"], ["reads", "VERB"], ["a book", "OBJECT"]];
+      const builder = node("grammar-story-builder");
+      words.forEach(([word, role], index) => {
+        const block = node(`grammar-story-word grammar-story-word-${index + 1}`);
+        block.append(node("grammar-word", word), node("grammar-role", role));
+        builder.append(block);
+      });
+      scene.append(builder, node("grammar-story-result", words.map(([word]) => word).join(" ") + "."));
+    } else if (concept === "Indian Constitution") {
+      const civic = node("civic-story");
+      civic.append(node("civic-book", "CONSTITUTION"), node("civic-ray civic-rights", "RIGHTS"),
+        node("civic-ray civic-duties", "DUTIES"), node("civic-ray civic-democracy", "DEMOCRACY"),
+        node("civic-ray civic-institutions", "INSTITUTIONS"));
+      scene.append(civic);
+    } else if (concept === "Indian Freedom Movement") {
+      const road = node("freedom-story-road");
+      [["1857", "RESISTANCE"], ["1920", "NON-COOPERATION"], ["1930", "SALT MARCH"], ["1942", "QUIT INDIA"], ["1947", "FREEDOM"]].forEach(([year, event], index) => {
+        const milestone = node(`freedom-story-milestone milestone-${index + 1}`);
+        milestone.append(node("milestone-year", year), node("milestone-event", event));
+        road.append(milestone);
+      });
+      scene.append(road, node("freedom-story-flag", "🇮🇳"));
+    } else if (concept === "Andhra Pradesh Geography") {
+      const map = node("ap-story-map");
+      map.append(node("ap-story-regions"), node("ap-story-ghats", "EASTERN GHATS"),
+        node("ap-story-river ap-story-krishna", "KRISHNA"), node("ap-story-river ap-story-godavari", "GODAVARI"),
+        node("ap-story-coast", "BAY OF BENGAL"));
+      scene.append(map);
+    } else if (concept === "Local Government") {
+      const village = node("government-story");
+      village.append(node("government-people", "🏠  🧑  🏠  👩  🏠"), node("government-office", "GRAM PANCHAYAT"),
+        node("government-service gov-water", "💧 WATER"), node("government-service gov-road", "═ ROAD"),
+        node("government-service gov-light", "💡 LIGHT"));
+      scene.append(village);
+    } else if (concept === "Climate and Natural Resources") {
+      const resources = node("resource-story");
+      resources.append(node("resource-story-earth", "🌍"), node("resource-story-item story-water", "💧 WATER"),
+        node("resource-story-item story-soil", "SOIL"), node("resource-story-item story-forest", "🌳 FOREST"),
+        node("resource-story-item story-minerals", "◆ MINERALS"), node("resource-story-conserve", "↻ CONSERVE"));
+      scene.append(resources);
+    }
+    scene.dataset.dedicatedPhase = phase;
+  }
+
   function renderSentenceScene(stage, concept, phase, index) {
     stage.querySelector(".sentence-scene")?.remove();
     const scene = node(`sentence-scene sentence-scene-${concept.toLowerCase().replaceAll(" ", "-")} sentence-phase-${phase}`);
@@ -466,13 +561,12 @@
       } else {
         scene.append(node("process-cycle", "☀  →  🌿  →  O₂"), node("process-callout", state.language === "te" ? "కిరణజన్య సంయోగక్రియ" : "PHOTOSYNTHESIS"));
       }
+    } else if (dedicatedAnimatedConcepts.has(concept)) {
+      renderDedicatedLessonScene(scene, concept, phase);
     } else {
       const visuals = phaseVisuals[phase] || ["●", "⇢", "●"];
       const visualTrack = node("sentence-visual-track");
-      visuals.forEach((visual, visualIndex) => {
-        const item = node(`sentence-visual-object sentence-object-${visualIndex + 1}`, visual);
-        visualTrack.append(item);
-      });
+      visuals.forEach((visual, visualIndex) => visualTrack.append(node(`sentence-visual-object sentence-object-${visualIndex + 1}`, visual)));
       scene.append(visualTrack, node("sentence-motion-path"));
     }
 
