@@ -292,6 +292,7 @@ def test_shared_voice_input_is_available_for_all_demo_roles() -> None:
     assert 'target.dispatchEvent(new Event("input", { bubbles: true }))' in voice_js
     assert '"te-IN"' in voice_js
     assert '"en-IN"' in voice_js
+    assert 'telugu_assisted_english: "te-IN"' in voice_js
     for interface in ("student", "teacher", "parent", "government"):
         content = (FRONTEND_ROOT / interface / "index.html").read_text(encoding="utf-8")
         assert 'src="../assets/js/voice-assistant.js"' in content
@@ -314,3 +315,12 @@ def test_government_voice_query_applies_supported_district_filter() -> None:
     for name in ("guntur", "గుంటూరు", "visakhapatnam", "విశాఖపట్నం"):
         assert name in dashboard_js
     assert 'byId("government-voice-form").addEventListener("submit", applyVoiceQuery)' in dashboard_js
+
+
+def test_telugu_narration_never_silently_falls_back_to_english_voice() -> None:
+    voice_js = (FRONTEND_ROOT / "assets" / "js" / "voice-assistant.js").read_text(encoding="utf-8")
+    assert "async function preferredVoice" in voice_js
+    assert '"voiceschanged"' in voice_js
+    assert 'language.startsWith("te") && !voice' in voice_js
+    assert "తెలుగు వాయిస్ ఈ బ్రౌజర్‌లో అందుబాటులో లేదు" in voice_js
+    assert 'id="lesson-narration-status"' in STUDENT_HTML
