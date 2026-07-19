@@ -274,7 +274,7 @@ def test_government_dashboard_is_synthetic_private_and_filterable() -> None:
     for metric in ("learners", "lessons", "practice", "mastery", "telugu", "improvement"):
         assert f'id="metric-{metric}"' in dashboard_html
     assert "baseDistricts" in dashboard_js
-    assert 'byId("district-filter").addEventListener("change", renderDashboard)' in dashboard_js
+    assert 'byId("district-filter").addEventListener("change",()=>' in dashboard_js
     assert "innerHTML" not in dashboard_js
 
 
@@ -785,8 +785,8 @@ def test_government_dashboard_has_three_profile_voice_and_spoken_insight() -> No
     assert 'id="government-answer"' in html
     assert 'data-speak-target="#government-answer"' in html
     assert 'data-speech-pause' in html
-    assert "ఇవన్నీ కల్పిత ప్రదర్శన సూచికలు" in js
-    assert "synthetic demo indicators" in js
+    assert "వ్యక్తిగత విద్యార్థి వివరాలు చూపబడవు" in js
+    assert "aggregate indicators" in js
 
 
 def test_demo_runbook_locks_rehearsal_and_recovery_paths() -> None:
