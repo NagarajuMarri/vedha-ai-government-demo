@@ -363,9 +363,14 @@ def test_animation_mode_hides_written_lesson_and_keeps_only_synchronized_caption
     assert 'byId("animation-caption").textContent = steps[state.index]' in animation_js
 
 
-def test_four_showcase_concepts_have_bilingual_synchronized_animation_steps() -> None:
+def test_all_available_concepts_have_synchronized_animation_templates() -> None:
     animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
-    for concept in ("Fractions", "Geometry", "Water Cycle", "Solar System"):
+    for concept in (
+        "Fractions", "Decimals", "Geometry", "Solar System", "Water Cycle",
+        "Photosynthesis", "Grammar", "Telugu Grammar", "Indian Constitution",
+        "Indian Freedom Movement", "Andhra Pradesh Geography", "Local Government",
+        "Climate and Natural Resources",
+    ):
         assert concept in animation_js
     for telugu in ("భిన్నాలు", "జ్యామితి", "నీటి చక్రం", "సౌర కుటుంబం"):
         assert telugu in animation_js
@@ -421,7 +426,7 @@ def test_fraction_animation_cuts_whole_pizza_in_narrated_sequence() -> None:
 def test_all_animated_lessons_are_between_one_and_five_minutes() -> None:
     animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
     durations = [int(value) for value in re.findall(r"durationSeconds: (\d+)", animation_js)]
-    assert len(durations) == 4
+    assert len(durations) == 13
     assert all(60 <= duration <= 300 for duration in durations)
     assert "estimateNarrationSeconds" in animation_js
     assert "Math.max(60, Math.min(300" in animation_js
@@ -450,3 +455,24 @@ def test_animation_narrates_the_complete_generated_text_lesson() -> None:
         assert lesson_part in animation_js
     assert "steps: { en: fullNarration, te: fullNarration }" in animation_js
     assert "generatedLesson.title" in animation_js
+
+
+def test_practice_answers_support_voice_input_in_selected_language() -> None:
+    assert 'voiceAnswer:' in TUTOR_JS
+    assert 'input.id = `practice-answer-${question.question_id}`' in TUTOR_JS
+    assert 'voiceButton.dataset.voiceTarget = `#${input.id}`' in TUTOR_JS
+    assert 'voiceButton.dataset.voiceStatus = `#${status.id}`' in TUTOR_JS
+    assert 'voiceButton.dataset.voiceLanguageSource = \'input[name="learning_profile"]:checked\'' in TUTOR_JS
+    assert 'answerRow.append(input, voiceButton, button)' in TUTOR_JS
+    assert 'input.className = "practice-answer"' in TUTOR_JS
+
+
+def test_all_animation_templates_have_distinct_visual_scenes() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for visual in (
+        "decimal-scene", "plant-scene", "grammar-scene", "constitution-scene",
+        "freedom-scene", "ap-scene", "local-government-scene", "resources-scene",
+    ):
+        assert visual in animation_js
+        assert f".{visual}" in styles
