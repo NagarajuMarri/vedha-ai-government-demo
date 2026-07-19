@@ -681,3 +681,41 @@ def test_parent_exam_report_layout_is_responsive() -> None:
         assert selector in styles
     assert "@media(max-width:58rem)" in styles
     assert "@media(max-width:36rem)" in styles
+
+
+def test_parent_portal_offers_three_explicit_language_profiles() -> None:
+    parent_html = (FRONTEND_ROOT / "parent" / "index.html").read_text(encoding="utf-8")
+    parent_js = (FRONTEND_ROOT / "assets" / "js" / "parent-dashboard.js").read_text(encoding="utf-8")
+    for profile in ("english_medium", "pure_telugu", "telugu_assisted_english"):
+        assert f'value="{profile}"' in parent_html
+        assert profile in parent_js
+    assert "English terms" in parent_html
+
+
+def test_parent_portal_localizes_dynamic_report_content_not_only_headings() -> None:
+    parent_js = (FRONTEND_ROOT / "assets" / "js" / "parent-dashboard.js").read_text(encoding="utf-8")
+    for pure_telugu in (
+        "గణితం · భిన్నాలు", "విజ్ఞాన శాస్త్రం · సౌర కుటుంబం",
+        "కోణాలు, త్రిభుజ నియమాలను పునశ్చరణ చేయండి",
+        "భిన్నాల పాఠం మరియు 5 అభ్యాస ప్రశ్నలను పూర్తి చేశారు",
+        "టర్మ్ పరీక్ష సిద్ధత",
+    ):
+        assert pure_telugu in parent_js
+    for assisted in (
+        "Angles మరియు triangle rulesను review చేయండి",
+        "Fractions lesson మరియు 5 practice questions complete చేశారు",
+        "Progress చూడండి",
+    ):
+        assert assisted in parent_js
+    assert "function translate(text, profile)" in parent_js
+    assert "progressRow([translate(label, language), score])" in parent_js
+    assert "translate(child.exam.title, language)" in parent_js
+    assert "translate(recommendation, language)" in parent_js
+
+
+def test_parent_voice_insights_follow_selected_language_profile() -> None:
+    parent_js = (FRONTEND_ROOT / "assets" / "js" / "parent-dashboard.js").read_text(encoding="utf-8")
+    assert 'profile === "pure_telugu"' in parent_js
+    assert 'profile === "telugu_assisted_english"' in parent_js
+    assert "Accuracy" in parent_js
+    assert "తదుపరి దశ" in parent_js
