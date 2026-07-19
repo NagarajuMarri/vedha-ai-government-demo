@@ -180,7 +180,7 @@ def test_handwritten_phone_photo_evaluation_is_connected() -> None:
 
 
 def test_pure_telugu_practice_controls_are_localized() -> None:
-    for text in ("15 ప్రశ్నల అభ్యాసం", "సులభం · 5", "సమాధానం తనిఖీ", "చేతిరాత పరిష్కారం జోడించండి", "అభ్యాసం రూపొందించండి"):
+    for text in ("మార్గదర్శక అభ్యాసం", "సులభం · 5", "సమాధానం తనిఖీ", "చేతిరాత పరిష్కారం జోడించండి", "అభ్యాసం రూపొందించండి"):
         assert text in TUTOR_JS
     assert 'hint.textContent = `${copy.hintLabel}: ${question.hint}`' in TUTOR_JS
 
@@ -340,3 +340,273 @@ def test_lesson_narration_excludes_interface_controls_and_section_labels() -> No
         assert re.search(fr'id="{element_id}"[^>]*data-narration', STUDENT_HTML)
     assert 'data-speech-pause data-narration' not in STUDENT_HTML
     assert 'data-speech-stop data-narration' not in STUDENT_HTML
+
+
+def test_student_can_choose_text_or_narrated_animation_mode() -> None:
+    assert 'data-explanation-mode="text"' in STUDENT_HTML
+    assert 'data-explanation-mode="animation"' in STUDENT_HTML
+    assert 'id="concept-animation"' in STUDENT_HTML
+    assert 'id="animation-caption"' in STUDENT_HTML
+    assert 'id="animation-play"' in STUDENT_HTML
+    assert 'id="animation-previous"' in STUDENT_HTML
+    assert 'id="animation-next"' in STUDENT_HTML
+    assert 'id="animation-replay"' in STUDENT_HTML
+    assert 'src="../assets/js/concept-animations.js"' in STUDENT_HTML
+
+
+def test_animation_mode_hides_written_lesson_and_keeps_only_synchronized_caption() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    assert ".lesson-result.animation-mode > .lesson-text-content" in styles
+    assert "display: none" in styles
+    assert 'lessonResult.classList.toggle("animation-mode", animationMode)' in animation_js
+    assert 'byId("animation-caption").textContent = steps[state.index]' in animation_js
+
+
+def test_all_available_concepts_have_synchronized_animation_templates() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    for concept in (
+        "Fractions", "Decimals", "Geometry", "Solar System", "Water Cycle",
+        "Photosynthesis", "Grammar", "Telugu Grammar", "Indian Constitution",
+        "Indian Freedom Movement", "Andhra Pradesh Geography", "Local Government",
+        "Climate and Natural Resources",
+    ):
+        assert concept in animation_js
+    for telugu in ("భిన్నాలు", "జ్యామితి", "నీటి చక్రం", "సౌర కుటుంబం"):
+        assert telugu in animation_js
+    assert "window.VedhaVoice?.speakText" in animation_js
+    assert "onEnd: scheduleAdvanceAfterNarration" in animation_js
+    assert "prefers-reduced-motion: reduce" in (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+
+
+def test_lesson_generation_prepares_animation_for_exact_selected_concept() -> None:
+    assert "window.VedhaAnimations?.prepare(state.setup.concept, state.setup.learning_profile, lesson)" in TUTOR_JS
+
+
+def test_animation_player_has_government_presentation_controls_and_timeline() -> None:
+    assert 'id="animation-fullscreen"' in STUDENT_HTML
+    assert 'id="animation-progress"' in STUDENT_HTML
+    assert 'role="progressbar"' in STUDENT_HTML
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    assert "requestFullscreen" in animation_js
+    assert 'byId("animation-progress-fill").style.width' in animation_js
+
+
+def test_animation_scenes_use_rich_concept_specific_motion_graphics() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for visual in (
+        "fraction-plate",
+        "pizza-topping",
+        "geometry-blueprint",
+        "triangle-edge",
+        "water-landscape",
+        "rain-drop",
+        "space-star",
+        "planet-surface",
+    ):
+        assert visual in animation_js
+        assert f".{visual}" in styles
+    for animation in ("rain-fall", "star-twinkle", "sun-breathe", "water-rise"):
+        assert f"@keyframes {animation}" in styles
+
+
+def test_fraction_animation_cuts_whole_pizza_in_narrated_sequence() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert 'node("pizza-cut cut-vertical")' in animation_js
+    assert 'node("pizza-cut cut-horizontal")' in animation_js
+    assert "ముందుగా మధ్యలో నిలువుగా ఒక కోత" in animation_js
+    assert "మధ్యలో అడ్డంగా రెండవ కోత" in animation_js
+    assert '.animation-stage[data-concept="fractions"][data-step="2"] .cut-vertical' in styles
+    assert '.animation-stage[data-concept="fractions"][data-step="3"] .cut-horizontal' in styles
+    assert 'node("piece-number", String(index + 1))' in animation_js
+
+
+def test_all_animated_lessons_are_between_one_and_five_minutes() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    durations = [int(value) for value in re.findall(r"durationSeconds: (\d+)", animation_js)]
+    assert len(durations) == 13
+    assert all(60 <= duration <= 300 for duration in durations)
+    assert "estimateNarrationSeconds" in animation_js
+    assert "Math.max(60, Math.min(300" in animation_js
+    assert 'id="animation-duration"' in STUDENT_HTML
+
+
+def test_fraction_animation_has_extended_eight_step_instruction() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    fraction_block = animation_js.split("Fractions:", 1)[1].split("Geometry:", 1)[0]
+    english_steps = fraction_block.split("en: [", 1)[1].split("],", 1)[0]
+    assert english_steps.count('",') >= 7
+    assert "Three is the numerator" in fraction_block
+    assert "four equal pieces" in fraction_block
+
+
+def test_animation_narrates_the_complete_generated_text_lesson() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    assert "function buildFullLessonNarration(generatedLesson)" in animation_js
+    for lesson_part in (
+        "generatedLesson.introduction",
+        "...generatedLesson.explanation_steps",
+        "generatedLesson.example",
+        "...generatedLesson.key_points",
+        "generatedLesson.check_question",
+    ):
+        assert lesson_part in animation_js
+    assert "steps: { en: fullNarration, te: fullNarration }" in animation_js
+    assert "generatedLesson.title" in animation_js
+
+
+def test_practice_answers_support_voice_input_in_selected_language() -> None:
+    assert 'voiceAnswer:' in TUTOR_JS
+    assert 'input.id = `practice-answer-${question.question_id}`' in TUTOR_JS
+    assert 'voiceButton.dataset.voiceTarget = `#${input.id}`' in TUTOR_JS
+    assert 'voiceButton.dataset.voiceStatus = `#practice-voice-status-${question.question_id}`' in TUTOR_JS
+    assert 'voiceButton.dataset.voiceLanguageSource = \'input[name="learning_profile"]:checked\'' in TUTOR_JS
+    assert 'answerRow.append(input, voiceButton, button)' in TUTOR_JS
+    assert 'input.className = "practice-answer"' in TUTOR_JS
+
+
+def test_all_animation_templates_have_distinct_visual_scenes() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for visual in (
+        "decimal-scene", "plant-scene", "grammar-scene", "constitution-scene",
+        "freedom-scene", "ap-scene", "local-government-scene", "resources-scene",
+    ):
+        assert visual in animation_js
+        assert f".{visual}" in styles
+
+
+def test_animation_narration_autoplays_and_manual_navigation_speaks() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    voice_js = (FRONTEND_ROOT / "assets" / "js" / "voice-assistant.js").read_text(encoding="utf-8")
+    assert 'if (animationMode)' in animation_js
+    assert "play();" in animation_js
+    assert 'if (event.target.closest("#animation-next"))' in animation_js
+    assert 'if (event.target.closest("#animation-previous"))' in animation_js
+    assert animation_js.count("narrateCurrentStep();") >= 4
+    assert "if (synth.paused) synth.resume()" in voice_js
+    assert "function narrationChunks(text, maxLength = 170)" in voice_js
+    assert "window.setTimeout(speakChunk, 80)" in voice_js
+    assert "speechToken" in voice_js
+
+
+def test_animation_visual_phase_tracks_narrated_sentence() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert "function visualPhase(concept, caption, index, total)" in animation_js
+    assert "stage.dataset.phase = activePhase" in animation_js
+    for phase in ("roots-water", "carbon", "food", "oxygen"):
+        assert phase in animation_js
+        assert f'data-phase="{phase}"' in styles
+    for animation in ("water-into-roots", "gas-into-leaf", "oxygen-release"):
+        assert f"@keyframes {animation}" in styles
+
+
+def test_photosynthesis_animation_progressively_shows_inputs_and_outputs() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert 'node("sunlight-rays")' in animation_js
+    assert 'node(`sunlight-ray sunlight-ray-${index + 1}`)' in animation_js
+    assert 'node("water-particles")' in animation_js
+    assert 'stage.classList.add(`seen-${resolvedVisualPhase' in animation_js
+    for selector in (
+        ".seen-sunlight .sunlight-rays",
+        ".seen-roots-water .water-particles",
+        ".seen-carbon .carbon-flow",
+        ".seen-food .plant-food",
+        ".seen-oxygen .oxygen-flow",
+    ):
+        assert selector in styles
+    assert "@keyframes sunbeam-fall" in styles
+    assert "@keyframes water-up-stem" in styles
+
+
+def test_every_narration_point_renders_a_fresh_storyboard_action() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert "const fallbackPhaseSequence" in animation_js
+    assert "function resolvedVisualPhase(concept, caption, index, total)" in animation_js
+    assert "function renderSentenceScene(stage, concept, phase, index)" in animation_js
+    assert 'stage.querySelector(".sentence-scene")?.remove()' in animation_js
+    assert "renderSentenceScene(stage, state.concept, activePhase, state.index)" in animation_js
+    assert ".sentence-scene" in styles
+    assert "@keyframes sentence-scene-cut" in styles
+    for phase in ("sunlight", "roots-water", "carbon", "food", "oxygen"):
+        assert f'data-action="{phase}"' in styles
+
+
+def test_practice_presents_one_validated_question_at_a_time() -> None:
+    assert "practiceIndex: 0" in TUTOR_JS
+    assert "function showPracticeQuestion(index)" in TUTOR_JS
+    assert 'item.dataset.practiceIndex = String(questionIndexes.get(question.question_id))' in TUTOR_JS
+    assert 'item.className = "focused-practice-question"' in TUTOR_JS
+    assert 'item.hidden = true' in TUTOR_JS
+    assert "Question ${state.practiceIndex + 1} of ${questions.length}" in TUTOR_JS
+    assert "function unlockNextQuestion(item, evaluation)" in TUTOR_JS
+    assert "if (!evaluation.correct && evaluation.attempt_number < 2) return" in TUTOR_JS
+    assert 'nextButton.className = "primary-button next-question"' in TUTOR_JS
+    assert "showPracticeQuestion(currentIndex + 1)" in TUTOR_JS
+
+
+def test_focused_practice_card_keeps_all_answer_methods_responsive() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert ".practice-result.sequential-practice" in styles
+    assert ".focused-practice-question" in styles
+    assert ".focused-practice-question .practice-answer-row" in styles
+    assert ".focused-practice-question .next-question" in styles
+    assert "@keyframes question-card-enter" in styles
+    assert "Upload Handwritten Work" in TUTOR_JS
+    assert "Speak Answer" in TUTOR_JS
+
+
+def test_photosynthesis_uses_separate_full_scenes_for_each_process() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for visual in (
+        "process-rays", "root-soil-cutaway", "leaf-closeup",
+        "chloroplast-factory", "oxygen-bubbles",
+    ):
+        assert visual in animation_js
+        assert f".{visual}" in styles
+    for phase in ("sunlight", "roots-water", "carbon", "food", "oxygen"):
+        assert f"sentence-phase-{phase}" in styles
+    for animation in (
+        "light-hit-leaf", "drop-to-root", "co2-enter",
+        "o2-release-scene", "sentence-scene-cut",
+    ):
+        assert f"@keyframes {animation}" in styles
+
+
+def test_every_available_lesson_has_dedicated_sentence_level_scenes() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    concepts = (
+        "Fractions", "Decimals", "Geometry", "Water Cycle", "Solar System",
+        "Grammar", "Telugu Grammar", "Indian Constitution",
+        "Indian Freedom Movement", "Andhra Pradesh Geography",
+        "Local Government", "Climate and Natural Resources",
+    )
+    assert "const dedicatedAnimatedConcepts = new Set" in animation_js
+    assert "function renderDedicatedLessonScene(scene, concept, phase)" in animation_js
+    for concept in concepts:
+        assert f'"{concept}"' in animation_js
+        css_name = concept.lower().replace(" ", "-")
+        assert f".dedicated-{css_name}" in styles
+    assert "dedicatedAnimatedConcepts.has(concept)" in animation_js
+
+
+def test_dedicated_lesson_scenes_contain_subject_specific_visual_objects() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    visuals = (
+        "story-pizza", "place-value-table", "geometry-story-board",
+        "cycle-story-world", "solar-story-system", "grammar-story-builder",
+        "civic-story", "freedom-story-road", "ap-story-map",
+        "government-story", "resource-story",
+    )
+    for visual in visuals:
+        assert visual in animation_js
+        assert f".{visual}" in styles
+    assert "scene.dataset.dedicatedPhase = phase" in animation_js

@@ -6,6 +6,7 @@
   let activeRecognition = null;
   let activeButton = null;
   let currentUtterance = null;
+  let speechToken = 0;
 
   const languageCodes = {
     english_medium: "en-IN",
@@ -202,6 +203,114 @@
       document.querySelectorAll(".speech-controls.is-speaking").forEach((control) => control.classList.remove("is-speaking"));
     }
   });
+
+
+  function narrationChunks(text, maxLength = 170) {
+    const sentences = text.trim().match(/[^.!?।]+[.!?।]?/g) || [text.trim()];
+    const chunks = [];
+    sentences.forEach((sentence) => {
+      const clean = sentence.trim();
+      if (!clean) return;
+      if (clean.length <= maxLength) {
+        chunks.push(clean);
+        return;
+      }
+      const words = clean.split(/\s+/);
+      let chunk = "";
+      words.forEach((word) => {
+        if (chunk && `${chunk} ${word}`.length > maxLength) {
+          chunks.push(chunk);
+          chunk = word;
+        } else {
+          chunk = chunk ? `${chunk} ${word}` : word;
+        }
+      });
+      if (chunk) chunks.push(chunk);
+    });
+    return chunks;
+  }
+
+  async function speakText(text, languageKey, callbacks = {}) {
+    if (!synth || !text?.trim()) {
+      callbacks.onUnavailable?.();
+      return false;
+    }
+    const language = languageCodes[languageKey] || languageKey || "en-IN";
+    const voice = await preferredVoice(language);
+    if (language.startsWith("te") && !voice) {
+      callbacks.onUnavailable?.();
+      return false;
+    }
+
+    const token = ++speechToken;
+    const chunks = narrationChunks(text);
+    let index = 0;
+    let firstChunkStarted = false;
+    synth.cancel();
+
+    const speakChunk = () => {
+      if (token !== speechToken || index >= chunks.length) {
+        if (token === speechToken && index >= chunks.length) {
+          currentUtterance = null;
+          callbacks.onEnd?.();
+        }
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(chunks[index]);
+      utterance.lang = language;
+      if (voice) utterance.voice = voice;
+      utterance.rate = 0.88;
+      utterance.volume = 1;
+      utterance.pitch = 1;
+      currentUtterance = utterance;
+
+      let started = false;
+      const watchdog = window.setTimeout(() => {
+        if (token !== speechToken || started) return;
+        synth.cancel();
+        currentUtterance = null;
+        callbacks.onError?.();
+      }, 2500);
+
+      utterance.onstart = () => {
+        started = true;
+        window.clearTimeout(watchdog);
+        if (!firstChunkStarted) {
+          firstChunkStarted = true;
+          callbacks.onStart?.();
+        }
+      };
+      utterance.onend = () => {
+        window.clearTimeout(watchdog);
+        if (token !== speechToken) return;
+        index += 1;
+        window.setTimeout(speakChunk, 35);
+      };
+      utterance.onerror = (event) => {
+        window.clearTimeout(watchdog);
+        if (token !== speechToken || event.error === "interrupted") return;
+        currentUtterance = null;
+        callbacks.onError?.();
+      };
+
+      if (synth.paused) synth.resume();
+      synth.speak(utterance);
+      /* Chrome occasionally leaves the queue paused even after resume(). */
+      window.setTimeout(() => {
+        if (token === speechToken && !started && synth.paused) synth.resume();
+      }, 120);
+    };
+
+    window.setTimeout(speakChunk, 80);
+    return true;
+  }
+
+  window.VedhaVoice = {
+    speakText,
+    pause() { if (synth?.speaking && !synth.paused) synth.pause(); },
+    resume() { if (synth?.paused) synth.resume(); },
+    cancel() { speechToken += 1; synth?.cancel(); currentUtterance = null; },
+  };
 
   window.addEventListener("beforeunload", () => {
     stopRecognition();
