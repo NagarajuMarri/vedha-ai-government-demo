@@ -1,31 +1,53 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Teacher Portal | Vedha AI Government Demo</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-      <script src="../assets/js/voice-assistant.js" defer></script>
-  </head>
-  <body class="interface-shell">
-    <main class="shell-panel">
-      <p class="eyebrow">Teacher experience</p>
-      <h1>Teacher Portal</h1>
-      <p lang="te">ఉపాధ్యాయ పోర్టల్</p>
-      <section class="role-voice-console" aria-labelledby="teacher-voice-title">
-        <p class="eyebrow">Bilingual voice access</p>
-        <h2 id="teacher-voice-title">Ask about your class</h2>
-        <p>Example: “Which students need help with fractions?” or “భిన్నాలలో సహాయం అవసరమైన విద్యార్థులు ఎవరు?”</p>
-        <div class="role-voice-composer">
-          <label class="sr-only" for="teacher-voice-query">Teacher request</label>
-          <textarea id="teacher-voice-query" rows="3" placeholder="Speak or type your request"></textarea>
-          <select id="teacher-voice-language" aria-label="Voice language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
-          <button class="voice-trigger" type="button" data-voice-target="#teacher-voice-query" data-voice-status="#teacher-voice-status" data-voice-language-source="#teacher-voice-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
-        </div>
-        <p id="teacher-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
-        <p class="demo-disclosure">The transcript is editable. Portal insights and actions are delivered in the following approved sprint using synthetic demo data.</p>
-      </section>
-      <a class="back-link" href="../">← Return to interface gateway</a>
-    </main>
-  </body>
-</html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher Portal | Vedha AI Government Demo</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/voice-assistant.js" defer></script>
+  <script src="../assets/js/teacher-dashboard.js" defer></script>
+</head>
+<body class="teacher-portal">
+<header class="teacher-topbar">
+  <a class="parent-brand" href="../"><img src="../assets/images/vedha-mark.png" alt=""><span>Vedha</span></a>
+  <div><span class="synthetic-pill" id="teacher-demo-label">Synthetic demonstration data</span><a class="back-link" id="teacher-gateway" href="../">Interface gateway</a></div>
+</header>
+<main class="teacher-main">
+  <section class="teacher-hero">
+    <div><p class="eyebrow" id="teacher-eyebrow">Teacher intelligence workspace</p><h1 id="teacher-heading">Act early. Teach every learner.</h1><p id="teacher-intro">Class-level evidence, student signals and practical interventions in one clear view.</p></div>
+    <div class="teacher-controls">
+      <label id="teacher-language-label" for="teacher-language">Language</label>
+      <select id="teacher-language"><option value="english_medium">English</option><option value="pure_telugu">తెలుగు</option><option value="telugu_assisted_english">తెలుగులో English terms తో</option></select>
+      <label id="teacher-class-label" for="teacher-class">Assigned class</label>
+      <select id="teacher-class"><option value="nineA">Class 9 · Section A</option><option value="sixB">Class 6 · Section B</option></select>
+      <label id="teacher-subject-label" for="teacher-subject">Subject</label>
+      <select id="teacher-subject"><option value="all">All subjects</option><option value="Mathematics">Mathematics</option><option value="Science">Science</option><option value="English">English</option><option value="Telugu">Telugu</option><option value="Social Studies">Social Studies</option></select>
+    </div>
+  </section>
+  <section class="parent-privacy-note"><strong id="teacher-privacy-title">Controlled demo:</strong> <span id="teacher-privacy-text">All classes, students and scores are fictional. A production teacher would only see assigned classes and students.</span></section>
+  <section class="teacher-metrics">
+    <article><strong id="teacher-students">32</strong><span id="teacher-students-label">Assigned students</span></article>
+    <article><strong id="teacher-accuracy">74%</strong><span id="teacher-accuracy-label">Class accuracy</span></article>
+    <article><strong id="teacher-completion">81%</strong><span id="teacher-completion-label">Weekly completion</span></article>
+    <article><strong id="teacher-interventions">6</strong><span id="teacher-interventions-label">Need intervention</span></article>
+  </section>
+  <section class="teacher-grid">
+    <article class="teacher-card teacher-performance-card"><div class="teacher-card-head"><div><p class="eyebrow" id="performance-eyebrow">Class evidence</p><h2 id="performance-title">Concept performance</h2></div><strong id="class-average">74%</strong></div><div id="concept-performance"></div></article>
+    <article class="teacher-card"><p class="eyebrow" id="signal-eyebrow">Prioritised support</p><h2 id="signal-title">Intervention signals</h2><div id="intervention-list"></div></article>
+  </section>
+  <section class="teacher-card teacher-roster-card">
+    <div class="teacher-card-head"><div><p class="eyebrow" id="roster-eyebrow">Assigned learners only</p><h2 id="roster-title">Student progress</h2></div><span id="roster-count"></span></div>
+    <div class="teacher-table-wrap"><table><thead><tr><th id="th-student">Student</th><th id="th-strength">Strength</th><th id="th-attention">Attention area</th><th id="th-accuracy">Accuracy</th><th id="th-action">Teacher action</th></tr></thead><tbody id="student-roster"></tbody></table></div>
+  </section>
+  <section class="teacher-grid">
+    <article class="teacher-card"><p class="eyebrow" id="assignment-eyebrow">Targeted follow-up</p><h2 id="assignment-title">Remedial assignments</h2><form id="assignment-form"><label for="assignment-group" id="assignment-group-label">Student group</label><select id="assignment-group"></select><label for="assignment-topic" id="assignment-topic-label">Topic</label><select id="assignment-topic"></select><label for="assignment-type" id="assignment-type-label">Activity</label><select id="assignment-type"><option value="practice">5-question practice</option><option value="animation">Narrated concept animation</option><option value="revision">Guided revision</option></select><button class="primary-button" id="assign-button" type="submit">Assign remedial work</button></form><p id="assignment-status" class="teacher-action-status" hidden></p></article>
+    <article class="teacher-card"><p class="eyebrow" id="approval-eyebrow">Teacher-in-the-loop</p><h2 id="approval-title">AI question approval</h2><div id="approval-question"></div><div class="teacher-approval-actions"><button id="approve-question" class="primary-button" type="button">Approve</button><button id="reject-question" type="button">Request revision</button></div><p id="approval-status" class="teacher-action-status" hidden></p></article>
+  </section>
+  <section class="parent-voice-card" aria-labelledby="teacher-voice-title">
+    <div><p class="eyebrow" id="voice-eyebrow">Bilingual voice access</p><h2 id="teacher-voice-title">Ask Vedha about your class</h2><p id="teacher-voice-help">Try “Who needs help with fractions?” or “What should I assign today?”</p></div>
+    <form id="teacher-voice-form"><textarea id="teacher-voice-query" rows="3" placeholder="Speak or type your request"></textarea><div class="parent-voice-actions"><button class="voice-trigger" type="button" data-voice-target="#teacher-voice-query" data-voice-status="#teacher-voice-status" data-voice-language-source="#teacher-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button><button class="primary-button" id="teacher-ask" type="submit">Ask Vedha</button></div></form>
+    <p id="teacher-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
+    <div id="teacher-answer" class="parent-answer" role="status" aria-live="polite" hidden><p id="teacher-answer-text" data-narration></p><div class="speech-controls"><button type="button" data-speak-target="#teacher-answer" data-speak-status="#teacher-speech-status" data-voice-language-source="#teacher-language">🔊 Read insight</button><button type="button" data-speech-pause>⏯ Pause / Resume</button><button type="button" data-speech-stop>■ Stop</button></div><p id="teacher-speech-status" class="voice-status" hidden></p></div>
+  </section>
+</main>
+</body></html>
