@@ -340,13 +340,41 @@
     }
   }
 
+  function visualPhase(concept, caption, index, total) {
+    const text = String(caption || "").toLowerCase();
+    const matches = (pattern) => pattern.test(text);
+    const phaseRules = {
+      Fractions: [
+        [/numerator|లవం/, "numerator"], [/denominator|హారం/, "denominator"],
+        [/select|highlight|ఎంచు|రంగు/, "selected"], [/equal|సమాన/, "equal"],
+        [/cut|కోత|divide|విభజ/, "cut"], [/whole|మొత్తం/, "whole"],
+      ],
+      Decimals: [[/hundredth|నూరవ/, "hundredths"], [/tenth|పదవ/, "tenths"], [/point|బిందువు/, "point"], [/place|స్థాన/, "places"]],
+      Geometry: [[/angle|కోణ/, "angles"], [/vertex|vertices|శీర్ష/, "vertices"], [/side|line|భుజ|రేఖ/, "sides"], [/triangle|త్రిభుజ/, "shape"]],
+      "Water Cycle": [[/precip|rain|వర్ష/, "rain"], [/condens|cloud|సంఘన|మేఘ/, "cloud"], [/evapor|vapour|ఆవిరి/, "evaporation"], [/collect|ocean|river|groundwater|సేక|సముద్ర|నది|భూగర్భ/, "collection"]],
+      "Solar System": [[/rotate|axis|day|night|అక్ష|పగలు|రాత్రి/, "rotation"], [/orbit|revolv|కక్ష్య|పరిభ్రమ/, "orbit"], [/outer|gas|బాహ్య|వాయు/, "outer"], [/inner|rock|అంతర్గత|రాతి/, "inner"], [/sun|సూర్య/, "sun"]],
+      Photosynthesis: [[/oxygen|ఆక్సిజన్/, "oxygen"], [/glucose|food|ఆహారం|గ్లూకోజ్/, "food"], [/carbon|co₂|కార్బన్/, "carbon"], [/water|root|నీరు|వేరు/, "roots-water"], [/sun|light|సూర్య|కాంతి/, "sunlight"]],
+      Grammar: [[/punctuation|విరామ/, "punctuation"], [/object|కర్మ/, "object"], [/verb|క్రియ/, "verb"], [/subject|కర్త/, "subject"], [/sentence|వాక్యం/, "sentence"]],
+      "Telugu Grammar": [[/క్రియ|verb/, "verb"], [/కర్మ|object/, "object"], [/కర్త|subject/, "subject"], [/వాక్యం|sentence/, "sentence"]],
+      "Indian Constitution": [[/dut|బాధ్యత|విధి/, "duties"], [/right|హక్కు/, "rights"], [/democra|ప్రజాస్వామ/, "democracy"], [/institution|government|ప్రభుత్వ|సంస్థ/, "institutions"]],
+      "Indian Freedom Movement": [[/1947|independ|స్వాతంత్ర/, "freedom"], [/1942|quit india|భారత్ విడిచి/, "quit-india"], [/1930|salt|ఉప్పు/, "salt"], [/1920|non.cooperation|సహాయ నిరాకరణ/, "non-cooperation"], [/1857|resistance|ప్రతిఘటన/, "resistance"]],
+      "Andhra Pradesh Geography": [[/coast|bay|తీర|బంగాళాఖాతం/, "coast"], [/krishna|కృష్ణా/, "krishna"], [/godavari|గోదావరి/, "godavari"], [/ghat|కనుమ/, "ghats"], [/plain|upland|మైదాన|ఎత్తైన/, "regions"]],
+      "Local Government": [[/water|నీరు/, "water"], [/road|రహదారి/, "road"], [/light|street|దీప|వీధి/, "light"], [/municip|town|city|పురపాలక|పట్టణ|నగర/, "urban"], [/panchayat|village|పంచాయతి|గ్రామ/, "panchayat"]],
+      "Climate and Natural Resources": [[/conserv|సంరక్ష/, "conserve"], [/mineral|ఖనిజ/, "minerals"], [/forest|అడవి/, "forests"], [/soil|నేల/, "soil"], [/water|నీరు/, "water"], [/climate|వాతావరణ/, "climate"]],
+    };
+    const match = (phaseRules[concept] || []).find(([pattern]) => matches(pattern));
+    return match?.[1] || `progress-${Math.min(5, Math.max(1, Math.ceil(((index + 1) / total) * 5)))}`;
+  }
+
   function setStep(index) {
     const steps = state.lesson.steps[state.language];
     state.index = Math.max(0, Math.min(index, steps.length - 1));
     const visualStep = state.concept === "Fractions"
       ? state.index + 1
       : Math.min(4, Math.ceil(((state.index + 1) / steps.length) * 4));
-    byId("animation-stage").dataset.step = String(visualStep);
+    const stage = byId("animation-stage");
+    stage.dataset.step = String(visualStep);
+    stage.dataset.phase = visualPhase(state.concept, steps[state.index], state.index, steps.length);
     byId("animation-caption").textContent = steps[state.index];
     byId("animation-step").textContent = `${state.index + 1} / ${steps.length}`;
     byId("animation-progress-fill").style.width = `${((state.index + 1) / steps.length) * 100}%`;
@@ -391,6 +419,12 @@
     state.stepStartedAt = Date.now();
     const spoken = await window.VedhaVoice?.speakText(caption, state.profile, {
       onEnd: scheduleAdvanceAfterNarration,
+      onError: () => {
+        byId("animation-status").textContent = state.language === "te"
+          ? "వాయిస్ ఆగిపోయింది. తదుపరి దృశ్యానికి కొనసాగుతోంది."
+          : "Narration was interrupted. Continuing to the next scene.";
+        scheduleAdvanceAfterNarration();
+      },
       onUnavailable: () => {
         byId("animation-status").textContent = state.language === "te"
           ? "తెలుగు వాయిస్ అందుబాటులో లేదు. దృశ్యం, సమకాలిక వాక్యంతో కొనసాగుతోంది."
@@ -498,8 +532,20 @@
       if (document.fullscreenElement) document.exitFullscreen?.();
       else panel.requestFullscreen?.();
     }
-    if (event.target.closest("#animation-previous")) { pause(); setStep(state.index - 1); }
-    if (event.target.closest("#animation-next")) { pause(); setStep(state.index + 1); }
+    if (event.target.closest("#animation-previous")) {
+      window.VedhaVoice?.cancel();
+      state.playing = true;
+      setStep(state.index - 1);
+      byId("animation-play").textContent = state.language === "te" ? "⏸ విరామం" : "⏸ Pause";
+      narrateCurrentStep();
+    }
+    if (event.target.closest("#animation-next")) {
+      window.VedhaVoice?.cancel();
+      state.playing = true;
+      setStep(state.index + 1);
+      byId("animation-play").textContent = state.language === "te" ? "⏸ విరామం" : "⏸ Pause";
+      narrateCurrentStep();
+    }
   });
 
   window.VedhaAnimations = { prepare, setMode };
