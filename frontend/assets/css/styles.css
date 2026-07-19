@@ -3750,3 +3750,5 @@ body {
  .grammar-story-builder{gap:.35rem}.grammar-story-word{min-width:6rem;padding:.7rem}.grammar-word{font-size:1rem}
  .freedom-story-milestone{width:4.3rem;height:4.3rem}.milestone-event{display:none}
 }
+
+.government-story,.resource-story{position:absolute;inset:0}
