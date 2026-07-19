@@ -487,8 +487,9 @@ def test_animation_narration_autoplays_and_manual_navigation_speaks() -> None:
     assert 'if (event.target.closest("#animation-previous"))' in animation_js
     assert animation_js.count("narrateCurrentStep();") >= 4
     assert "if (synth.paused) synth.resume()" in voice_js
-    assert "window.setTimeout(queue, 90)" in voice_js
-    assert "startWatchdog" in voice_js
+    assert "function narrationChunks(text, maxLength = 170)" in voice_js
+    assert "window.setTimeout(speakChunk, 80)" in voice_js
+    assert "speechToken" in voice_js
 
 
 def test_animation_visual_phase_tracks_narrated_sentence() -> None:
@@ -501,3 +502,22 @@ def test_animation_visual_phase_tracks_narrated_sentence() -> None:
         assert f'data-phase="{phase}"' in styles
     for animation in ("water-into-roots", "gas-into-leaf", "oxygen-release"):
         assert f"@keyframes {animation}" in styles
+
+
+def test_photosynthesis_animation_progressively_shows_inputs_and_outputs() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert 'node("sunlight-rays")' in animation_js
+    assert 'node(`sunlight-ray sunlight-ray-${index + 1}`)' in animation_js
+    assert 'node("water-particles")' in animation_js
+    assert 'stage.classList.add(`seen-${visualPhase' in animation_js
+    for selector in (
+        ".seen-sunlight .sunlight-rays",
+        ".seen-roots-water .water-particles",
+        ".seen-carbon .carbon-flow",
+        ".seen-food .plant-food",
+        ".seen-oxygen .oxygen-flow",
+    ):
+        assert selector in styles
+    assert "@keyframes sunbeam-fall" in styles
+    assert "@keyframes water-up-stem" in styles
