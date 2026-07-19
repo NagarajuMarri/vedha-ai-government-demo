@@ -5,13 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Teacher Portal | Vedha AI Government Demo</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+      <script src="../assets/js/voice-assistant.js" defer></script>
   </head>
   <body class="interface-shell">
     <main class="shell-panel">
       <p class="eyebrow">Teacher experience</p>
       <h1>Teacher Portal</h1>
       <p lang="te">ఉపాధ్యాయ పోర్టల్</p>
-      <p>The interface shell is ready. Teaching features are not implemented in Sprint 1.</p>
+      <section class="role-voice-console" aria-labelledby="teacher-voice-title">
+        <p class="eyebrow">Bilingual voice access</p>
+        <h2 id="teacher-voice-title">Ask about your class</h2>
+        <p>Example: “Which students need help with fractions?” or “భిన్నాలలో సహాయం అవసరమైన విద్యార్థులు ఎవరు?”</p>
+        <div class="role-voice-composer">
+          <label class="sr-only" for="teacher-voice-query">Teacher request</label>
+          <textarea id="teacher-voice-query" rows="3" placeholder="Speak or type your request"></textarea>
+          <select id="teacher-voice-language" aria-label="Voice language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
+          <button class="voice-trigger" type="button" data-voice-target="#teacher-voice-query" data-voice-status="#teacher-voice-status" data-voice-language-source="#teacher-voice-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
+        </div>
+        <p id="teacher-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
+        <p class="demo-disclosure">The transcript is editable. Portal insights and actions are delivered in the following approved sprint using synthetic demo data.</p>
+      </section>
       <a class="back-link" href="../">← Return to interface gateway</a>
     </main>
   </body>

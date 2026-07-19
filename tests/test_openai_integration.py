@@ -631,3 +631,71 @@ def test_social_studies_prompt_forbids_generic_overview() -> None:
     assert "Social Studies concept rules" in prompt.instructions
     assert "Never answer with generic study advice" in prompt.instructions
     assert "keep every learner-facing sentence in Telugu" in prompt.instructions
+
+
+@pytest.mark.parametrize(
+    ("subject", "concept", "expected_telugu"),
+    [
+        ("Mathematics", "Fractions", "భిన్న"),
+        ("Mathematics", "Decimals", "దశాంశ"),
+        ("Science", "Solar System", "సౌర కుటుంబ"),
+        ("Science", "Water Cycle", "నీటి చక్ర"),
+        ("Science", "Photosynthesis", "కిరణజన్య సంయోగక్రియ"),
+        ("English", "Grammar", "వ్యాకరణ"),
+        ("Telugu", "Telugu Grammar", "తెలుగు వ్యాకరణ"),
+    ],
+)
+def test_every_approved_pure_telugu_fallback_is_concept_specific(
+    subject: str,
+    concept: str,
+    expected_telugu: str,
+) -> None:
+    lesson = DeterministicFallbackLessonGenerator().generate(
+        LessonGenerationRequest(
+            class_level="9",
+            subject=subject,
+            concept=concept,
+            learning_profile="pure_telugu",
+            student_question=f"{concept} ను మొదటి నుండి వివరించండి",
+        )
+    )
+    combined = " ".join([
+        lesson.title,
+        lesson.introduction,
+        *lesson.explanation_steps,
+        lesson.example,
+        *lesson.key_points,
+        lesson.check_question,
+    ])
+    assert expected_telugu in combined
+    assert "పునాది భావనను అర్థం చేసుకుందాం" not in lesson.title
+    assert lesson.source == "fallback"
+    assert lesson.fallback_used is True
+
+
+def test_reviewer_rejects_provider_lesson_that_ignores_selected_concept() -> None:
+    request = LessonGenerationRequest(
+        class_level="9",
+        subject="Science",
+        concept="Water Cycle",
+        learning_profile="english_medium",
+        student_question="Explain the water cycle from scratch",
+    )
+    generic_lesson = LessonResult(
+        title="Understanding Science",
+        introduction="Science helps us study the natural world.",
+        explanation_steps=["Observe carefully.", "Connect ideas to daily life."],
+        example="Think of a familiar science example.",
+        key_points=["Observe.", "Explain."],
+        check_question="What did you understand?",
+        learning_profile="english_medium",
+        subject="Science",
+        class_level="9",
+        source="openai",
+        fallback_used=False,
+        prompt_id="vedha_science_teacher_v1",
+        prompt_version="1.0.0",
+    )
+    with pytest.raises(AIReviewerRejectionError) as exc_info:
+        LessonReviewer().review(generic_lesson, request)
+    assert exc_info.value.validation_rule == "concept_mismatch"

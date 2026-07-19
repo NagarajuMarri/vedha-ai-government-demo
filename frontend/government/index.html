@@ -6,6 +6,7 @@
     <meta name="description" content="Privacy-conscious synthetic education indicators for the Vedha AI government demonstration">
     <title>Government Dashboard | Vedha AI Government Demo</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/voice-assistant.js" defer></script>
     <script src="../assets/js/government-dashboard.js" defer></script>
   </head>
   <body class="government-app">
@@ -33,6 +34,22 @@
           <small id="class-scope">Classes 6–10</small>
         </div>
       </section>
+
+      <form id="government-voice-form" class="role-voice-console" aria-labelledby="government-voice-title">
+        <div>
+          <p class="eyebrow">Ask the dashboard</p>
+          <h2 id="government-voice-title">Speak or type a district request</h2>
+          <p>Try “Show Guntur” or “గుంటూరు వివరాలు చూపించు”. Review the transcript before applying it.</p>
+        </div>
+        <div class="role-voice-composer">
+          <label class="sr-only" for="government-voice-query">Government dashboard request</label>
+          <input id="government-voice-query" type="text" placeholder="Ask for a district insight">
+          <select id="government-voice-language" aria-label="Voice language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
+          <button class="voice-trigger" type="button" data-voice-target="#government-voice-query" data-voice-status="#government-voice-status" data-voice-language-source="#government-voice-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
+          <button class="primary-button" type="submit">Apply request</button>
+        </div>
+        <p id="government-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
+      </form>
 
       <aside class="synthetic-banner" role="note">
         <span aria-hidden="true">ⓘ</span>
