@@ -287,6 +287,14 @@ Decorative background motion, disabled microphone controls, silent animations, a
 - Aggregates reconcile with underlying assessment records.
 - Filters, tables/charts, accessibility, and bilingual states pass review.
 
+**Sprint 4H controlled-demo status:**
+
+- Two explicitly synthetic assigned-class views demonstrate scoped teacher access.
+- Concept performance, student progress, weak-topic signals, filters and class comparison data are functional.
+- Teachers can assign simulated remedial work and approve or return an AI-generated practice question.
+- English, Pure Telugu and Telugu Assisted English profiles apply to dynamic content, editable voice queries and spoken insights.
+- Production authentication, teacher-class authorization, persisted assignments and live assessment reconciliation remain pending and are not implied.
+
 ### VGD-015 — Build Government Dashboard
 
 | Field | Value |
