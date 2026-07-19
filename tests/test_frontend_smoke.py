@@ -610,3 +610,45 @@ def test_dedicated_lesson_scenes_contain_subject_specific_visual_objects() -> No
         assert visual in animation_js
         assert f".{visual}" in styles
     assert "scene.dataset.dedicatedPhase = phase" in animation_js
+
+
+def test_parent_portal_is_functional_bilingual_and_synthetic() -> None:
+    parent_html = (FRONTEND_ROOT / "parent" / "index.html").read_text(encoding="utf-8")
+    parent_js = (FRONTEND_ROOT / "assets" / "js" / "parent-dashboard.js").read_text(encoding="utf-8")
+    assert 'src="../assets/js/parent-dashboard.js"' in parent_html
+    assert "Synthetic demonstration data" in parent_html
+    assert "only see explicitly linked children" in parent_html
+    assert 'id="child-selector"' in parent_html
+    assert 'id="parent-language"' in parent_html
+    for element_id in (
+        "strengths-list", "attention-list", "activity-list",
+        "recommendation-list", "parent-answer",
+    ):
+        assert f'id="{element_id}"' in parent_html
+    assert "const children =" in parent_js
+    assert "ananya:" in parent_js
+    assert "arjun:" in parent_js
+    assert "innerHTML" not in parent_js
+
+
+def test_parent_portal_supports_voice_queries_and_spoken_insights() -> None:
+    parent_html = (FRONTEND_ROOT / "parent" / "index.html").read_text(encoding="utf-8")
+    parent_js = (FRONTEND_ROOT / "assets" / "js" / "parent-dashboard.js").read_text(encoding="utf-8")
+    assert 'id="parent-voice-form"' in parent_html
+    assert 'data-voice-target="#parent-voice-query"' in parent_html
+    assert 'data-speak-target="#parent-answer"' in parent_html
+    assert "parent-voice-form" in parent_js
+    assert "answerQuery" in parent_js
+    for telugu in ("ప్రగతిని చూడండి", "సహాయం అవసరమైనవి", "వేదను అడగండి"):
+        assert telugu in parent_js
+
+
+def test_parent_portal_is_responsive_and_presentation_ready() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for selector in (
+        ".parent-portal", ".parent-summary", ".parent-metrics",
+        ".parent-grid", ".parent-card", ".parent-voice-card",
+    ):
+        assert selector in styles
+    assert "@media(max-width:52rem)" in styles
+    assert "@media(max-width:30rem)" in styles
