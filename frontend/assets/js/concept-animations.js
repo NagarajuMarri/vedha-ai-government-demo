@@ -427,6 +427,58 @@
     return sequence[position];
   }
 
+  function renderSentenceScene(stage, concept, phase, index) {
+    stage.querySelector(".sentence-scene")?.remove();
+    const scene = node(`sentence-scene sentence-scene-${concept.toLowerCase().replaceAll(" ", "-")} sentence-phase-${phase}`);
+    scene.dataset.sentence = String(index + 1);
+    scene.append(node("sentence-scene-number", String(index + 1).padStart(2, "0")));
+
+    if (concept === "Photosynthesis") {
+      if (phase === "sunlight") {
+        const sun = node("process-sun", "☀");
+        const canopy = node("process-canopy");
+        const rays = node("process-rays");
+        for (let ray = 0; ray < 9; ray += 1) rays.append(node(`process-ray ray-beam-${ray + 1}`));
+        for (let leaf = 0; leaf < 5; leaf += 1) canopy.append(node(`process-leaf process-leaf-${leaf + 1}`));
+        scene.append(sun, rays, canopy, node("process-callout", state.language === "te" ? "ఆకులు సూర్యకాంతిని గ్రహిస్తాయి" : "LEAVES ABSORB SUNLIGHT"));
+      } else if (phase === "roots-water") {
+        const soil = node("root-soil-cutaway");
+        const roots = node("root-network");
+        for (let root = 0; root < 8; root += 1) roots.append(node(`root-branch root-branch-${root + 1}`));
+        const droplets = node("root-droplets");
+        for (let drop = 0; drop < 12; drop += 1) droplets.append(node(`root-drop root-drop-${drop + 1}`, "●"));
+        scene.append(node("root-stem"), soil, roots, droplets, node("process-callout", state.language === "te" ? "వేర్లు నేల నుండి నీటిని గ్రహిస్తాయి" : "ROOTS ABSORB WATER FROM SOIL"));
+      } else if (phase === "carbon") {
+        const leaf = node("leaf-closeup");
+        const pore = node("leaf-stoma");
+        const bubbles = node("carbon-bubbles");
+        for (let bubble = 0; bubble < 9; bubble += 1) bubbles.append(node(`gas-bubble carbon-bubble-${bubble + 1}`, "CO₂"));
+        scene.append(leaf, pore, bubbles, node("process-callout", state.language === "te" ? "కార్బన్ డయాక్సైడ్ ఆకులోకి ప్రవేశిస్తుంది" : "CARBON DIOXIDE ENTERS THE LEAF"));
+      } else if (phase === "food") {
+        const chloroplast = node("chloroplast-factory");
+        chloroplast.append(node("chloroplast-core"), node("energy-orbit"), node("sugar-crystal", "C₆H₁₂O₆"));
+        scene.append(chloroplast, node("process-equation", "LIGHT + H₂O + CO₂  →  GLUCOSE"), node("process-callout", state.language === "te" ? "మొక్క గ్లూకోజ్ రూపంలో ఆహారం తయారు చేస్తుంది" : "THE PLANT MAKES FOOD AS GLUCOSE"));
+      } else if (phase === "oxygen") {
+        const leaf = node("oxygen-leaf");
+        const bubbles = node("oxygen-bubbles");
+        for (let bubble = 0; bubble < 12; bubble += 1) bubbles.append(node(`gas-bubble oxygen-bubble-${bubble + 1}`, "O₂"));
+        scene.append(leaf, bubbles, node("process-callout", state.language === "te" ? "ఆక్సిజన్ గాలిలోకి విడుదలవుతుంది" : "OXYGEN IS RELEASED INTO THE AIR"));
+      } else {
+        scene.append(node("process-cycle", "☀  →  🌿  →  O₂"), node("process-callout", state.language === "te" ? "కిరణజన్య సంయోగక్రియ" : "PHOTOSYNTHESIS"));
+      }
+    } else {
+      const visuals = phaseVisuals[phase] || ["●", "⇢", "●"];
+      const visualTrack = node("sentence-visual-track");
+      visuals.forEach((visual, visualIndex) => {
+        const item = node(`sentence-visual-object sentence-object-${visualIndex + 1}`, visual);
+        visualTrack.append(item);
+      });
+      scene.append(visualTrack, node("sentence-motion-path"));
+    }
+
+    stage.append(scene);
+  }
+
   function renderPointAction(stage, concept, phase, index) {
     stage.querySelector(".point-action-layer")?.remove();
     const layer = node("point-action-layer");
@@ -458,7 +510,7 @@
       stage.classList.add(`seen-${resolvedVisualPhase(state.concept, caption, stepIndex, steps.length)}`);
     });
     stage.dataset.sequence = String(state.index);
-    renderPointAction(stage, state.concept, activePhase, state.index);
+    renderSentenceScene(stage, state.concept, activePhase, state.index);
     byId("animation-caption").textContent = steps[state.index];
     byId("animation-step").textContent = `${state.index + 1} / ${steps.length}`;
     byId("animation-progress-fill").style.width = `${((state.index + 1) / steps.length) * 100}%`;
