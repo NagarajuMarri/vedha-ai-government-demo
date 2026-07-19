@@ -71,6 +71,9 @@ class DeterministicFallbackLessonGenerator:
             }
         if request.subject == "Social Studies":
             return self._build_social_studies_content(profile, request)
+        concept_content = self._build_demo_concept_content(profile, request)
+        if concept_content is not None:
+            return concept_content
         if profile == "english_medium":
             return {
                 "title": f"Understanding the foundation of {subject}",
@@ -122,6 +125,131 @@ class DeterministicFallbackLessonGenerator:
             "check_question": f"{subject} లోని ప్రధాన భావనను నీ సొంత ఉదాహరణతో ఎలా వివరిస్తావు?",
         }
 
+
+    @staticmethod
+    def _build_demo_concept_content(
+        profile: str,
+        request: LessonGenerationRequest,
+    ) -> dict[str, str | list[str]] | None:
+        """Return concept-aligned recovery lessons for every approved demo concept."""
+
+        lessons = {
+            "fractions": {
+                "title_en": "Fractions: equal parts of a whole",
+                "title_te": "భిన్నాలు: మొత్తంలోని సమాన భాగాలు",
+                "intro_en": "A fraction shows one or more equal parts of a whole. In 3/4, 3 is the numerator and 4 is the denominator.",
+                "intro_te": "భిన్నం అనేది ఒక మొత్తాన్ని సమాన భాగాలుగా విభజించినప్పుడు వాటిలో ఎన్ని భాగాలు తీసుకున్నామో చూపుతుంది. 3/4లో 3 లవం, 4 హారం.",
+                "steps_en": ["Divide one whole into equal parts.", "The denominator tells the total number of equal parts.", "The numerator tells how many of those parts are selected."],
+                "steps_te": ["ఒక మొత్తాన్ని సమాన భాగాలుగా విభజించాలి.", "హారం మొత్తం సమాన భాగాల సంఖ్యను తెలియజేస్తుంది.", "లవం తీసుకున్న భాగాల సంఖ్యను తెలియజేస్తుంది."],
+                "example_en": "A roti cut into 4 equal pieces has four quarters. Taking 3 pieces represents 3/4.",
+                "example_te": "ఒక రొట్టెను 4 సమాన ముక్కలుగా కోసి, వాటిలో 3 ముక్కలు తీసుకుంటే అది 3/4.",
+                "points_en": ["Parts must be equal.", "The numerator is written above the fraction bar.", "The denominator is written below the fraction bar."],
+                "points_te": ["భాగాలు సమానంగా ఉండాలి.", "లవం భిన్న రేఖకు పైన ఉంటుంది.", "హారం భిన్న రేఖకు కింద ఉంటుంది."],
+                "check_en": "A fruit is divided into 8 equal pieces and 3 are taken. Which fraction represents the taken pieces?",
+                "check_te": "ఒక పండును 8 సమాన ముక్కలుగా చేసి 3 ముక్కలు తీసుకుంటే, తీసుకున్న భాగాన్ని ఏ భిన్నం సూచిస్తుంది?",
+            },
+            "decimals": {
+                "title_en": "Decimals and place value",
+                "title_te": "దశాంశాలు మరియు స్థాన విలువ",
+                "intro_en": "Decimals represent whole numbers and parts smaller than one using a decimal point.",
+                "intro_te": "దశాంశ బిందువును ఉపయోగించి పూర్ణ సంఖ్యలతో పాటు ఒకటి కంటే చిన్న భాగాలను దశాంశాలు సూచిస్తాయి.",
+                "steps_en": ["Digits left of the decimal point represent whole-number places.", "The first place to the right is tenths.", "The second place to the right is hundredths."],
+                "steps_te": ["దశాంశ బిందువు ఎడమవైపు అంకెలు పూర్ణ సంఖ్య స్థానాలను సూచిస్తాయి.", "కుడివైపు మొదటి స్థానం పదవ వంతులను సూచిస్తుంది.", "కుడివైపు రెండవ స్థానం నూరవ వంతులను సూచిస్తుంది."],
+                "example_en": "In 2.35, 2 is the whole-number part, 3 means three tenths, and 5 means five hundredths.",
+                "example_te": "2.35లో 2 పూర్ణ సంఖ్య, 3 మూడు పదవ వంతులు, 5 ఐదు నూరవ వంతులను సూచిస్తాయి.",
+                "points_en": ["Place value changes across the decimal point.", "Align decimal points when comparing numbers.", "0.5 is the same as 0.50."],
+                "points_te": ["దశాంశ బిందువు ఆధారంగా స్థాన విలువ మారుతుంది.", "సంఖ్యలను పోల్చేటప్పుడు దశాంశ బిందువులను ఒకే వరుసలో ఉంచాలి.", "0.5 మరియు 0.50 సమాన విలువలు."],
+                "check_en": "What is the value of 7 in 4.72?",
+                "check_te": "4.72లో 7 యొక్క స్థాన విలువ ఎంత?",
+            },
+            "solar system": {
+                "title_en": "Our Solar System",
+                "title_te": "మన సౌర కుటుంబం",
+                "intro_en": "The Solar System consists of the Sun and the planets, moons, asteroids, and comets held by its gravity.",
+                "intro_te": "సూర్యుడు, అతని గురుత్వాకర్షణ వల్ల కక్ష్యల్లో తిరిగే గ్రహాలు, ఉపగ్రహాలు, గ్రహశకలాలు, తోకచుక్కలు కలిసి సౌర కుటుంబాన్ని ఏర్పరుస్తాయి.",
+                "steps_en": ["The Sun is a star at the centre of the Solar System.", "Eight planets orbit the Sun in paths called orbits.", "Earth rotates on its axis and revolves around the Sun."],
+                "steps_te": ["సూర్యుడు సౌర కుటుంబం మధ్యలో ఉన్న ఒక నక్షత్రం.", "ఎనిమిది గ్రహాలు కక్ష్యలు అనే మార్గాల్లో సూర్యుని చుట్టూ తిరుగుతాయి.", "భూమి తన అక్షంపై తిరుగుతూ సూర్యుని చుట్టూ పరిభ్రమిస్తుంది."],
+                "example_en": "Earth takes about one year to complete one revolution around the Sun.",
+                "example_te": "భూమి సూర్యుని చుట్టూ ఒకసారి పరిభ్రమించడానికి సుమారు ఒక సంవత్సరం పడుతుంది.",
+                "points_en": ["The Sun supplies light and heat.", "Planets do not produce their own light.", "Gravity keeps objects in orbit."],
+                "points_te": ["సూర్యుడు కాంతి, వేడిని అందిస్తాడు.", "గ్రహాలు స్వంత కాంతిని ఉత్పత్తి చేయవు.", "గురుత్వాకర్షణ ఖగోళ వస్తువులను కక్ష్యల్లో ఉంచుతుంది."],
+                "check_en": "Why does Earth remain in orbit around the Sun?",
+                "check_te": "భూమి సూర్యుని చుట్టూ కక్ష్యలో ఎందుకు ఉంటుంది?",
+            },
+            "water cycle": {
+                "title_en": "The Water Cycle",
+                "title_te": "నీటి చక్రం",
+                "intro_en": "The water cycle is the continuous movement of water between Earth's surface and the atmosphere.",
+                "intro_te": "భూమి ఉపరితలం మరియు వాతావరణం మధ్య నీరు నిరంతరం మారుతూ ప్రయాణించే ప్రక్రియను నీటి చక్రం అంటారు.",
+                "steps_en": ["Sunlight heats water and causes evaporation.", "Water vapour cools and condenses into clouds.", "Water returns as rain or other precipitation and collects again."],
+                "steps_te": ["సూర్యుడి వేడి వల్ల నీరు ఆవిరవుతుంది.", "నీటి ఆవిరి చల్లబడి చిన్న బిందువులుగా మారి మేఘాలను ఏర్పరుస్తుంది.", "వర్షపాతం ద్వారా నీరు భూమికి తిరిగి వచ్చి మళ్లీ జలాశయాల్లో చేరుతుంది."],
+                "example_en": "A puddle becomes smaller in sunlight because its water evaporates and enters the air.",
+                "example_te": "ఎండలో నీటి మడుగు చిన్నదవుతుంది; అందులోని నీరు ఆవిరై గాలిలో కలుస్తుంది.",
+                "points_en": ["Evaporation changes liquid water to vapour.", "Condensation forms cloud droplets.", "Precipitation returns water to Earth."],
+                "points_te": ["ఆవిరీకరణలో ద్రవ నీరు ఆవిరిగా మారుతుంది.", "సంఘననంతో మేఘ బిందువులు ఏర్పడతాయి.", "వర్షపాతం నీటిని భూమికి తిరిగి తీసుకువస్తుంది."],
+                "check_en": "What happens to water vapour when it cools?",
+                "check_te": "నీటి ఆవిరి చల్లబడినప్పుడు ఏమవుతుంది?",
+            },
+            "photosynthesis": {
+                "title_en": "Photosynthesis: how plants make food",
+                "title_te": "కిరణజన్య సంయోగక్రియ: మొక్కలు ఆహారం తయారు చేసుకునే విధానం",
+                "intro_en": "Photosynthesis is the process by which green plants use sunlight, water, and carbon dioxide to make food and release oxygen.",
+                "intro_te": "ఆకుపచ్చ మొక్కలు సూర్యకాంతి, నీరు, కార్బన్ డయాక్సైడ్‌ను ఉపయోగించి ఆహారం తయారు చేసి ఆక్సిజన్ విడుదల చేసే ప్రక్రియను కిరణజన్య సంయోగక్రియ అంటారు.",
+                "steps_en": ["Roots absorb water from the soil.", "Leaves take in carbon dioxide and capture sunlight using chlorophyll.", "The plant makes glucose and releases oxygen."],
+                "steps_te": ["వేర్లు నేల నుండి నీటిని గ్రహిస్తాయి.", "ఆకులు కార్బన్ డయాక్సైడ్‌ను తీసుకుని పత్రహరితం సహాయంతో సూర్యకాంతిని గ్రహిస్తాయి.", "మొక్క గ్లూకోజ్ అనే ఆహారాన్ని తయారు చేసి ఆక్సిజన్‌ను విడుదల చేస్తుంది."],
+                "example_en": "A plant kept without light becomes weak because it cannot photosynthesise normally.",
+                "example_te": "కాంతి లేకుండా ఉంచిన మొక్క సాధారణంగా కిరణజన్య సంయోగక్రియ చేయలేక బలహీనమవుతుంది.",
+                "points_en": ["Sunlight provides energy.", "Leaves are the main food-making organs.", "Oxygen is released during the process."],
+                "points_te": ["సూర్యకాంతి శక్తిని అందిస్తుంది.", "ఆకులు ప్రధానంగా ఆహారం తయారు చేస్తాయి.", "ఈ ప్రక్రియలో ఆక్సిజన్ విడుదలవుతుంది."],
+                "check_en": "Which three main inputs does a plant need for photosynthesis?",
+                "check_te": "కిరణజన్య సంయోగక్రియకు మొక్కకు అవసరమైన మూడు ప్రధాన పదార్థాలు ఏవి?",
+            },
+            "grammar": {
+                "title_en": "English Grammar: building clear sentences",
+                "title_te": "ఆంగ్ల వ్యాకరణం: స్పష్టమైన వాక్యాల నిర్మాణం",
+                "intro_en": "Grammar is the set of rules that helps us arrange words into clear and meaningful sentences.",
+                "intro_te": "పదాలను స్పష్టమైన, అర్థవంతమైన వాక్యాలుగా అమర్చడానికి సహాయపడే నియమాల సమాహారమే ఆంగ్ల వ్యాకరణం.",
+                "steps_en": ["Identify who or what the sentence is about.", "Choose a verb that shows the action or state.", "Add necessary details and check word order and punctuation."],
+                "steps_te": ["వాక్యం ఎవరి గురించి లేదా దేని గురించి చెబుతుందో గుర్తించాలి.", "చర్య లేదా స్థితిని తెలిపే క్రియను ఎంచుకోవాలి.", "అవసరమైన వివరాలు జోడించి పదక్రమం, విరామచిహ్నాలను తనిఖీ చేయాలి."],
+                "example_en": "In “Ravi reads a book,” Ravi is the subject, reads is the verb, and a book completes the idea.",
+                "example_te": "“Ravi reads a book” అనే వాక్యంలో Ravi కర్త, reads క్రియ, a book వాక్య భావాన్ని పూర్తి చేస్తుంది.",
+                "points_en": ["A complete sentence expresses a complete thought.", "The subject and verb must agree.", "Punctuation helps readers understand meaning."],
+                "points_te": ["పూర్తి వాక్యం సంపూర్ణ భావాన్ని తెలియజేస్తుంది.", "కర్త, క్రియ ఒకదానికొకటి సరిపోవాలి.", "విరామచిహ్నాలు భావాన్ని స్పష్టంగా తెలియజేస్తాయి."],
+                "check_en": "Identify the subject and verb in: “The children play outside.”",
+                "check_te": "“The children play outside” అనే వాక్యంలో కర్త, క్రియలను గుర్తించండి.",
+            },
+            "telugu grammar": {
+                "title_en": "Telugu Grammar: sentence structure",
+                "title_te": "తెలుగు వ్యాకరణం: వాక్య నిర్మాణం",
+                "intro_en": "Telugu grammar explains how words change and combine to create meaningful Telugu sentences.",
+                "intro_te": "పదాలు ఎలా రూపాంతరం చెంది, పరస్పరం కలిసి అర్థవంతమైన తెలుగు వాక్యాలను నిర్మిస్తాయో తెలుగు వ్యాకరణం వివరిస్తుంది.",
+                "steps_en": ["Identify the subject of the sentence.", "Identify the object or additional information.", "Place the verb naturally at the end in a common Telugu sentence."],
+                "steps_te": ["వాక్యంలోని కర్తను గుర్తించాలి.", "కర్మను లేదా అదనపు సమాచారాన్ని గుర్తించాలి.", "సాధారణ తెలుగు వాక్యంలో క్రియను సహజంగా చివర ఉంచాలి."],
+                "example_en": "“రాము పుస్తకం చదివాడు” contains the subject రాము, object పుస్తకం, and verb చదివాడు.",
+                "example_te": "“రాము పుస్తకం చదివాడు” అనే వాక్యంలో రాము కర్త, పుస్తకం కర్మ, చదివాడు క్రియ.",
+                "points_en": ["Word forms show number, gender, tense, and relation.", "Correct word order makes meaning clear.", "The verb often appears at the end."],
+                "points_te": ["పదరూపాలు వచనం, లింగం, కాలం, సంబంధాన్ని తెలియజేస్తాయి.", "సరైన పదక్రమం భావాన్ని స్పష్టంగా చేస్తుంది.", "క్రియ సాధారణంగా వాక్యం చివర ఉంటుంది."],
+                "check_en": "Identify the subject and verb in “సీత పాట పాడింది”.",
+                "check_te": "“సీత పాట పాడింది” అనే వాక్యంలో కర్త, క్రియలను గుర్తించండి.",
+            },
+        }
+        topic = lessons.get(request.concept.casefold())
+        if topic is None:
+            return None
+        if profile == "english_medium":
+            suffix = "en"
+        elif profile == "pure_telugu":
+            suffix = "te"
+        else:
+            suffix = "te"
+        return {
+            "title": topic[f"title_{suffix}"],
+            "introduction": topic[f"intro_{suffix}"],
+            "explanation_steps": topic[f"steps_{suffix}"],
+            "example": topic[f"example_{suffix}"],
+            "key_points": topic[f"points_{suffix}"],
+            "check_question": topic[f"check_{suffix}"],
+        }
 
     @staticmethod
     def _build_social_studies_content(
