@@ -38,12 +38,12 @@
       <form id="government-voice-form" class="role-voice-console" aria-labelledby="government-voice-title">
         <div>
           <p class="eyebrow">Ask the dashboard</p>
-          <h2 id="government-voice-title">Speak or type a district request</h2>
-          <p>Try “Show Guntur” or “గుంటూరు వివరాలు చూపించు”. Review the transcript before applying it.</p>
+          <h2 id="government-voice-title">Speak or type a district, mandal, school or subject request</h2>
+          <p>Try “Show Mathematics in Guntur”, “Show Tenali mandal”, or “గుంటూరు గణితం వివరాలు చూపించు”. Review the transcript before applying it.</p>
         </div>
         <div class="role-voice-composer">
           <label class="sr-only" for="government-voice-query">Government dashboard request</label>
-          <input id="government-voice-query" type="text" placeholder="Ask for a district insight">
+          <input id="government-voice-query" type="text" placeholder="Ask for a district, mandal, school or subject insight">
           <select id="government-voice-language" aria-label="Language profile"><option value="english_medium">English</option><option value="pure_telugu">తెలుగు</option><option value="telugu_assisted_english">తెలుగులో English terms తో</option></select>
           <button class="voice-trigger" type="button" data-voice-target="#government-voice-query" data-voice-status="#government-voice-status" data-voice-language-source="#government-voice-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
           <button class="primary-button" id="government-apply" type="submit">Apply request</button>
@@ -72,11 +72,23 @@
           </select>
         </div>
         <div>
+          <label for="mandal-filter">Mandal</label>
+          <select id="mandal-filter" disabled><option value="all">All mandals</option></select>
+        </div>
+        <div>
+          <label for="school-filter">School</label>
+          <select id="school-filter" disabled><option value="all">All schools</option></select>
+        </div>
+        <div>
+          <label for="subject-filter">Subject</label>
+          <select id="subject-filter"><option value="all">All subjects</option><option value="Mathematics">Mathematics</option><option value="Science">Science</option><option value="English">English</option><option value="Telugu">Telugu</option><option value="Social Studies">Social Studies</option></select>
+        </div>
+        <div>
           <label for="class-filter">Class band</label>
           <select id="class-filter">
-            <option>Classes 6–10</option>
-            <option>Classes 6–8</option>
-            <option>Classes 9–10</option>
+            <option value="all">Classes 6–10</option>
+            <option value="middle">Classes 6–8</option>
+            <option value="secondary">Classes 9–10</option>
           </select>
         </div>
         <p id="filter-announcement" class="sr-only" role="status" aria-live="polite"></p>
@@ -98,7 +110,7 @@
         </article>
 
         <article class="dashboard-card chart-card">
-          <header><div><p class="eyebrow">Regional view</p><h2>District comparison</h2></div><span>Mastery %</span></header>
+          <header><div><p class="eyebrow">Regional view</p><h2 id="comparison-title">District comparison</h2></div><span>Mastery %</span></header>
           <div id="district-performance" class="dashboard-bars" aria-label="District mastery comparison"></div>
         </article>
 
@@ -114,7 +126,7 @@
         <article class="dashboard-card privacy-card">
           <header><div><p class="eyebrow">Privacy by design</p><h2>Aggregate insight, not surveillance</h2></div></header>
           <div class="privacy-shield" aria-hidden="true">✓</div>
-          <p>This demo intentionally provides no student-level drill-down. A production dashboard would enforce approved organizational scope, minimum cohort thresholds and auditable role-based access.</p>
+          <p>This demo intentionally provides no student-level drill-down. A production dashboard would enforce approved organizational scope, minimum cohort thresholds and auditable role-based access. School views remain aggregate and never expose individual learners.</p>
           <a href="../">← Return to experience gateway</a>
         </article>
       </section>
