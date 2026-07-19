@@ -181,4 +181,4 @@ Sprint 4D started on 2026-07-18. The initial branch adds validated practice-doma
 
 ## Sprint 4G delivery record
 
-Sprint 4G adds a functional controlled-demo Parent Portal on `feature/sprint-4g-parent-portal`. It uses explicitly synthetic linked-child profiles and provides weekly progress metrics, strengths, attention areas, recent activity, at-home support recommendations, English/Telugu switching, editable voice queries and spoken insights. Production identity, parent-child authorization and persisted records remain pending and are not implied.
+Sprint 4G adds a functional controlled-demo Parent Portal on `feature/sprint-4g-parent-portal`. It uses explicitly synthetic linked-child profiles and provides weekly/monthly progress metrics, subject-wise completion, upcoming-exam preparation readiness, completed/remaining topics, strengths, attention areas, recent activity, at-home support recommendations, English/Telugu switching, editable voice queries and spoken insights. Production identity, parent-child authorization and persisted records remain pending and are not implied.
