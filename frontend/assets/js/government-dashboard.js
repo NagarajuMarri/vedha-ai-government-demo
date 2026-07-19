@@ -139,22 +139,35 @@
     event.preventDefault();
     const query = byId("government-voice-query").value.trim().toLowerCase();
     const match = Object.entries(districtAliases).find(([alias]) => query.includes(alias.toLowerCase()));
+    const profile = byId("government-voice-language").value;
     if (!match) {
       byId("government-voice-status").hidden = false;
-      byId("government-voice-status").textContent =
-        "Request captured. For this demo, mention Andhra Pradesh, Visakhapatnam, Guntur, Kurnool, Tirupati or East Godavari.";
+      byId("government-voice-status").textContent = profile === "pure_telugu"
+        ? "ఆంధ్రప్రదేశ్, విశాఖపట్నం, గుంటూరు, కర్నూలు, తిరుపతి లేదా తూర్పు గోదావరిలో ఒక ప్రాంతాన్ని పేర్కొనండి."
+        : profile === "telugu_assisted_english"
+          ? "Andhra Pradesh, Visakhapatnam, Guntur, Kurnool, Tirupati లేదా East Godavari districtను mention చేయండి."
+          : "Mention Andhra Pradesh, Visakhapatnam, Guntur, Kurnool, Tirupati or East Godavari.";
+      byId("government-answer").hidden = true;
       return;
     }
     byId("district-filter").value = match[1];
     renderDashboard();
+    const data = syntheticData[match[1]];
+    const insight = profile === "pure_telugu"
+      ? `${data.label} పరిధిలో ${formatNumber(data.learners)} మంది విద్యార్థులు చేరుకున్నారు. భావనల పట్టు ${data.mastery} శాతం, అభ్యాస పూర్తి ${data.practice} శాతం, సరిదిద్దే మార్గదర్శకానంతర మెరుగుదల ${data.improvement} శాతం. ఇవన్నీ కల్పిత ప్రదర్శన సూచికలు.`
+      : profile === "telugu_assisted_english"
+        ? `${data.label} scopeలో ${formatNumber(data.learners)} learners చేరుకున్నారు. Concept mastery ${data.mastery}%, practice completion ${data.practice}%, corrective guidance తర్వాత improvement ${data.improvement}%. ఇవన్నీ synthetic demo indicators.`
+        : `${data.label} reaches ${formatNumber(data.learners)} learners. Concept mastery is ${data.mastery}%, practice completion is ${data.practice}%, and improvement after corrective guidance is ${data.improvement}%. All indicators are synthetic.`;
     byId("government-voice-status").hidden = false;
-    byId("government-voice-status").textContent =
-      `Applied the spoken request for ${syntheticData[match[1]].label}. Review the updated synthetic indicators below.`;
-    byId("dashboard-scope").scrollIntoView({ behavior: "smooth", block: "center" });
+    byId("government-voice-status").textContent = profile === "pure_telugu" ? "అభ్యర్థన వర్తింపజేయబడింది. దిగువ కల్పిత సూచికలను పరిశీలించండి." : profile === "telugu_assisted_english" ? "Request apply అయింది. Updated synthetic indicators చూడండి." : `Applied the request for ${data.label}.`;
+    byId("government-answer-text").textContent = insight;
+    byId("government-answer").hidden = false;
+    byId("government-answer").scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   byId("government-voice-form").addEventListener("submit", applyVoiceQuery);
   byId("district-filter").addEventListener("change", renderDashboard);
+  byId("government-voice-language").addEventListener("change", () => { document.documentElement.lang = byId("government-voice-language").value === "english_medium" ? "en" : "te"; byId("government-answer").hidden = true; });
   byId("class-filter").addEventListener("change", () => {
     const classLabel = byId("class-filter").selectedOptions[0].textContent;
     byId("class-scope").textContent = classLabel;
