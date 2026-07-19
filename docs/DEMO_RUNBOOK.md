@@ -89,9 +89,9 @@ State clearly that assignments and approvals are simulated in this controlled de
 
 1. Open **Government Dashboard**.
 2. Select the same language profile.
-3. Ask: “Show Guntur” or “గుంటూరు వివరాలు చూపించు”.
+3. Ask: “Show Mathematics in Guntur”, “Show Tenali mandal”, or “గుంటూరు గణితం వివరాలు చూపించు”.
 4. Play the generated spoken aggregate insight.
-5. Compare mastery, practice completion and improvement after corrective guidance.
+5. Drill from Guntur to Tenali mandal, then to the synthetic Vedha Demo ZPHS Tenali aggregate. Filter Mathematics and compare mastery, practice completion and improvement after corrective guidance.
 6. Emphasize: the Government Dashboard intentionally contains no student-level drill-down.
 
 Closing line: “Vedha connects personal learning to timely family support, actionable teaching and responsible system-level insight—without exposing the learner.”
@@ -105,7 +105,7 @@ Closing line: “Vedha connects personal learning to timely family support, acti
 | Practice voice/photo answer and second-attempt solution | Required | Required | Required |
 | Parent dynamic report and spoken insight | Required | Required | Required |
 | Teacher filters, actions and spoken insight | Required | Required | Required |
-| Government district request and spoken aggregate insight | Required | Required | Required |
+| Government district/mandal/school/subject request and spoken aggregate insight | Required | Required | Required |
 
 ## Recovery plan
 
