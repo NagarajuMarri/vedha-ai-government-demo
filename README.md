@@ -171,6 +171,7 @@ The planned implementation structure is documented in `docs/ARCHITECTURE.md`; it
 | [Architecture](docs/ARCHITECTURE.md) | System design and evolution path |
 | [Roadmap](docs/ROADMAP.md) | Eleven delivery phases and milestone gates |
 | [Task tracker](docs/TASKS.md) | Prioritized work, dependencies, ownership, and acceptance criteria |
+| [Government demo runbook](docs/DEMO_RUNBOOK.md) | Presenter sequence, bilingual rehearsal, recovery paths, and readiness gate |
 | [AI Project Manager](docs/PROJECT_MANAGER.md) | Current milestone, sprint controls, risks, debt, decisions, and next task |
 
 ## Contribution rules
