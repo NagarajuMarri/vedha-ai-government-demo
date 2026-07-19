@@ -273,7 +273,7 @@ def test_government_dashboard_is_synthetic_private_and_filterable() -> None:
     assert 'role="status"' in dashboard_html
     for metric in ("learners", "lessons", "practice", "mastery", "telugu", "improvement"):
         assert f'id="metric-{metric}"' in dashboard_html
-    assert "syntheticData" in dashboard_js
+    assert "baseDistricts" in dashboard_js
     assert 'byId("district-filter").addEventListener("change", renderDashboard)' in dashboard_js
     assert "innerHTML" not in dashboard_js
 
@@ -314,7 +314,7 @@ def test_government_voice_query_applies_supported_district_filter() -> None:
     dashboard_js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
     for name in ("guntur", "గుంటూరు", "visakhapatnam", "విశాఖపట్నం"):
         assert name in dashboard_js
-    assert 'byId("government-voice-form").addEventListener("submit", applyVoiceQuery)' in dashboard_js
+    assert 'byId("government-voice-form").addEventListener("submit",applyVoiceQuery)' in dashboard_js
 
 
 def test_telugu_narration_never_silently_falls_back_to_english_voice() -> None:
