@@ -220,11 +220,42 @@
     utterance.lang = language;
     utterance.voice = voice;
     utterance.rate = 0.88;
-    utterance.onstart = () => callbacks.onStart?.();
-    utterance.onend = () => callbacks.onEnd?.();
-    utterance.onerror = () => callbacks.onError?.();
+    let started = false;
+    let retried = false;
+    let startWatchdog = null;
+    const queue = () => {
+      if (synth.paused) synth.resume();
+      synth.speak(utterance);
+      startWatchdog = window.setTimeout(() => {
+        if (started || currentUtterance !== utterance) return;
+        if (!retried) {
+          retried = true;
+          synth.cancel();
+          window.setTimeout(queue, 120);
+        } else {
+          callbacks.onError?.();
+        }
+      }, 1400);
+    };
+    utterance.onstart = () => {
+      started = true;
+      if (startWatchdog) window.clearTimeout(startWatchdog);
+      callbacks.onStart?.();
+    };
+    utterance.onend = () => {
+      if (startWatchdog) window.clearTimeout(startWatchdog);
+      currentUtterance = null;
+      callbacks.onEnd?.();
+    };
+    utterance.onerror = (event) => {
+      if (startWatchdog) window.clearTimeout(startWatchdog);
+      if (event.error === "interrupted" && currentUtterance !== utterance) return;
+      currentUtterance = null;
+      callbacks.onError?.();
+    };
     currentUtterance = utterance;
-    synth.speak(utterance);
+    synth.cancel();
+    window.setTimeout(queue, 90);
     return true;
   }
 
