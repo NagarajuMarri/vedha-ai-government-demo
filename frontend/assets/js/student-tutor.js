@@ -167,7 +167,7 @@
     const isFallback = lesson.source === "fallback" || lesson.fallback_used;
     fallbackNote.hidden = !isFallback;
     fallbackNote.textContent = isFallback ? messages[state.setup.learning_profile].fallback : "";
-    window.VedhaAnimations?.prepare(state.setup.concept, state.setup.learning_profile);
+    window.VedhaAnimations?.prepare(state.setup.concept, state.setup.learning_profile, lesson);
     byId("lesson-result").hidden = false;
     byId("lesson-result").focus({ preventScroll: true });
     byId("lesson-result").scrollIntoView({ behavior: "smooth", block: "start" });
