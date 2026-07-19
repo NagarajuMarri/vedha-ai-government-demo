@@ -20,6 +20,8 @@
         <div class="parent-controls">
           <label for="parent-language">Language</label>
           <select id="parent-language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
+          <label for="report-period">Report</label>
+          <select id="report-period"><option value="weekly">Weekly report</option><option value="monthly">Monthly report</option></select>
           <label for="child-selector">Linked child</label>
           <select id="child-selector"><option value="ananya">Ananya · Class 9</option><option value="arjun">Arjun · Class 6</option></select>
         </div>
@@ -35,6 +37,22 @@
           <article><span id="metric-streak">5 days</span><small id="metric-streak-label">Learning streak</small></article>
           <article><span id="metric-growth">+12%</span><small id="metric-growth-label">Weekly improvement</small></article>
         </div>
+      </section>
+
+      <section class="parent-report-grid">
+        <article class="parent-card subject-completion-card">
+          <div class="report-card-heading"><div><p class="eyebrow" id="subject-eyebrow">Syllabus progress</p><h2 id="subject-title">Subject-wise completion</h2></div><strong id="overall-completion">72%</strong></div>
+          <div id="subject-completion-list"></div>
+        </article>
+        <article class="parent-card exam-plan-card">
+          <div class="exam-plan-heading"><div><p class="eyebrow" id="exam-eyebrow">Upcoming assessment</p><h2 id="exam-title">Term Examination Preparation</h2><p id="exam-date"></p></div><div class="exam-readiness-ring" id="exam-ring"><strong id="exam-completion">68%</strong><span id="exam-ready-label">Plan completed</span></div></div>
+          <div class="exam-progress-track" role="progressbar" aria-label="Exam preparation completed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68"><span id="exam-progress-fill"></span></div>
+          <div class="exam-plan-columns">
+            <section><h3 id="completed-title">Completed</h3><ul id="exam-completed-list"></ul></section>
+            <section><h3 id="remaining-title">Still to prepare</h3><ul id="exam-remaining-list"></ul></section>
+          </div>
+          <div class="next-study-step"><strong id="next-step-title">Next preparation step</strong><p id="exam-next-step"></p></div>
+        </article>
       </section>
 
       <section class="parent-grid">
