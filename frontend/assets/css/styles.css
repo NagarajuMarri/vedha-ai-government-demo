@@ -3802,3 +3802,14 @@ body {
 .teacher-approval-actions .primary-button{color:#fff;background:var(--color-primary)}.teacher-portal .parent-voice-card{margin-top:1.25rem}
 @media(max-width:64rem){.teacher-hero,.teacher-grid{grid-template-columns:1fr}.teacher-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:38rem){.teacher-topbar{align-items:flex-start}.teacher-topbar>div{display:grid;gap:.4rem}.teacher-main{width:min(calc(100% - 1rem),86rem);padding-top:1rem}.teacher-hero{padding:1.4rem}.teacher-metrics{grid-template-columns:1fr 1fr}.teacher-metrics article{padding:1rem}.teacher-card{padding:1rem}.teacher-approval-actions button{width:100%}}
+
+
+/* Sprint 4I connected government-demo journey */
+.demo-journey{padding:4.5rem 0;background:linear-gradient(180deg,#fff,#eef6f6)}
+.demo-journey .section-heading .eyebrow{color:var(--color-secondary)}
+.journey-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:0;padding:0;list-style:none;counter-reset:journey}
+.journey-steps li{min-width:0}.journey-steps a{display:grid;grid-template-columns:auto 1fr;gap:.8rem;align-items:start;height:100%;padding:1.25rem;border:1px solid var(--color-border);border-radius:1rem;background:#fff;box-shadow:var(--shadow-card);text-decoration:none;transition:transform .18s ease,border-color .18s ease}
+.journey-steps a:hover{border-color:var(--color-secondary);transform:translateY(-.2rem)}.journey-steps a>span{display:grid;width:2.25rem;height:2.25rem;place-items:center;border-radius:50%;color:#fff;background:var(--color-primary);font-weight:800}.journey-steps div{display:grid;gap:.35rem}.journey-steps strong{font-size:1.08rem}.journey-steps small{color:var(--color-muted);line-height:1.45}.journey-steps em{grid-column:2;color:var(--color-secondary);font-style:normal;font-weight:800}
+.journey-note{display:flex;align-items:center;gap:.75rem;margin-top:1rem;padding:1rem 1.25rem;border-left:.3rem solid var(--color-focus);border-radius:.5rem;background:#fff8e8}.journey-note span{flex:1;color:var(--color-muted)}.journey-note a{font-weight:800;color:var(--color-primary)}
+.government-answer{margin-top:1rem}.government-answer .speech-controls{display:flex;gap:.6rem;flex-wrap:wrap}
+@media(max-width:64rem){.journey-steps{grid-template-columns:repeat(2,1fr)}}@media(max-width:38rem){.journey-steps{grid-template-columns:1fr}.journey-note{align-items:flex-start;flex-direction:column}}
