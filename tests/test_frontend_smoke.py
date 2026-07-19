@@ -577,3 +577,36 @@ def test_photosynthesis_uses_separate_full_scenes_for_each_process() -> None:
         "o2-release-scene", "sentence-scene-cut",
     ):
         assert f"@keyframes {animation}" in styles
+
+
+def test_every_available_lesson_has_dedicated_sentence_level_scenes() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    concepts = (
+        "Fractions", "Decimals", "Geometry", "Water Cycle", "Solar System",
+        "Grammar", "Telugu Grammar", "Indian Constitution",
+        "Indian Freedom Movement", "Andhra Pradesh Geography",
+        "Local Government", "Climate and Natural Resources",
+    )
+    assert "const dedicatedAnimatedConcepts = new Set" in animation_js
+    assert "function renderDedicatedLessonScene(scene, concept, phase)" in animation_js
+    for concept in concepts:
+        assert f'"{concept}"' in animation_js
+        css_name = concept.lower().replace(" ", "-")
+        assert f".dedicated-{css_name}" in styles
+    assert "dedicatedAnimatedConcepts.has(concept)" in animation_js
+
+
+def test_dedicated_lesson_scenes_contain_subject_specific_visual_objects() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    visuals = (
+        "story-pizza", "place-value-table", "geometry-story-board",
+        "cycle-story-world", "solar-story-system", "grammar-story-builder",
+        "civic-story", "freedom-story-road", "ap-story-map",
+        "government-story", "resource-story",
+    )
+    for visual in visuals:
+        assert visual in animation_js
+        assert f".{visual}" in styles
+    assert "scene.dataset.dedicatedPhase = phase" in animation_js
