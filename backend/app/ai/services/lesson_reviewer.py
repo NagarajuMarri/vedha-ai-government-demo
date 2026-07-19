@@ -19,6 +19,21 @@ _ADVANCED_FRACTION_TERMS = (
     "మిశ్ర సంఖ్య", "భిన్నాల కూడిక", "భిన్నాల తీసివేత",
 )
 _INCORRECT_TERMS = ("అపరిమిత భిన్నం",)
+_CONCEPT_TERMS = {
+    "fractions": ("fraction", "fractions", "భిన్నం", "భిన్నాలు"),
+    "decimals": ("decimal", "decimals", "దశాంశం", "దశాంశాలు"),
+    "geometry": ("geometry", "జ్యామితి"),
+    "solar system": ("solar system", "సౌర కుటుంబం"),
+    "water cycle": ("water cycle", "నీటి చక్రం"),
+    "photosynthesis": ("photosynthesis", "కిరణజన్య సంయోగక్రియ"),
+    "grammar": ("grammar", "వ్యాకరణం"),
+    "telugu grammar": ("telugu grammar", "తెలుగు వ్యాకరణం"),
+    "indian constitution": ("indian constitution", "భారత రాజ్యాంగం"),
+    "indian freedom movement": ("indian freedom movement", "భారత స్వాతంత్ర్య ఉద్యమం"),
+    "andhra pradesh geography": ("andhra pradesh geography", "ఆంధ్రప్రదేశ్ భూగోళ"),
+    "local government": ("local government", "స్థానిక ప్రభుత్వం"),
+    "climate and natural resources": ("climate", "natural resources", "వాతావరణం", "సహజ వనరులు"),
+}
 
 
 class LessonReviewer:
@@ -92,6 +107,9 @@ class LessonReviewer:
 
         content = all_content.casefold()
         question = request.student_question.casefold()
+        expected_terms = _CONCEPT_TERMS.get(request.concept.casefold())
+        if expected_terms and not any(term.casefold() in content for term in expected_terms):
+            raise AIReviewerRejectionError("concept_mismatch")
         if any(term in content for term in _INCORRECT_TERMS):
             raise AIReviewerRejectionError("terminology_error")
 
