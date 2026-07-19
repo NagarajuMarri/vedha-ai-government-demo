@@ -764,3 +764,34 @@ def test_teacher_dashboard_layout_is_responsive_and_presentation_ready() -> None
         assert selector in styles
     assert "@media(max-width:64rem)" in styles
     assert "@media(max-width:38rem)" in styles
+
+
+def test_gateway_presents_integrated_four_role_ministerial_journey() -> None:
+    landing = (FRONTEND_ROOT / "index.html").read_text(encoding="utf-8")
+    for text in ("Ministerial demonstration path", "Student learns", "Parent supports", "Teacher intervenes", "Leader sees impact"):
+        assert text in landing
+    for href in ('href="student/"', 'href="parent/"', 'href="teacher/"', 'href="government/"'):
+        assert href in landing
+    assert 'href="../docs/DEMO_RUNBOOK.md"' in landing
+
+
+def test_government_dashboard_has_three_profile_voice_and_spoken_insight() -> None:
+    html = (FRONTEND_ROOT / "government" / "index.html").read_text(encoding="utf-8")
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    for profile in ("english_medium", "pure_telugu", "telugu_assisted_english"):
+        assert f'value="{profile}"' in html
+        assert profile in js
+    assert 'id="government-answer"' in html
+    assert 'data-speak-target="#government-answer"' in html
+    assert 'data-speech-pause' in html
+    assert "ఇవన్నీ కల్పిత ప్రదర్శన సూచికలు" in js
+    assert "synthetic demo indicators" in js
+
+
+def test_demo_runbook_locks_rehearsal_and_recovery_paths() -> None:
+    runbook = (PROJECT_ROOT / "docs" / "DEMO_RUNBOOK.md").read_text(encoding="utf-8")
+    for section in ("Pre-demo checklist", "Demonstration script", "Bilingual rehearsal matrix", "Recovery plan", "Completion gate"):
+        assert section in runbook
+    assert "12 minutes presentation" in runbook
+    assert "no student-level drill-down" in runbook
+    assert "Ctrl+Shift+R" in runbook
