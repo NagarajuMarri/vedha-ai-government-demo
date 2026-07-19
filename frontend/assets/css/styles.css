@@ -2516,3 +2516,361 @@ body {
   .cycle-arrow,
   .angle { transition: none; }
 }
+
+
+/* Sprint 4F presentation-quality motion graphics upgrade */
+.concept-animation {
+  --scene-navy: #071b34;
+  --scene-blue: #0b4f85;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #f7fbff, #e7f0f8);
+}
+
+.concept-animation:fullscreen {
+  overflow: auto;
+  padding: clamp(1.5rem, 4vw, 4rem);
+  background: #eef5fb;
+}
+
+.concept-animation:fullscreen .animation-stage {
+  min-height: min(62vh, 42rem);
+}
+
+.animation-stage {
+  isolation: isolate;
+  min-height: 29rem;
+  border: 1px solid rgb(255 255 255 / 65%);
+  background: linear-gradient(160deg, #dff4ff, #eef8ff 45%, #e2f2de);
+  box-shadow:
+    inset 0 0 0 1px rgb(23 63 115 / 8%),
+    inset 0 -5rem 8rem rgb(23 63 115 / 8%),
+    0 1.3rem 3rem rgb(23 63 115 / 16%);
+}
+
+.animation-stage::after {
+  content: "";
+  position: absolute;
+  z-index: 20;
+  inset: auto 0 0;
+  height: 5rem;
+  pointer-events: none;
+  background: linear-gradient(transparent, rgb(3 18 36 / 18%));
+}
+
+.scene-badge {
+  position: absolute;
+  z-index: 30;
+  left: 1rem;
+  top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 999px;
+  background: rgb(4 23 45 / 76%);
+  color: #fff;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  backdrop-filter: blur(12px);
+}
+
+.scene-badge-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #42e5c5;
+  box-shadow: 0 0 0.8rem #42e5c5;
+  animation: studio-live 1.8s ease-in-out infinite;
+}
+
+.animation-progress {
+  height: 0.42rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #cbdbe7;
+}
+
+.animation-progress span {
+  display: block;
+  width: 25%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #087f78, #20bcae, #f0a202);
+  box-shadow: 0 0 1rem rgb(8 127 120 / 45%);
+  transition: width 0.7s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Premium fractions scene */
+.animation-stage[data-concept="fractions"] {
+  background:
+    radial-gradient(circle at 50% 42%, rgb(255 225 155 / 38%), transparent 27%),
+    linear-gradient(150deg, #43281d, #714c34 55%, #322016);
+}
+
+.fraction-table {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 8rem, rgb(255 255 255 / 3%) 8rem 8.1rem),
+    linear-gradient(12deg, transparent, rgb(255 255 255 / 5%));
+}
+
+.fraction-plate {
+  display: grid;
+  place-items: center;
+  width: 21rem;
+  height: 21rem;
+  border: 1.1rem solid #f7f2e8;
+  border-radius: 50%;
+  background: radial-gradient(circle, #d7cbbd, #fff 66%, #c9bca9 69%, #fff 73%);
+  box-shadow: 0 2rem 4rem #140b0788, inset 0 0 1.5rem #fff;
+}
+
+.animation-stage[data-concept="fractions"] .visual-fraction {
+  position: relative;
+  left: auto;
+  top: auto;
+  translate: none;
+  width: 16.5rem;
+  height: 16.5rem;
+  border: 0.65rem solid #d49549;
+  background: #f2c75c;
+  box-shadow: inset 0 0 1.5rem #8d4f22aa, 0 0.7rem 1rem #24110766;
+}
+
+.pizza-cheese {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 40% 30%, #ffe790, #e8ab3c);
+}
+
+.pizza-topping {
+  position: absolute;
+  z-index: 2;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8523f, #8f1d24);
+  box-shadow: inset -0.2rem -0.25rem #63101755;
+}
+.topping-1 { left: 25%; top: 22%; }
+.topping-2 { right: 18%; top: 48%; }
+.topping-3 { left: 45%; bottom: 16%; }
+
+.fraction-story {
+  position: absolute;
+  right: clamp(1rem, 5vw, 5rem);
+  bottom: 2.5rem;
+  border: 1px solid rgb(255 255 255 / 28%);
+  border-radius: 0.8rem;
+  background: rgb(0 0 0 / 38%);
+  color: #fff;
+  padding: 0.8rem 1.1rem;
+  font-size: 1.15rem;
+  font-weight: 850;
+  backdrop-filter: blur(10px);
+}
+
+/* Premium geometry blueprint */
+.animation-stage[data-concept="geometry"] {
+  background-color: #063765;
+  background-image:
+    linear-gradient(rgb(86 183 235 / 16%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(86 183 235 / 16%) 1px, transparent 1px),
+    linear-gradient(rgb(86 183 235 / 8%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(86 183 235 / 8%) 1px, transparent 1px);
+  background-size: 4rem 4rem, 4rem 4rem, 1rem 1rem, 1rem 1rem;
+}
+
+.geometry-blueprint { position: absolute; inset: 0; }
+.axis-label { position: absolute; color: #7ee0ff; font-family: ui-monospace, monospace; font-weight: 800; }
+.axis-x { right: 1.3rem; bottom: 49%; }
+.axis-y { left: 50%; top: 1.3rem; }
+
+.animation-stage[data-concept="geometry"] .visual-triangle {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 24rem;
+  height: 18rem;
+  translate: -50% -50%;
+  border: 0;
+  filter: drop-shadow(0 0 1.1rem #4fd5ff88);
+}
+
+.animation-stage[data-concept="geometry"] .visual-triangle::after { display: none; }
+.triangle-edge { position: absolute; height: 0.28rem; border-radius: 999px; background: linear-gradient(90deg, #fff, #65dbff); box-shadow: 0 0 1rem #4fd5ff; transform-origin: left center; scale: 0 1; transition: scale 1s cubic-bezier(.2,.8,.2,1); }
+.edge-base { left: 2rem; bottom: 1.5rem; width: 20rem; }
+.edge-left { left: 2rem; bottom: 1.5rem; width: 18rem; rotate: -58deg; }
+.edge-right { right: 2rem; bottom: 1.5rem; width: 18rem; rotate: 238deg; transform-origin: right center; }
+.animation-stage[data-step="1"] .triangle-edge,
+.animation-stage[data-step="2"] .triangle-edge,
+.animation-stage[data-step="3"] .triangle-edge,
+.animation-stage[data-step="4"] .triangle-edge { scale: 1 1; }
+
+.triangle-vertex {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid #8ce9ff;
+  border-radius: 50%;
+  background: #052a50;
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 0 1.2rem #5bdcff;
+}
+.vertex-a { left: 0.9rem; bottom: 0.6rem; }
+.vertex-b { right: 0.9rem; bottom: 0.6rem; }
+.vertex-c { left: calc(50% - 1rem); top: 0.2rem; }
+
+.animation-stage[data-concept="geometry"] .geometry-equation {
+  right: 1.5rem;
+  bottom: 1.5rem;
+  border: 1px solid #5bdcff88;
+  background: rgb(2 26 52 / 82%);
+  color: #fff;
+  box-shadow: 0 0 2rem #49ccff44;
+  backdrop-filter: blur(12px);
+}
+
+/* Cinematic water cycle scene */
+.animation-stage[data-concept="water-cycle"] {
+  background: linear-gradient(#6dc9f5 0 55%, #d6edff 56% 66%, #347db5 67%);
+}
+
+.water-sky { position: absolute; inset: 0; overflow: hidden; }
+.water-landscape { position: absolute; inset: 42% 0 0; }
+.mountain { position: absolute; bottom: 4rem; width: 0; height: 0; border-left: 14rem solid transparent; border-right: 14rem solid transparent; border-bottom: 15rem solid #476d65; filter: drop-shadow(0 1rem 1rem #1238); }
+.mountain-back { left: -5rem; scale: 0.8; opacity: 0.7; border-bottom-color: #6f8f86; }
+.mountain-front { left: 25%; border-bottom-color: #315a56; }
+.snow-cap { position: absolute; left: calc(25% + 9.4rem); bottom: 14rem; width: 0; height: 0; border-left: 4.6rem solid transparent; border-right: 4.6rem solid transparent; border-bottom: 5rem solid #f5fbff; }
+
+.animation-stage[data-concept="water-cycle"] .cycle-water {
+  z-index: 4;
+  left: 0;
+  right: 0;
+  height: 5.2rem;
+  background: linear-gradient(#2ea5db, #075884);
+  box-shadow: inset 0 0.7rem 0 #8edfff55;
+}
+
+.animation-stage[data-concept="water-cycle"] .cycle-sun {
+  left: 8%;
+  top: 10%;
+  width: 6rem;
+  height: 6rem;
+  color: transparent;
+  font-size: 0;
+}
+.sun-core { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff5ad, #ffbb23 55%, #ee7c16); box-shadow: 0 0 3rem #ffca3a; }
+.sun-ray { position: absolute; left: 50%; top: 50%; width: 0.25rem; height: 5rem; background: linear-gradient(#ffcc42, transparent); transform-origin: 50% 0; }
+.ray-1 { rotate: 0deg; }
+.ray-2 { rotate: 30deg; }
+.ray-3 { rotate: 60deg; }
+.ray-4 { rotate: 90deg; }
+.ray-5 { rotate: 120deg; }
+.ray-6 { rotate: 150deg; }
+.ray-7 { rotate: 180deg; }
+.ray-8 { rotate: 210deg; }
+.ray-9 { rotate: 240deg; }
+.ray-10 { rotate: 270deg; }
+.ray-11 { rotate: 300deg; }
+.ray-12 { rotate: 330deg; }
+
+.animation-stage[data-concept="water-cycle"] .cycle-cloud {
+  right: 12%;
+  top: 12%;
+  width: 12rem;
+  height: 6rem;
+  color: transparent;
+  font-size: 0;
+  filter: drop-shadow(0 1rem 1rem #29485b55);
+}
+.cloud-puff { position: absolute; border-radius: 50%; background: linear-gradient(#fff, #c9dce8); }
+.puff-1 { left: 0; bottom: 0; width: 6rem; height: 5rem; }
+.puff-2 { left: 3.5rem; top: 0; width: 6rem; height: 6rem; }
+.puff-3 { right: 0; bottom: 0; width: 6rem; height: 4.5rem; }
+.cloud-base { position: absolute; left: 1rem; right: 1rem; bottom: 0; height: 3rem; border-radius: 2rem; background: #d4e3ec; }
+
+.cycle-flow { position: absolute; z-index: 7; opacity: 0.18; transition: opacity 0.7s ease; }
+.cycle-flow .flow-label,
+.rain-system .flow-label { border-radius: 999px; background: rgb(4 30 53 / 78%); color: #fff; padding: 0.4rem 0.7rem; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.07em; }
+.cycle-flow.evaporation { left: 35%; bottom: 22%; height: 13rem; }
+.flow-line { width: 0.35rem; height: 100%; margin: auto; background: linear-gradient(transparent, #fff); box-shadow: 0 0 1rem #fff; animation: water-rise 1.8s ease-in-out infinite; }
+.cycle-flow.condensation { right: 17%; top: 6%; }
+.rain-system { position: absolute; z-index: 8; right: 13%; top: 29%; width: 12rem; height: 13rem; opacity: 0.12; transition: opacity 0.7s ease; }
+.rain-drop { position: absolute; top: 0; width: 0.25rem; height: 1.4rem; border-radius: 50%; background: #e9f9ff; animation: rain-fall 1.2s linear infinite; }
+.drop-1 { left: 0%; animation-delay: -0s; }
+.drop-2 { left: 23%; animation-delay: -0.18s; }
+.drop-3 { left: 46%; animation-delay: -0.36s; }
+.drop-4 { left: 69%; animation-delay: -0.54s; }
+.drop-5 { left: 0%; animation-delay: -0.72s; }
+.drop-6 { left: 23%; animation-delay: -0.8999999999999999s; }
+.drop-7 { left: 46%; animation-delay: -0s; }
+.drop-8 { left: 69%; animation-delay: -0.18s; }
+.drop-9 { left: 0%; animation-delay: -0.36s; }
+.drop-10 { left: 23%; animation-delay: -0.54s; }
+.drop-11 { left: 46%; animation-delay: -0.72s; }
+.drop-12 { left: 69%; animation-delay: -0.8999999999999999s; }
+.drop-13 { left: 0%; animation-delay: -0s; }
+.drop-14 { left: 23%; animation-delay: -0.18s; }
+.rain-system .flow-label { position: absolute; left: 50%; bottom: -1rem; translate: -50%; }
+.animation-stage[data-step="2"] .cycle-flow.evaporation { opacity: 1; }
+.animation-stage[data-step="3"] .cycle-flow.condensation { opacity: 1; }
+.animation-stage[data-step="4"] .rain-system { opacity: 1; }
+
+/* Cinematic solar system scene */
+.animation-stage[data-concept="solar-system"] {
+  background: radial-gradient(circle at 48% 48%, #163b6d, #06172f 48%, #01050d);
+}
+.space-scene { position: absolute; inset: 0; overflow: hidden; }
+.space-star { position: absolute; left: var(--star-x); top: var(--star-y); width: 0.18rem; height: 0.18rem; border-radius: 50%; background: #fff; box-shadow: 0 0 0.55rem #b5d8ff; animation: star-twinkle 2.4s ease-in-out var(--star-delay) infinite; }
+.star-2,.star-5,.star-8 { width: 0.1rem; height: 0.1rem; opacity: 0.6; }
+.animation-stage[data-concept="solar-system"] .visual-solar-system { inset: 0; }
+.animation-stage[data-concept="solar-system"] .solar-sun { width: 7rem; height: 7rem; background: transparent; box-shadow: none; font-size: 0; }
+.solar-glow { position: absolute; inset: -2.5rem; border-radius: 50%; background: radial-gradient(circle, #ffdc65aa, #ff8a0055 43%, transparent 70%); animation: sun-breathe 3s ease-in-out infinite; }
+.solar-core { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 38% 32%, #fff6b0, #ffc327 46%, #f16a10 80%); box-shadow: inset -1rem -1rem 2rem #d33b00, 0 0 2.5rem #ff9f1c; }
+.celestial-label { position: absolute; left: 50%; top: calc(100% + 0.55rem); translate: -50%; color: #eaf5ff; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.08em; white-space: nowrap; text-shadow: 0 2px 5px #000; }
+.animation-stage[data-concept="solar-system"] .solar-orbit { border-color: rgb(135 190 255 / 28%); box-shadow: inset 0 0 1rem rgb(64 129 212 / 12%); }
+.animation-stage[data-concept="solar-system"] .orbit-1 { width: 11rem; height: 11rem; }
+.animation-stage[data-concept="solar-system"] .orbit-2 { width: 16rem; height: 16rem; }
+.animation-stage[data-concept="solar-system"] .orbit-3 { width: 21rem; height: 21rem; }
+.animation-stage[data-concept="solar-system"] .orbit-4 { width: 27rem; height: 27rem; animation-duration: 22s; }
+.animation-stage[data-concept="solar-system"] .solar-planet { top: -1rem; display: grid; place-items: center; background: transparent; }
+.planet-surface { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #d1d5db, #6b7280); box-shadow: inset -0.35rem -0.3rem #1118, 0 0 0.8rem #aac8ff88; }
+.planet-2 .planet-surface { background: radial-gradient(circle at 35% 30%, #71d09c, #2376aa 55%, #153f78); }
+.planet-3 .planet-surface { background: radial-gradient(circle at 35% 30%, #ee9b78, #a43c2e); }
+.planet-4 { width: 2.7rem; height: 2.7rem; }
+.planet-4 .planet-surface { background: repeating-linear-gradient(#d59b62 0 0.35rem, #a65c3e 0.4rem 0.7rem); }
+
+@keyframes studio-live { 50% { opacity: 0.45; scale: 0.75; } }
+@keyframes water-rise { 50% { translate: 0 -1.3rem; opacity: 0.45; } }
+@keyframes rain-fall { from { translate: 0 -1rem; opacity: 0; } 30% { opacity: 1; } to { translate: -0.7rem 11rem; opacity: 0; } }
+@keyframes star-twinkle { 50% { opacity: 0.2; scale: 0.5; } }
+@keyframes sun-breathe { 50% { scale: 1.15; opacity: 0.72; } }
+
+@media (max-width: 48rem) {
+  .animation-stage { min-height: 24rem; }
+  .fraction-plate { width: 16rem; height: 16rem; }
+  .animation-stage[data-concept="fractions"] .visual-fraction { width: 12.5rem; height: 12.5rem; }
+  .animation-stage[data-concept="geometry"] .visual-triangle { width: 18rem; scale: 0.78; }
+  .animation-stage[data-concept="solar-system"] .orbit-4 { width: 21rem; height: 21rem; }
+  .scene-badge { font-size: 0.58rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-badge-dot,
+  .sun-ray,
+  .flow-line,
+  .rain-drop,
+  .space-star,
+  .solar-glow { animation: none; }
+}
