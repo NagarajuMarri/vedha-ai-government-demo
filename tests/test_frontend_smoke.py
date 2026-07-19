@@ -796,3 +796,38 @@ def test_demo_runbook_locks_rehearsal_and_recovery_paths() -> None:
     assert "12 minutes presentation" in runbook
     assert "no student-level drill-down" in runbook
     assert "Ctrl+Shift+R" in runbook
+
+
+def test_government_dashboard_supports_hierarchical_and_subject_filters() -> None:
+    html = (FRONTEND_ROOT / "government" / "index.html").read_text(encoding="utf-8")
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    for element_id in ("district-filter", "mandal-filter", "school-filter", "subject-filter", "class-filter"):
+        assert f'id="{element_id}"' in html
+    assert "const hierarchy=" in js
+    assert "function populateMandals()" in js
+    assert "function populateSchools()" in js
+    assert 'byId("mandal-filter").addEventListener("change"' in js
+    assert '"Mathematics":"గణితం"' not in js or "subjectAliases" in js
+    for scope in ("Gajuwaka", "Tenali", "Mangalagiri", "Adoni", "Chandragiri", "Rajamahendravaram"):
+        assert scope in js
+    assert "Vedha Demo ZPHS Tenali" in js
+
+
+def test_school_analytics_remain_aggregate_and_privacy_safe() -> None:
+    html = (FRONTEND_ROOT / "government" / "index.html").read_text(encoding="utf-8")
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    assert "School views remain aggregate" in html
+    assert "Math.max(40" in js
+    assert "No individual student data is shown." in js
+    assert "వ్యక్తిగత విద్యార్థి వివరాలు చూపబడవు" in js
+    assert "student_id" not in js
+    assert "student-name" not in html
+
+
+def test_government_voice_query_understands_mandal_school_and_subject() -> None:
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    assert "function findVoiceSelections(query)" in js
+    assert "subjectAliases" in js
+    assert "mandalKey" in js
+    assert "schoolKey" in js
+    assert 'byId("subject-filter").value=found.subject' in js
