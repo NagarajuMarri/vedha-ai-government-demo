@@ -266,7 +266,7 @@ Decorative background motion, disabled microphone controls, silent animations, a
 **Sprint 4G controlled-demo status:**
 
 - Two explicitly synthetic linked-child profiles demonstrate the authorized parent experience.
-- Weekly progress, strengths, attention areas, activity and support recommendations are functional.
+- Weekly and monthly reports, subject-wise completion, upcoming-exam readiness, completed/remaining preparation topics, strengths, attention areas, activity and support recommendations are functional.
 - English/Telugu switching, editable voice queries and spoken insights are supported.
 - Production authentication, parent-child linking and persisted progress remain pending and are not implied.
 
