@@ -337,6 +337,13 @@ Decorative background motion, disabled microphone controls, silent animations, a
 - No open critical/high security defects remain.
 - Demo script, synthetic dataset, fallback behavior, and operator responsibilities are rehearsed.
 
+**Sprint 4I controlled-demo status:**
+
+- The gateway presents a rehearsable Student → Parent → Teacher → Government story with a 12-minute presenter path.
+- Government voice access now supports English, Pure Telugu and Telugu Assisted English and produces a spoken synthetic district insight.
+- A bilingual runbook covers setup, role-by-role script, privacy boundaries, browser/provider recovery and the completion gate.
+- Full manual English and Telugu rehearsal, accessibility review and deployment approval remain pending.
+
 ### VGD-017 — Prepare controlled deployment
 
 | Field | Value |

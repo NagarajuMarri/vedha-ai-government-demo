@@ -273,8 +273,8 @@ def test_government_dashboard_is_synthetic_private_and_filterable() -> None:
     assert 'role="status"' in dashboard_html
     for metric in ("learners", "lessons", "practice", "mastery", "telugu", "improvement"):
         assert f'id="metric-{metric}"' in dashboard_html
-    assert "syntheticData" in dashboard_js
-    assert 'byId("district-filter").addEventListener("change", renderDashboard)' in dashboard_js
+    assert "baseDistricts" in dashboard_js
+    assert 'byId("district-filter").addEventListener("change",()=>' in dashboard_js
     assert "innerHTML" not in dashboard_js
 
 
@@ -314,7 +314,7 @@ def test_government_voice_query_applies_supported_district_filter() -> None:
     dashboard_js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
     for name in ("guntur", "గుంటూరు", "visakhapatnam", "విశాఖపట్నం"):
         assert name in dashboard_js
-    assert 'byId("government-voice-form").addEventListener("submit", applyVoiceQuery)' in dashboard_js
+    assert 'byId("government-voice-form").addEventListener("submit",applyVoiceQuery)' in dashboard_js
 
 
 def test_telugu_narration_never_silently_falls_back_to_english_voice() -> None:
@@ -764,3 +764,70 @@ def test_teacher_dashboard_layout_is_responsive_and_presentation_ready() -> None
         assert selector in styles
     assert "@media(max-width:64rem)" in styles
     assert "@media(max-width:38rem)" in styles
+
+
+def test_gateway_presents_integrated_four_role_ministerial_journey() -> None:
+    landing = (FRONTEND_ROOT / "index.html").read_text(encoding="utf-8")
+    for text in ("Ministerial demonstration path", "Student learns", "Parent supports", "Teacher intervenes", "Leader sees impact"):
+        assert text in landing
+    for href in ('href="student/"', 'href="parent/"', 'href="teacher/"', 'href="government/"'):
+        assert href in landing
+    assert 'href="demo/"' in landing
+    assert (FRONTEND_ROOT / "demo" / "index.html").is_file()
+
+
+def test_government_dashboard_has_three_profile_voice_and_spoken_insight() -> None:
+    html = (FRONTEND_ROOT / "government" / "index.html").read_text(encoding="utf-8")
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    for profile in ("english_medium", "pure_telugu", "telugu_assisted_english"):
+        assert f'value="{profile}"' in html
+        assert profile in js
+    assert 'id="government-answer"' in html
+    assert 'data-speak-target="#government-answer"' in html
+    assert 'data-speech-pause' in html
+    assert "వ్యక్తిగత విద్యార్థి వివరాలు చూపబడవు" in js
+    assert "aggregate indicators" in js
+
+
+def test_demo_runbook_locks_rehearsal_and_recovery_paths() -> None:
+    runbook = (PROJECT_ROOT / "docs" / "DEMO_RUNBOOK.md").read_text(encoding="utf-8")
+    for section in ("Pre-demo checklist", "Demonstration script", "Bilingual rehearsal matrix", "Recovery plan", "Completion gate"):
+        assert section in runbook
+    assert "12 minutes presentation" in runbook
+    assert "no student-level drill-down" in runbook
+    assert "Ctrl+Shift+R" in runbook
+
+
+def test_government_dashboard_supports_hierarchical_and_subject_filters() -> None:
+    html = (FRONTEND_ROOT / "government" / "index.html").read_text(encoding="utf-8")
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    for element_id in ("district-filter", "mandal-filter", "school-filter", "subject-filter", "class-filter"):
+        assert f'id="{element_id}"' in html
+    assert "const hierarchy=" in js
+    assert "function populateMandals()" in js
+    assert "function populateSchools()" in js
+    assert 'byId("mandal-filter").addEventListener("change"' in js
+    assert '"Mathematics":"గణితం"' not in js or "subjectAliases" in js
+    for scope in ("Gajuwaka", "Tenali", "Mangalagiri", "Adoni", "Chandragiri", "Rajamahendravaram"):
+        assert scope in js
+    assert "Vedha Demo ZPHS Tenali" in js
+
+
+def test_school_analytics_remain_aggregate_and_privacy_safe() -> None:
+    html = (FRONTEND_ROOT / "government" / "index.html").read_text(encoding="utf-8")
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    assert "School views remain aggregate" in html
+    assert "Math.max(40" in js
+    assert "No individual student data is shown." in js
+    assert "వ్యక్తిగత విద్యార్థి వివరాలు చూపబడవు" in js
+    assert "student_id" not in js
+    assert "student-name" not in html
+
+
+def test_government_voice_query_understands_mandal_school_and_subject() -> None:
+    js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    assert "function findVoiceSelections(query)" in js
+    assert "subjectAliases" in js
+    assert "mandalKey" in js
+    assert "schoolKey" in js
+    assert 'byId("subject-filter").value=found.subject' in js
