@@ -93,32 +93,88 @@
     stage.replaceChildren();
     stage.dataset.concept = concept.toLowerCase().replaceAll(" ", "-");
 
+    const sceneBadge = node("scene-badge");
+    sceneBadge.append(node("scene-badge-dot"), node("scene-badge-text", state.language === "te" ? "వేద దృశ్య పాఠం" : "VEDHA VISUAL LESSON"));
+    stage.append(sceneBadge);
+
     if (concept === "Fractions") {
+      const table = node("fraction-table");
+      const plate = node("fraction-plate");
       const whole = node("visual-fraction");
-      for (let index = 0; index < 4; index += 1) whole.append(node(`fraction-part part-${index + 1}`));
-      whole.append(node("fraction-label", "3/4"));
-      stage.append(whole);
-    } else if (concept === "Geometry") {
-      const triangle = node("visual-triangle");
-      triangle.append(node("angle angle-a", "50°"), node("angle angle-b", "60°"), node("angle angle-c", "70°"));
-      stage.append(triangle, node("geometry-equation", "50° + 60° + 70° = 180°"));
-    } else if (concept === "Water Cycle") {
-      stage.append(
-        node("cycle-sun", "☀"),
-        node("cycle-water", "నీరు · Water"),
-        node("cycle-cloud", "☁"),
-        node("cycle-arrow evaporation", "↑"),
-        node("cycle-arrow rain", "↓"),
-      );
-    } else if (concept === "Solar System") {
-      const system = node("visual-solar-system");
-      system.append(node("solar-sun", "☀"));
-      for (let index = 1; index <= 3; index += 1) {
-        const orbit = node(`solar-orbit orbit-${index}`);
-        orbit.append(node(`solar-planet planet-${index}`, index === 2 ? "భూమి" : ""));
-        system.append(orbit);
+      for (let index = 0; index < 4; index += 1) {
+        const part = node(`fraction-part part-${index + 1}`);
+        part.append(node("pizza-cheese"));
+        for (let topping = 0; topping < 3; topping += 1) part.append(node(`pizza-topping topping-${topping + 1}`));
+        whole.append(part);
       }
-      stage.append(system);
+      whole.append(node("fraction-label", "3/4"));
+      plate.append(whole);
+      table.append(plate, node("fraction-story", state.language === "te" ? "4 సమాన భాగాలు" : "4 equal parts"));
+      stage.append(table);
+    } else if (concept === "Geometry") {
+      const blueprint = node("geometry-blueprint");
+      blueprint.append(node("axis-label axis-x", "x"), node("axis-label axis-y", "y"));
+      const triangle = node("visual-triangle");
+      triangle.append(
+        node("triangle-edge edge-left"),
+        node("triangle-edge edge-right"),
+        node("triangle-edge edge-base"),
+        node("triangle-vertex vertex-a", "A"),
+        node("triangle-vertex vertex-b", "B"),
+        node("triangle-vertex vertex-c", "C"),
+        node("angle angle-a", "50°"),
+        node("angle angle-b", "60°"),
+        node("angle angle-c", "70°"),
+      );
+      blueprint.append(triangle, node("geometry-equation", "50° + 60° + 70° = 180°"));
+      stage.append(blueprint);
+    } else if (concept === "Water Cycle") {
+      const sky = node("water-sky");
+      const sun = node("cycle-sun");
+      sun.append(node("sun-core"), ...Array.from({ length: 12 }, (_, index) => node(`sun-ray ray-${index + 1}`)));
+      const landscape = node("water-landscape");
+      landscape.append(
+        node("mountain mountain-back"),
+        node("mountain mountain-front"),
+        node("snow-cap"),
+        node("cycle-water", state.language === "te" ? "జలాశయం" : "COLLECTION"),
+      );
+      const cloud = node("cycle-cloud");
+      cloud.append(node("cloud-puff puff-1"), node("cloud-puff puff-2"), node("cloud-puff puff-3"), node("cloud-base"));
+      const evaporation = node("cycle-flow evaporation");
+      evaporation.append(node("flow-line"), node("flow-label", state.language === "te" ? "ఆవిరీకరణ" : "EVAPORATION"));
+      const condensation = node("cycle-flow condensation");
+      condensation.append(node("flow-label", state.language === "te" ? "సంఘననం" : "CONDENSATION"));
+      const rain = node("rain-system");
+      for (let index = 0; index < 14; index += 1) rain.append(node(`rain-drop drop-${index + 1}`));
+      rain.append(node("flow-label", state.language === "te" ? "వర్షపాతం" : "PRECIPITATION"));
+      sky.append(sun, cloud, evaporation, condensation, rain, landscape);
+      stage.append(sky);
+    } else if (concept === "Solar System") {
+      const space = node("space-scene");
+      for (let index = 0; index < 42; index += 1) {
+        const star = node(`space-star star-${(index % 9) + 1}`);
+        star.style.setProperty("--star-x", `${(index * 37) % 97}%`);
+        star.style.setProperty("--star-y", `${(index * 61) % 93}%`);
+        star.style.setProperty("--star-delay", `${(index % 7) * -0.35}s`);
+        space.append(star);
+      }
+      const system = node("visual-solar-system");
+      const sun = node("solar-sun");
+      sun.append(node("solar-glow"), node("solar-core"), node("celestial-label", state.language === "te" ? "సూర్యుడు" : "SUN"));
+      system.append(sun);
+      const planetData = [
+        ["బుధుడు", "MERCURY"], ["భూమి", "EARTH"], ["అంగారకుడు", "MARS"], ["గురుడు", "JUPITER"],
+      ];
+      planetData.forEach(([te, en], index) => {
+        const orbit = node(`solar-orbit orbit-${index + 1}`);
+        const planet = node(`solar-planet planet-${index + 1}`);
+        planet.append(node("planet-surface"), node("celestial-label", state.language === "te" ? te : en));
+        orbit.append(planet);
+        system.append(orbit);
+      });
+      space.append(system);
+      stage.append(space);
     }
   }
 
@@ -128,6 +184,8 @@
     byId("animation-stage").dataset.step = String(state.index + 1);
     byId("animation-caption").textContent = steps[state.index];
     byId("animation-step").textContent = `${state.index + 1} / ${steps.length}`;
+    byId("animation-progress-fill").style.width = `${((state.index + 1) / steps.length) * 100}%`;
+    byId("animation-progress").setAttribute("aria-valuenow", String(state.index + 1));
     byId("animation-previous").disabled = state.index === 0;
     byId("animation-next").disabled = state.index === steps.length - 1;
   }
@@ -234,6 +292,11 @@
     if (mode && !mode.disabled) setMode(mode.dataset.explanationMode);
     if (event.target.closest("#animation-play")) state.playing ? pause() : play();
     if (event.target.closest("#animation-replay")) { setStep(0); play(); }
+    if (event.target.closest("#animation-fullscreen")) {
+      const panel = byId("concept-animation");
+      if (document.fullscreenElement) document.exitFullscreen?.();
+      else panel.requestFullscreen?.();
+    }
     if (event.target.closest("#animation-previous")) { pause(); setStep(state.index - 1); }
     if (event.target.closest("#animation-next")) { pause(); setStep(state.index + 1); }
   });
