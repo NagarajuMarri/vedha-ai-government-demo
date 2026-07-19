@@ -3525,3 +3525,124 @@ body {
 @media(prefers-reduced-motion:reduce){
   .focused-practice-question{animation:none}
 }
+
+
+/* Full sentence-by-sentence animation scenes */
+.sentence-scene {
+  position:absolute;
+  z-index:12;
+  inset:0;
+  overflow:hidden;
+  background:radial-gradient(circle at 50% 45%,#1d6695,#082541 72%);
+  animation:sentence-scene-cut .65s cubic-bezier(.2,.85,.2,1) both;
+}
+.sentence-scene-number {
+  position:absolute;
+  right:1.2rem;
+  top:.8rem;
+  color:#ffffff22;
+  font-size:clamp(4rem,12vw,8rem);
+  font-weight:950;
+  line-height:1;
+}
+.sentence-visual-track {
+  position:absolute;
+  inset:18% 8% 23%;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  gap:2rem;
+}
+.sentence-visual-object {
+  position:relative;
+  z-index:4;
+  display:grid;
+  place-items:center;
+  min-width:clamp(6rem,18vw,13rem);
+  min-height:clamp(6rem,18vw,13rem);
+  border:1px solid #ffffff55;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 25%,#ffffff33,#061f3be8);
+  color:#fff;
+  font-size:clamp(1.2rem,3vw,2.2rem);
+  font-weight:950;
+  text-align:center;
+  box-shadow:0 1.5rem 3rem #0018,inset 0 1px #ffffff66;
+}
+.sentence-object-1{animation:sentence-source 2.2s ease-in-out infinite}
+.sentence-object-2{border:0;background:transparent;box-shadow:none;color:#ffe66a;animation:sentence-transfer 1.3s ease-in-out infinite}
+.sentence-object-3{animation:sentence-result 2.2s .4s ease-in-out infinite}
+.sentence-motion-path {
+  position:absolute;
+  left:18%;
+  right:18%;
+  top:50%;
+  height:.35rem;
+  background:repeating-linear-gradient(90deg,#ffffff66 0 1rem,transparent 1rem 1.5rem);
+  animation:motion-path 1.1s linear infinite;
+}
+
+/* Each photosynthesis sentence is a completely different camera scene. */
+.sentence-scene-photosynthesis.sentence-phase-sunlight {
+  background:linear-gradient(#43aee8 0 68%,#77b85a 68%);
+}
+.process-sun{position:absolute;left:8%;top:10%;font-size:7rem;filter:drop-shadow(0 0 2.8rem #ffdf3e);animation:sun-breathe 2.2s infinite}
+.process-canopy{position:absolute;right:9%;top:31%;width:43%;height:38%}
+.process-leaf{position:absolute;width:11rem;height:5.2rem;border-radius:100% 0 100% 0;background:linear-gradient(135deg,#a4ed63,#1c873e);box-shadow:inset 0 0 1.2rem #0b5528,0 0 1.2rem #d6ff7a}
+.process-leaf-1{left:2%;top:5%;rotate:12deg}.process-leaf-2{right:4%;top:4%;rotate:78deg}
+.process-leaf-3{left:23%;top:36%;rotate:38deg}.process-leaf-4{right:4%;top:54%;rotate:98deg}.process-leaf-5{left:4%;top:68%;rotate:-10deg}
+.process-rays{position:absolute;left:18%;top:21%;width:53%;height:48%;rotate:-28deg}
+.process-ray{position:absolute;top:0;width:.45rem;height:100%;border-radius:999px;background:linear-gradient(#fff8a9,#ffd524 58%,transparent);box-shadow:0 0 1.2rem #ffe44e;animation:light-hit-leaf 1.2s ease-in-out infinite}
+.ray-beam-1{left:3%;animation-delay:-.1s}.ray-beam-2{left:14%;animation-delay:-.2s}.ray-beam-3{left:25%;animation-delay:-.3s}.ray-beam-4{left:36%;animation-delay:-.4s}.ray-beam-5{left:47%;animation-delay:-.5s}.ray-beam-6{left:58%;animation-delay:-.6s}.ray-beam-7{left:69%;animation-delay:-.7s}.ray-beam-8{left:80%;animation-delay:-.8s}.ray-beam-9{left:91%;animation-delay:-.9s}
+
+.sentence-scene-photosynthesis.sentence-phase-roots-water {
+  background:linear-gradient(#91d9f5 0 38%,#70452c 38% 62%,#3b281e 62%);
+}
+.root-stem{position:absolute;left:50%;top:12%;width:1.4rem;height:45%;border-radius:1rem;background:#258441;box-shadow:0 0 1rem #66df7d}
+.root-soil-cutaway{position:absolute;inset:38% 0 0;background:repeating-linear-gradient(12deg,#6b412a 0 1.8rem,#53321f 1.9rem 3.5rem)}
+.root-network{position:absolute;left:50%;top:43%;width:1rem;height:48%}
+.root-branch{position:absolute;top:0;width:.4rem;height:13rem;border-radius:50%;background:#e2b077;transform-origin:top}
+.root-branch-1{rotate:8deg}.root-branch-2{rotate:25deg}.root-branch-3{rotate:43deg}.root-branch-4{rotate:68deg}.root-branch-5{rotate:-12deg}.root-branch-6{rotate:-29deg}.root-branch-7{rotate:-48deg}.root-branch-8{rotate:-67deg}
+.root-drop{position:absolute;color:#70dfff;font-size:1rem;text-shadow:0 0 1rem #a8efff;animation:drop-to-root 1.7s ease-in infinite}
+.root-drop-1{left:18%;top:58%;animation-delay:-.1s}.root-drop-2{left:28%;top:47%;animation-delay:-.3s}.root-drop-3{left:39%;top:70%;animation-delay:-.5s}.root-drop-4{left:62%;top:52%;animation-delay:-.7s}.root-drop-5{left:76%;top:68%;animation-delay:-.9s}.root-drop-6{left:85%;top:45%;animation-delay:-1.1s}.root-drop-7{left:14%;top:77%;animation-delay:-1.3s}.root-drop-8{left:92%;top:78%;animation-delay:-1.5s}.root-drop-9{left:34%;top:85%}.root-drop-10{left:67%;top:82%;animation-delay:-.4s}.root-drop-11{left:46%;top:56%;animation-delay:-.8s}.root-drop-12{left:55%;top:73%;animation-delay:-1.2s}
+
+.sentence-scene-photosynthesis.sentence-phase-carbon{background:radial-gradient(circle at 60% 45%,#79ca63,#135b32 70%)}
+.leaf-closeup{position:absolute;left:50%;top:48%;translate:-50% -50%;width:65%;height:58%;border-radius:100% 0 100% 0;background:linear-gradient(135deg,#9ee66e,#21823f);box-shadow:inset 0 0 4rem #0b4d27,0 2rem 3rem #062e1d88}
+.leaf-closeup::after{content:"";position:absolute;left:8%;right:8%;top:50%;height:.7rem;background:#d1ef9b;rotate:-12deg;box-shadow:0 0 1rem #eaffb6}
+.leaf-stoma{position:absolute;z-index:4;left:48%;top:50%;width:5rem;height:2rem;border:.8rem solid #76d26b;border-radius:50%;background:#163e2d;box-shadow:0 0 1.5rem #d5ffae}
+.gas-bubble{position:absolute;border:1px solid #ffffff99;border-radius:50%;background:#ffffff22;color:#fff;padding:.45rem;font-size:.7rem;font-weight:950;box-shadow:0 0 1rem #fff6}
+.carbon-bubble-1{left:8%;top:15%}.carbon-bubble-2{left:17%;top:65%}.carbon-bubble-3{left:29%;top:30%}.carbon-bubble-4{left:77%;top:20%}.carbon-bubble-5{left:86%;top:65%}.carbon-bubble-6{left:68%;top:76%}.carbon-bubble-7{left:12%;top:43%}.carbon-bubble-8{left:82%;top:43%}.carbon-bubble-9{left:50%;top:82%}
+.carbon-bubbles .gas-bubble{animation:co2-enter 2.2s ease-in-out infinite}
+
+.sentence-scene-photosynthesis.sentence-phase-food{background:radial-gradient(circle,#65b752,#123e28)}
+.chloroplast-factory{position:absolute;left:50%;top:45%;translate:-50% -50%;width:25rem;height:14rem;border:1rem solid #74c95e;border-radius:50%;background:repeating-linear-gradient(0deg,#285f38 0 1.1rem,#40904d 1.2rem 2.2rem);box-shadow:0 0 3rem #b5ff75,inset 0 0 2rem #082e1c}
+.chloroplast-core{position:absolute;inset:25%;border-radius:50%;background:#ffe66b;box-shadow:0 0 2rem #fff477;animation:action-pulse 1.5s infinite}
+.energy-orbit{position:absolute;inset:10%;border:.3rem dashed #d9ff8a;border-radius:50%;animation:slow-spin 5s linear infinite}
+.sugar-crystal{position:absolute;right:-4rem;top:36%;border-radius:1rem;background:#fff;color:#176137;padding:1rem;font-weight:950;box-shadow:0 0 2rem #fff}
+.process-equation{position:absolute;left:50%;bottom:20%;translate:-50%;border-radius:999px;background:#071f34d9;color:#fff;padding:.8rem 1.4rem;font-size:1.2rem;font-weight:950}
+
+.sentence-scene-photosynthesis.sentence-phase-oxygen{background:linear-gradient(145deg,#31a3d9,#8bd66c)}
+.oxygen-leaf{position:absolute;left:18%;top:28%;width:19rem;height:12rem;border-radius:100% 0 100% 0;background:linear-gradient(135deg,#aff071,#1b813e);box-shadow:inset 0 0 2rem #0b5329,0 1.5rem 2rem #14522b77}
+.oxygen-bubbles .gas-bubble{background:#d9fff1;color:#08755d;border-color:#fff;font-size:.9rem;animation:o2-release-scene 2.3s ease-out infinite}
+.oxygen-bubble-1{left:38%;top:45%}.oxygen-bubble-2{left:47%;top:31%;animation-delay:-.2s}.oxygen-bubble-3{left:56%;top:55%;animation-delay:-.4s}.oxygen-bubble-4{left:65%;top:24%;animation-delay:-.6s}.oxygen-bubble-5{left:75%;top:44%;animation-delay:-.8s}.oxygen-bubble-6{left:84%;top:16%;animation-delay:-1s}.oxygen-bubble-7{left:41%;top:68%;animation-delay:-1.2s}.oxygen-bubble-8{left:59%;top:75%;animation-delay:-1.4s}.oxygen-bubble-9{left:72%;top:65%;animation-delay:-1.6s}.oxygen-bubble-10{left:89%;top:55%;animation-delay:-1.8s}.oxygen-bubble-11{left:50%;top:12%;animation-delay:-2s}.oxygen-bubble-12{left:80%;top:79%;animation-delay:-2.2s}
+.process-callout{position:absolute;z-index:20;left:50%;bottom:7%;translate:-50%;width:max-content;max-width:85%;border:1px solid #ffffff77;border-radius:999px;background:#041d36dc;color:#fff;padding:.7rem 1.2rem;font-weight:950;text-align:center;box-shadow:0 1rem 2rem #0017;backdrop-filter:blur(9px)}
+
+@keyframes sentence-scene-cut{from{opacity:0;scale:1.06;filter:blur(8px)}to{opacity:1;scale:1;filter:none}}
+@keyframes sentence-source{50%{scale:1.12;box-shadow:0 0 2.5rem #73dfff}}
+@keyframes sentence-transfer{50%{translate:1rem 0;opacity:.35}}
+@keyframes sentence-result{0%,30%{opacity:.25;scale:.8}65%,100%{opacity:1;scale:1.1}}
+@keyframes motion-path{to{background-position:1.5rem 0}}
+@keyframes light-hit-leaf{0%{scale:1 .1;opacity:.15}70%{scale:1 1;opacity:1}100%{translate:3rem 2rem;opacity:0}}
+@keyframes drop-to-root{0%{opacity:0;translate:0 -2rem}55%{opacity:1}100%{opacity:0;translate:calc(50vw - 2rem) -3rem}}
+@keyframes co2-enter{0%{opacity:.2;translate:0 0}70%{opacity:1;translate:calc(50vw - 4rem) calc(45vh - 3rem);scale:.7}100%{opacity:0;scale:.2}}
+@keyframes o2-release-scene{0%{opacity:0;translate:-3rem 2rem}45%{opacity:1}100%{opacity:0;translate:5rem -5rem}}
+
+@media(max-width:48rem){
+  .sentence-visual-track{inset:20% 4% 27%;gap:.4rem}
+  .sentence-visual-object{min-width:5rem;min-height:5rem;font-size:.8rem}
+  .process-sun{font-size:4.5rem}.process-canopy{right:2%;width:52%}.process-leaf{width:7rem;height:3.2rem}
+  .chloroplast-factory{width:16rem;height:10rem}.sugar-crystal{right:-1rem;font-size:.7rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .sentence-scene,.sentence-visual-object,.process-ray,.root-drop,.gas-bubble{animation:none}
+}
