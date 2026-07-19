@@ -2287,3 +2287,232 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .voice-trigger.is-listening { animation: none; }
 }
+
+
+/* Sprint 4F: narrated concept animation layer */
+.explanation-mode-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background: #f7faff;
+}
+
+.explanation-mode-switch > span {
+  margin-right: auto;
+  color: var(--color-muted);
+  font-weight: 750;
+}
+
+.explanation-mode-switch button,
+.animation-controls button {
+  min-height: 2.75rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  padding: 0.55rem 1rem;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.explanation-mode-switch button.is-selected {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.explanation-mode-switch button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lesson-result.animation-mode > .lesson-text-content {
+  display: none;
+}
+
+.animation-unavailable {
+  margin: 0;
+  padding: 0.8rem 1.5rem;
+  background: #fff8e6;
+  color: #694b00;
+}
+
+.concept-animation {
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at 15% 10%, rgb(8 127 120 / 10%), transparent 30%),
+    linear-gradient(180deg, #f8fcff, #eef5fb);
+}
+
+.concept-animation > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.concept-animation h2 { margin: 0.15rem 0 0; }
+.animation-step {
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.45rem 0.8rem;
+  font-weight: 800;
+}
+
+.animation-stage {
+  position: relative;
+  min-height: 22rem;
+  margin: 1.25rem 0;
+  overflow: hidden;
+  border: 1px solid #c9dae8;
+  border-radius: 1.25rem;
+  background: linear-gradient(#dff4ff 0 65%, #e8f5df 65%);
+  box-shadow: inset 0 0 3rem rgb(23 63 115 / 7%);
+}
+
+.animation-caption {
+  min-height: 4.5rem;
+  margin: 0;
+  border-left: 5px solid var(--color-secondary);
+  border-radius: 0.4rem;
+  background: #fff;
+  padding: 1rem 1.15rem;
+  color: var(--color-text);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.65;
+  box-shadow: 0 8px 20px rgb(23 63 115 / 8%);
+}
+
+.animation-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.animation-controls .primary-button {
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.animation-check {
+  margin: 1rem 0 0;
+  border-radius: 0.75rem;
+  background: #e8f8f3;
+  padding: 1rem;
+  color: #095e58;
+  font-weight: 750;
+}
+
+/* Fractions */
+.visual-fraction {
+  position: absolute;
+  width: 14rem;
+  height: 14rem;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  border: 0.5rem solid #fff;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1rem 2.5rem rgb(23 63 115 / 22%);
+  rotate: -8deg;
+  transition: rotate 0.8s ease, scale 0.8s ease;
+}
+.fraction-part { border: 2px solid #fff; background: #dce8f4; transition: background 0.7s ease, transform 0.7s ease; }
+.fraction-label { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 2.7rem; font-weight: 900; opacity: 0; text-shadow: 0 2px 8px #0008; transition: opacity 0.6s ease; }
+.animation-stage[data-step="2"] .visual-fraction { rotate: 0deg; scale: 1.08; }
+.animation-stage[data-step="3"] .fraction-part:not(.part-4),
+.animation-stage[data-step="4"] .fraction-part:not(.part-4) { background: #f0a202; transform: scale(0.96); }
+.animation-stage[data-step="4"] .fraction-label { opacity: 1; }
+
+/* Geometry */
+.visual-triangle {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 0;
+  height: 0;
+  translate: -50% -50%;
+  border-left: 9rem solid transparent;
+  border-right: 9rem solid transparent;
+  border-bottom: 15rem solid #1f7fc1;
+  filter: drop-shadow(0 1rem 1rem rgb(23 63 115 / 20%));
+}
+.visual-triangle::after {
+  content: "";
+  position: absolute;
+  left: -7.5rem;
+  top: 1.8rem;
+  border-left: 7.5rem solid transparent;
+  border-right: 7.5rem solid transparent;
+  border-bottom: 12.5rem solid #f5fbff;
+}
+.angle { position: absolute; z-index: 2; min-width: 3rem; border-radius: 999px; background: #fff; padding: 0.4rem; text-align: center; font-weight: 900; opacity: 0; transition: opacity 0.6s ease, scale 0.6s ease; }
+.angle-a { left: -8.2rem; top: 12rem; }
+.angle-b { left: 5rem; top: 12rem; }
+.angle-c { left: -1.5rem; top: 2.3rem; }
+.animation-stage[data-step="2"] .angle,
+.animation-stage[data-step="3"] .angle,
+.animation-stage[data-step="4"] .angle { opacity: 1; scale: 1.1; }
+.geometry-equation { position: absolute; right: 1rem; bottom: 1rem; border-radius: 0.7rem; background: #fff; padding: 0.8rem; font-size: 1.25rem; font-weight: 900; opacity: 0; transition: opacity 0.6s ease; }
+.animation-stage[data-step="3"] .geometry-equation,
+.animation-stage[data-step="4"] .geometry-equation { opacity: 1; }
+
+/* Water cycle */
+.cycle-sun { position: absolute; left: 8%; top: 8%; color: #f0a202; font-size: 6rem; animation: vedha-spin 10s linear infinite; }
+.cycle-water { position: absolute; left: 5%; right: 5%; bottom: 0; height: 6rem; display: grid; place-items: center; background: #3ba7d8; color: #fff; font-weight: 900; font-size: 1.2rem; border-radius: 50% 50% 0 0; }
+.cycle-cloud { position: absolute; right: 14%; top: 17%; color: #fff; font-size: 8rem; filter: drop-shadow(0 0.5rem 0.6rem #6b8299); transition: transform 0.8s ease; }
+.cycle-arrow { position: absolute; font-size: 5rem; font-weight: 900; opacity: 0.15; transition: opacity 0.5s ease, transform 0.8s ease; }
+.cycle-arrow.evaporation { left: 38%; bottom: 24%; color: #e07133; }
+.cycle-arrow.rain { right: 27%; top: 46%; color: #176da0; }
+.animation-stage[data-step="2"] .evaporation { opacity: 1; transform: translateY(-2rem); }
+.animation-stage[data-step="3"] .cycle-cloud { transform: scale(1.15); }
+.animation-stage[data-step="4"] .rain { opacity: 1; transform: translateY(2rem); }
+
+/* Solar system */
+.visual-solar-system { position: absolute; inset: 1rem; display: grid; place-items: center; }
+.solar-sun { position: absolute; z-index: 4; display: grid; place-items: center; width: 6rem; height: 6rem; border-radius: 50%; background: #f5aa16; font-size: 3.5rem; box-shadow: 0 0 2rem #f5aa16; }
+.solar-orbit { position: absolute; border: 2px solid rgb(23 63 115 / 30%); border-radius: 50%; animation: solar-orbit 8s linear infinite; animation-play-state: paused; }
+.orbit-1 { width: 11rem; height: 11rem; }
+.orbit-2 { width: 17rem; height: 17rem; animation-duration: 12s; }
+.orbit-3 { width: 23rem; height: 23rem; animation-duration: 16s; }
+.solar-planet { position: absolute; left: 50%; top: -0.8rem; translate: -50%; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: #8b5cf6; color: #173f73; font-size: 0.75rem; font-weight: 900; white-space: nowrap; }
+.planet-2 { width: 2rem; height: 2rem; background: #2f9f71; }
+.planet-3 { background: #ce6550; }
+.animation-stage[data-step="2"] .solar-orbit,
+.animation-stage[data-step="3"] .solar-orbit,
+.animation-stage[data-step="4"] .solar-orbit { animation-play-state: running; }
+.animation-stage[data-step="3"] .planet-2 { box-shadow: inset -0.5rem -0.2rem #1a5b92; transform: rotate(180deg); transition: transform 2s linear; }
+.animation-stage[data-step="4"] .orbit-2 { border-color: #f0a202; border-width: 4px; }
+
+@keyframes vedha-spin { to { rotate: 360deg; } }
+@keyframes solar-orbit { to { rotate: 360deg; } }
+
+@media (max-width: 48rem) {
+  .animation-stage { min-height: 18rem; }
+  .visual-fraction { width: 11rem; height: 11rem; }
+  .visual-triangle { scale: 0.72; }
+  .orbit-3 { width: 17rem; height: 17rem; }
+  .orbit-2 { width: 13rem; height: 13rem; }
+  .orbit-1 { width: 9rem; height: 9rem; }
+  .animation-controls button { flex: 1 1 9rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cycle-sun,
+  .solar-orbit { animation: none; }
+  .visual-fraction,
+  .fraction-part,
+  .cycle-cloud,
+  .cycle-arrow,
+  .angle { transition: none; }
+}
