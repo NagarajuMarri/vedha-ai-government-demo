@@ -461,7 +461,7 @@ def test_practice_answers_support_voice_input_in_selected_language() -> None:
     assert 'voiceAnswer:' in TUTOR_JS
     assert 'input.id = `practice-answer-${question.question_id}`' in TUTOR_JS
     assert 'voiceButton.dataset.voiceTarget = `#${input.id}`' in TUTOR_JS
-    assert 'voiceButton.dataset.voiceStatus = `#${status.id}`' in TUTOR_JS
+    assert 'voiceButton.dataset.voiceStatus = `#practice-voice-status-${question.question_id}`' in TUTOR_JS
     assert 'voiceButton.dataset.voiceLanguageSource = \'input[name="learning_profile"]:checked\'' in TUTOR_JS
     assert 'answerRow.append(input, voiceButton, button)' in TUTOR_JS
     assert 'input.className = "practice-answer"' in TUTOR_JS
