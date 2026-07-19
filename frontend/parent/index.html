@@ -5,27 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Parent Portal | Vedha AI Government Demo</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
-      <script src="../assets/js/voice-assistant.js" defer></script>
+    <script src="../assets/js/voice-assistant.js" defer></script>
+    <script src="../assets/js/parent-dashboard.js" defer></script>
   </head>
-  <body class="interface-shell">
-    <main class="shell-panel">
-      <p class="eyebrow">Parent experience</p>
-      <h1>Parent Portal</h1>
-      <p lang="te">తల్లిదండ్రుల పోర్టల్</p>
-      <section class="role-voice-console" aria-labelledby="parent-voice-title">
-        <p class="eyebrow">Bilingual voice access</p>
-        <h2 id="parent-voice-title">Ask about your child’s learning</h2>
-        <p>Example: “Where does my child need support?” or “నా బిడ్డకు ఎక్కడ సహాయం అవసరం?”</p>
-        <div class="role-voice-composer">
-          <label class="sr-only" for="parent-voice-query">Parent request</label>
-          <textarea id="parent-voice-query" rows="3" placeholder="Speak or type your request"></textarea>
-          <select id="parent-voice-language" aria-label="Voice language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
-          <button class="voice-trigger" type="button" data-voice-target="#parent-voice-query" data-voice-status="#parent-voice-status" data-voice-language-source="#parent-voice-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
+  <body class="parent-portal">
+    <header class="parent-topbar">
+      <a class="parent-brand" href="../"><img src="../assets/images/vedha-mark.png" alt=""><span>Vedha</span></a>
+      <div><span class="synthetic-pill" id="synthetic-label">Synthetic demonstration data</span><a class="back-link" id="gateway-label" href="../">Interface gateway</a></div>
+    </header>
+    <main class="parent-main">
+      <section class="parent-hero">
+        <div><p class="eyebrow">Parent learning companion</p><h1 id="parent-heading">See progress. Support with confidence.</h1>
+          <p id="parent-intro">A clear weekly view of your linked child’s learning, strengths and next support steps.</p></div>
+        <div class="parent-controls">
+          <label id="language-label" for="parent-language">Language</label>
+          <select id="parent-language">
+            <option value="english_medium">English</option>
+            <option value="pure_telugu">తెలుగు</option>
+            <option value="telugu_assisted_english">తెలుగులో English terms తో</option>
+          </select>
+          <label id="report-label" for="report-period">Report</label>
+          <select id="report-period"><option value="weekly">Weekly report</option><option value="monthly">Monthly report</option></select>
+          <label id="child-label" for="child-selector">Linked child</label>
+          <select id="child-selector"><option value="ananya">Ananya · Class 9</option><option value="arjun">Arjun · Class 6</option></select>
         </div>
-        <p id="parent-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
-        <p class="demo-disclosure">The transcript is editable. Portal insights and actions are delivered in the following approved sprint using synthetic demo data.</p>
       </section>
-      <a class="back-link" href="../">← Return to interface gateway</a>
+
+      <section class="parent-privacy-note"><strong id="privacy-title">Controlled demo:</strong> <span id="privacy-text">All children, activities and scores shown here are fictional. A production parent would only see explicitly linked children.</span></section>
+
+      <section class="parent-summary" aria-labelledby="child-name">
+        <div class="child-profile"><div class="child-avatar" id="child-avatar">A</div><div><p id="week-label">This week</p><h2 id="child-name">Ananya</h2><p id="child-context">Class 9 · AP State Board</p></div></div>
+        <div class="parent-metrics">
+          <article><span id="metric-lessons">8</span><small id="metric-lessons-label">Lessons completed</small></article>
+          <article><span id="metric-practice">76%</span><small id="metric-practice-label">Practice accuracy</small></article>
+          <article><span id="metric-streak">5 days</span><small id="metric-streak-label">Learning streak</small></article>
+          <article><span id="metric-growth">+12%</span><small id="metric-growth-label">Weekly improvement</small></article>
+        </div>
+      </section>
+
+      <section class="parent-report-grid">
+        <article class="parent-card subject-completion-card">
+          <div class="report-card-heading"><div><p class="eyebrow" id="subject-eyebrow">Syllabus progress</p><h2 id="subject-title">Subject-wise completion</h2></div><strong id="overall-completion">72%</strong></div>
+          <div id="subject-completion-list"></div>
+        </article>
+        <article class="parent-card exam-plan-card">
+          <div class="exam-plan-heading"><div><p class="eyebrow" id="exam-eyebrow">Upcoming assessment</p><h2 id="exam-title">Term Examination Preparation</h2><p id="exam-date"></p></div><div class="exam-readiness-ring" id="exam-ring"><strong id="exam-completion">68%</strong><span id="exam-ready-label">Plan completed</span></div></div>
+          <div class="exam-progress-track" role="progressbar" aria-label="Exam preparation completed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68"><span id="exam-progress-fill"></span></div>
+          <div class="exam-plan-columns">
+            <section><h3 id="completed-title">Completed</h3><ul id="exam-completed-list"></ul></section>
+            <section><h3 id="remaining-title">Still to prepare</h3><ul id="exam-remaining-list"></ul></section>
+          </div>
+          <div class="next-study-step"><strong id="next-step-title">Next preparation step</strong><p id="exam-next-step"></p></div>
+        </article>
+      </section>
+
+      <section class="parent-grid">
+        <article class="parent-card strengths-card"><p class="eyebrow" id="strengths-eyebrow">What is going well</p><h2 id="strengths-title">Strengths</h2><div id="strengths-list"></div></article>
+        <article class="parent-card attention-card"><p class="eyebrow" id="attention-eyebrow">Where support helps</p><h2 id="attention-title">Attention areas</h2><div id="attention-list"></div></article>
+        <article class="parent-card activity-card"><p class="eyebrow" id="activity-eyebrow">Recent learning</p><h2 id="activity-title">Activity</h2><ol id="activity-list"></ol></article>
+        <article class="parent-card recommendation-card"><p class="eyebrow" id="recommendation-eyebrow">Try this at home</p><h2 id="recommendation-title">Support recommendations</h2><div id="recommendation-list"></div></article>
+      </section>
+
+      <section class="parent-voice-card" aria-labelledby="parent-voice-title">
+        <div><p class="eyebrow">Bilingual voice access</p><h2 id="parent-voice-title">Ask Vedha about your child</h2>
+          <p id="parent-voice-help">Try “Where does my child need help?” or “What should we practise today?”</p></div>
+        <form id="parent-voice-form">
+          <textarea id="parent-voice-query" rows="3" placeholder="Speak or type your question"></textarea>
+          <div class="parent-voice-actions">
+            <button class="voice-trigger" type="button" data-voice-target="#parent-voice-query" data-voice-status="#parent-voice-status" data-voice-language-source="#parent-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
+            <button class="primary-button" id="parent-ask" type="submit">Ask Vedha</button>
+          </div>
+        </form>
+        <p id="parent-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
+        <div id="parent-answer" class="parent-answer" role="status" aria-live="polite" hidden>
+          <p id="parent-answer-text" data-narration></p>
+          <div class="speech-controls">
+            <button type="button" data-speak-target="#parent-answer" data-speak-status="#parent-speech-status" data-voice-language-source="#parent-language">🔊 Read insight</button>
+            <button type="button" data-speech-stop>■ Stop</button>
+          </div>
+          <p id="parent-speech-status" class="voice-status" hidden></p>
+        </div>
+      </section>
     </main>
   </body>
 </html>

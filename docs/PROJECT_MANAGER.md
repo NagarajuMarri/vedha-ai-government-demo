@@ -6,12 +6,12 @@
 
 | Field | Current state |
 |---|---|
-| Current milestone | Phase 5 - Practice System |
-| Progress | Sprints 3A-3C, 4A, 4B and 4C complete; Sprint 4D practice vertical slice in progress |
+| Current milestone | Phase 7 - Parent Portal |
+| Progress | Student tutor, guided practice, role voice, sentence-level animations, government dashboard and Sprint 4G Parent Portal demo slice operational |
 | Overall status | Student lesson, bilingual exact-composition practice, typed/photo evaluation, second-attempt solutions, and session progress are operational for the controlled demo |
-| Current sprint | Sprint 4D - Exact-Composition Practice Vertical Slice |
-| Sprint goal | Deliver exactly 15 concept questions (5 easy, 5 medium, 5 hard), then connect them to the Student experience |
-| Next task | Complete bilingual demo rehearsal, operator runbook, and final validation checklist |
+| Current sprint | Sprint 4G - Functional Parent Portal |
+| Sprint goal | Demonstrate bilingual linked-child progress, strengths, attention areas, activity, recommendations and voice insights with synthetic data |
+| Next task | Sprint 4H - Functional Teacher Portal |
 
 ## Locked government-demo requirements
 
@@ -178,3 +178,7 @@ processing require separately approved future work.
 ## Sprint 4D delivery record
 
 Sprint 4D started on 2026-07-18. The initial branch adds validated practice-domain models, a deterministic bilingual-safe generator, `POST /api/v1/practice/generate`, exact 5/5/5 composition and uniqueness enforcement, API regression tests, and repaired GitHub Actions configuration. Both CI workflows passed on the current branch. Student UI integration remains the next slice.
+
+## Sprint 4G delivery record
+
+Sprint 4G adds a functional controlled-demo Parent Portal on `feature/sprint-4g-parent-portal`. It uses explicitly synthetic linked-child profiles and provides weekly/monthly progress metrics, subject-wise completion, upcoming-exam preparation readiness, completed/remaining topics, strengths, attention areas, recent activity, at-home support recommendations, English/Telugu switching, editable voice queries and spoken insights. Production identity, parent-child authorization and persisted records remain pending and are not implied.
