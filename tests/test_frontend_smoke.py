@@ -496,7 +496,7 @@ def test_animation_visual_phase_tracks_narrated_sentence() -> None:
     animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
     styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
     assert "function visualPhase(concept, caption, index, total)" in animation_js
-    assert "stage.dataset.phase = visualPhase" in animation_js
+    assert "stage.dataset.phase = activePhase" in animation_js
     for phase in ("roots-water", "carbon", "food", "oxygen"):
         assert phase in animation_js
         assert f'data-phase="{phase}"' in styles
