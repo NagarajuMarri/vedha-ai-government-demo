@@ -126,6 +126,34 @@
       `Dashboard updated for ${data.label}. All figures are synthetic demonstration data.`;
   }
 
+  const districtAliases = {
+    "andhra pradesh": "statewide", "ఆంధ్రప్రదేశ్": "statewide",
+    visakhapatnam: "visakhapatnam", "విశాఖపట్నం": "visakhapatnam",
+    guntur: "guntur", "గుంటూరు": "guntur",
+    kurnool: "kurnool", "కర్నూలు": "kurnool",
+    tirupati: "tirupati", "తిరుపతి": "tirupati",
+    "east godavari": "east_godavari", "తూర్పు గోదావరి": "east_godavari",
+  };
+
+  function applyVoiceQuery(event) {
+    event.preventDefault();
+    const query = byId("government-voice-query").value.trim().toLowerCase();
+    const match = Object.entries(districtAliases).find(([alias]) => query.includes(alias.toLowerCase()));
+    if (!match) {
+      byId("government-voice-status").hidden = false;
+      byId("government-voice-status").textContent =
+        "Request captured. For this demo, mention Andhra Pradesh, Visakhapatnam, Guntur, Kurnool, Tirupati or East Godavari.";
+      return;
+    }
+    byId("district-filter").value = match[1];
+    renderDashboard();
+    byId("government-voice-status").hidden = false;
+    byId("government-voice-status").textContent =
+      `Applied the spoken request for ${syntheticData[match[1]].label}. Review the updated synthetic indicators below.`;
+    byId("dashboard-scope").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  byId("government-voice-form").addEventListener("submit", applyVoiceQuery);
   byId("district-filter").addEventListener("change", renderDashboard);
   byId("class-filter").addEventListener("change", () => {
     const classLabel = byId("class-filter").selectedOptions[0].textContent;
