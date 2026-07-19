@@ -324,3 +324,19 @@ def test_telugu_narration_never_silently_falls_back_to_english_voice() -> None:
     assert 'language.startsWith("te") && !voice' in voice_js
     assert "తెలుగు వాయిస్ ఈ బ్రౌజర్‌లో అందుబాటులో లేదు" in voice_js
     assert 'id="lesson-narration-status"' in STUDENT_HTML
+
+
+def test_lesson_narration_excludes_interface_controls_and_section_labels() -> None:
+    voice_js = (FRONTEND_ROOT / "assets" / "js" / "voice-assistant.js").read_text(encoding="utf-8")
+    assert 'target.querySelectorAll("[data-narration]")' in voice_js
+    for element_id in (
+        "lesson-title",
+        "lesson-introduction",
+        "lesson-steps",
+        "lesson-example",
+        "lesson-points",
+        "lesson-check",
+    ):
+        assert re.search(fr'id="{element_id}"[^>]*data-narration', STUDENT_HTML)
+    assert 'data-speech-pause data-narration' not in STUDENT_HTML
+    assert 'data-speech-stop data-narration' not in STUDENT_HTML
