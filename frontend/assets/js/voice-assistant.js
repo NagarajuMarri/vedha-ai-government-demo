@@ -140,7 +140,10 @@
       return;
     }
     const target = document.querySelector(button.dataset.speakTarget);
-    const text = target?.innerText?.trim();
+    const narrationParts = target ? [...target.querySelectorAll("[data-narration]")] : [];
+    const text = narrationParts.length
+      ? narrationParts.map((part) => part.innerText.trim()).filter(Boolean).join(". ")
+      : target?.innerText?.trim();
     if (!text) return;
 
     synth.cancel();
