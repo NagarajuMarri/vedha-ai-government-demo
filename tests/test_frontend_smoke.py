@@ -180,7 +180,7 @@ def test_handwritten_phone_photo_evaluation_is_connected() -> None:
 
 
 def test_pure_telugu_practice_controls_are_localized() -> None:
-    for text in ("15 ప్రశ్నల అభ్యాసం", "సులభం · 5", "సమాధానం తనిఖీ", "చేతిరాత పరిష్కారం జోడించండి", "అభ్యాసం రూపొందించండి"):
+    for text in ("మార్గదర్శక అభ్యాసం", "సులభం · 5", "సమాధానం తనిఖీ", "చేతిరాత పరిష్కారం జోడించండి", "అభ్యాసం రూపొందించండి"):
         assert text in TUTOR_JS
     assert 'hint.textContent = `${copy.hintLabel}: ${question.hint}`' in TUTOR_JS
 
@@ -535,3 +535,27 @@ def test_every_narration_point_renders_a_fresh_storyboard_action() -> None:
     assert "@keyframes storyboard-enter" in styles
     for phase in ("sunlight", "roots-water", "carbon", "food", "oxygen"):
         assert f'data-action="{phase}"' in styles
+
+
+def test_practice_presents_one_validated_question_at_a_time() -> None:
+    assert "practiceIndex: 0" in TUTOR_JS
+    assert "function showPracticeQuestion(index)" in TUTOR_JS
+    assert 'item.dataset.practiceIndex = String(questionIndexes.get(question.question_id))' in TUTOR_JS
+    assert 'item.className = "focused-practice-question"' in TUTOR_JS
+    assert 'item.hidden = true' in TUTOR_JS
+    assert "Question ${state.practiceIndex + 1} of ${questions.length}" in TUTOR_JS
+    assert "function unlockNextQuestion(item, evaluation)" in TUTOR_JS
+    assert "if (!evaluation.correct && evaluation.attempt_number < 2) return" in TUTOR_JS
+    assert 'nextButton.className = "primary-button next-question"' in TUTOR_JS
+    assert "showPracticeQuestion(currentIndex + 1)" in TUTOR_JS
+
+
+def test_focused_practice_card_keeps_all_answer_methods_responsive() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert ".practice-result.sequential-practice" in styles
+    assert ".focused-practice-question" in styles
+    assert ".focused-practice-question .practice-answer-row" in styles
+    assert ".focused-practice-question .next-question" in styles
+    assert "@keyframes question-card-enter" in styles
+    assert "Upload Handwritten Work" in TUTOR_JS
+    assert "Speak Answer" in TUTOR_JS
