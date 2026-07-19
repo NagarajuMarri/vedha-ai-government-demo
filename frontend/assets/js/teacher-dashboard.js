@@ -1,0 +1,62 @@
+"use strict";
+(function initializeTeacherDashboard(document) {
+  const classes = {
+    nineA: { label:"Class 9 · Section A", students:32, accuracy:74, completion:81,
+      concepts:[["Fractions",88],["Solar System",82],["Geometry",58],["English grammar",63],["Indian Constitution",79]],
+      roster:[
+        ["Ananya","Fractions","Geometry",84,"Geometry intervention"],["Ravi","Solar System","English grammar",72,"Grammar practice"],
+        ["Meghana","Indian Constitution","Geometry",68,"Angles revision"],["Kiran","Telugu","Fractions",61,"Equivalent fractions"],
+        ["Sahithi","Geometry","English grammar",76,"Subject–verb agreement"],["Vamsi","Science","Indian Constitution",70,"Constitution recap"]
+      ],
+      question:"A triangle has angles 50° and 60°. Find the third angle and explain the rule used."
+    },
+    sixB: { label:"Class 6 · Section B", students:28, accuracy:71, completion:77,
+      concepts:[["Water Cycle",86],["Decimals",78],["Local Government",74],["Fractions",56],["Telugu grammar",61]],
+      roster:[
+        ["Arjun","Water Cycle","Fractions",73,"Equivalent fractions"],["Divya","Decimals","Telugu grammar",69,"Sentence structure"],
+        ["Nikhil","Local Government","Fractions",64,"Visual fraction practice"],["Harini","Science","Decimals",81,"Decimal word problems"],
+        ["Sai","Telugu","Local Government",70,"Civic concept recap"]
+      ],
+      question:"Show two visual examples of fractions equivalent to 1/2 and explain how you know."
+    }
+  };
+  const tr = {
+    pure_telugu:{
+      "Fractions":"భిన్నాలు","Solar System":"సౌర కుటుంబం","Geometry":"జ్యామితి","English grammar":"ఆంగ్ల వ్యాకరణం","Indian Constitution":"భారత రాజ్యాంగం","Telugu":"తెలుగు","Science":"విజ్ఞాన శాస్త్రం","Water Cycle":"నీటి చక్రం","Decimals":"దశాంశాలు","Local Government":"స్థానిక ప్రభుత్వం","Telugu grammar":"తెలుగు వ్యాకరణం",
+      "Geometry intervention":"జ్యామితి సహాయ కార్యక్రమం","Grammar practice":"వ్యాకరణ అభ్యాసం","Angles revision":"కోణాల పునశ్చరణ","Equivalent fractions":"సమాన భిన్నాలు","Subject–verb agreement":"కర్త–క్రియ అన్వయం","Constitution recap":"రాజ్యాంగ పునశ్చరణ","Sentence structure":"వాక్య నిర్మాణం","Visual fraction practice":"బొమ్మలతో భిన్నాల అభ్యాసం","Decimal word problems":"దశాంశ కథన సమస్యలు","Civic concept recap":"పౌరశాస్త్ర భావనల పునశ్చరణ"
+    },
+    telugu_assisted_english:{
+      "Geometry intervention":"Geometry intervention","Grammar practice":"Grammar practice","Angles revision":"Angles revision","Equivalent fractions":"Equivalent fractions","Subject–verb agreement":"Subject–verb agreement","Constitution recap":"Constitution recap","Sentence structure":"Sentence structure","Visual fraction practice":"Visual fraction practice","Decimal word problems":"Decimal word problems","Civic concept recap":"Civic concept recap"
+    }
+  };
+  const copy={
+    english_medium:{heading:"Act early. Teach every learner.",intro:"Class-level evidence, student signals and practical interventions in one clear view.",students:"Assigned students",accuracy:"Class accuracy",completion:"Weekly completion",interventions:"Need intervention",performance:"Concept performance",signals:"Intervention signals",roster:"Student progress",strength:"Strength",attention:"Attention area",action:"Teacher action",assignment:"Remedial assignments",approval:"AI question approval",voice:"Ask Vedha about your class",voiceHelp:"Try “Who needs help with fractions?” or “What should I assign today?”",ask:"Ask Vedha",assigned:"Remedial work assigned to",approved:"Question approved for student practice.",revision:"Question returned to Vedha for revision."},
+    pure_telugu:{heading:"ముందుగానే స్పందించండి. ప్రతి విద్యార్థికి బోధించండి.",intro:"తరగతి ఫలితాలు, విద్యార్థి సంకేతాలు, అవసరమైన సహాయ చర్యలు ఒకే చోట.",students:"కేటాయించిన విద్యార్థులు",accuracy:"తరగతి ఖచ్చితత్వం",completion:"వారపు పూర్తి",interventions:"సహాయం అవసరం",performance:"భావనల వారీ ఫలితాలు",signals:"సహాయ సంకేతాలు",roster:"విద్యార్థుల ప్రగతి",strength:"బలం",attention:"శ్రద్ధ అంశం",action:"ఉపాధ్యాయ చర్య",assignment:"పునరభ్యాస కేటాయింపులు",approval:"కృత్రిమ మేధ ప్రశ్న ఆమోదం",voice:"మీ తరగతి గురించి వేదను అడగండి",voiceHelp:"“భిన్నాలలో ఎవరికి సహాయం అవసరం?” లేదా “ఈ రోజు ఏమి కేటాయించాలి?” అని అడగండి.",ask:"వేదను అడగండి",assigned:"పునరభ్యాసం కేటాయించబడింది:",approved:"విద్యార్థుల అభ్యాసానికి ప్రశ్న ఆమోదించబడింది.",revision:"ప్రశ్నను సవరించడానికి వేదకు తిరిగి పంపారు."},
+    telugu_assisted_english:{heading:"Earlyగా act చేయండి. ప్రతి learnerకు teach చేయండి.",intro:"Class performance, student signals మరియు practical interventions ఒకే viewలో.",students:"Assigned students",accuracy:"Class accuracy",completion:"Weekly completion",interventions:"Intervention అవసరం",performance:"Concept performance",signals:"Intervention signals",roster:"Student progress",strength:"Strength",attention:"Attention area",action:"Teacher action",assignment:"Remedial assignments",approval:"AI question approval",voice:"మీ class గురించి Vedhaను అడగండి",voiceHelp:"“Fractionsలో ఎవరికి help అవసరం?” లేదా “Today ఏమి assign చేయాలి?” అని అడగండి.",ask:"Vedhaను అడగండి",assigned:"Remedial work assign అయింది:",approved:"Question student practiceకు approve అయింది.",revision:"Question revision కోసం Vedhaకు return అయింది."}
+  };
+  const byId=(id)=>document.getElementById(id);
+  const translate=(text,profile)=>tr[profile]?.[text]||text;
+  function progress([name,score],profile){const row=document.createElement("div");row.className="parent-progress-row";const head=document.createElement("div");head.append(Object.assign(document.createElement("span"),{textContent:translate(name,profile)}),Object.assign(document.createElement("strong"),{textContent:score+"%"}));const track=document.createElement("div");track.append(Object.assign(document.createElement("span"),{style:"width:"+score+"%"}));row.append(head,track);return row;}
+  function render(){
+    const data=classes[byId("teacher-class").value], profile=byId("teacher-language").value, labels=copy[profile], subject=byId("teacher-subject").value;
+    document.documentElement.lang=profile==="english_medium"?"en":"te";
+    byId("teacher-heading").textContent=labels.heading;byId("teacher-intro").textContent=labels.intro;
+    [["teacher-students-label","students"],["teacher-accuracy-label","accuracy"],["teacher-completion-label","completion"],["teacher-interventions-label","interventions"],["performance-title","performance"],["signal-title","signals"],["roster-title","roster"],["th-strength","strength"],["th-attention","attention"],["th-action","action"],["assignment-title","assignment"],["approval-title","approval"],["teacher-voice-title","voice"],["teacher-voice-help","voiceHelp"]].forEach(([id,key])=>byId(id).textContent=labels[key]);
+    byId("teacher-ask").textContent=labels.ask;byId("teacher-students").textContent=data.students;byId("teacher-accuracy").textContent=data.accuracy+"%";byId("teacher-completion").textContent=data.completion+"%";
+    const visible=data.roster.filter(row=>subject==="all"||row[1]===subject||row[2]===subject);const interventions=visible.filter(row=>row[3]<70);
+    byId("teacher-interventions").textContent=interventions.length;byId("class-average").textContent=data.accuracy+"%";byId("roster-count").textContent=visible.length+" / "+data.students;
+    const concepts=subject==="all"?data.concepts:data.concepts.filter(([name])=>name===subject);
+    byId("concept-performance").replaceChildren(...concepts.map(item=>progress(item,profile)));
+    byId("intervention-list").replaceChildren(...data.roster.filter(row=>row[3]<70).map(row=>{const a=document.createElement("article");a.className="teacher-signal";a.append(Object.assign(document.createElement("strong"),{textContent:row[0]+" · "+row[3]+"%"}),Object.assign(document.createElement("p"),{textContent:translate(row[2],profile)+" — "+translate(row[4],profile)}));return a;}));
+    byId("student-roster").replaceChildren(...visible.map(row=>{const trEl=document.createElement("tr");[row[0],translate(row[1],profile),translate(row[2],profile),row[3]+"%",translate(row[4],profile)].forEach(text=>trEl.append(Object.assign(document.createElement("td"),{textContent:text})));return trEl;}));
+    byId("assignment-group").replaceChildren(...data.roster.filter(row=>row[3]<70).map(row=>Object.assign(document.createElement("option"),{value:row[0],textContent:row[0]+" · "+translate(row[2],profile)})));
+    byId("assignment-topic").replaceChildren(...data.concepts.map(([name])=>Object.assign(document.createElement("option"),{value:name,textContent:translate(name,profile)})));
+    byId("approval-question").replaceChildren(Object.assign(document.createElement("p"),{textContent:data.question}));
+    byId("assignment-status").hidden=true;byId("approval-status").hidden=true;byId("teacher-answer").hidden=true;
+  }
+  byId("assignment-form").addEventListener("submit",e=>{e.preventDefault();const profile=byId("teacher-language").value,labels=copy[profile];byId("assignment-status").textContent=labels.assigned+" "+byId("assignment-group").value+" · "+translate(byId("assignment-topic").value,profile);byId("assignment-status").hidden=false;});
+  byId("approve-question").addEventListener("click",()=>{const labels=copy[byId("teacher-language").value];byId("approval-status").textContent=labels.approved;byId("approval-status").hidden=false;});
+  byId("reject-question").addEventListener("click",()=>{const labels=copy[byId("teacher-language").value];byId("approval-status").textContent=labels.revision;byId("approval-status").hidden=false;});
+  byId("teacher-voice-form").addEventListener("submit",e=>{e.preventDefault();const data=classes[byId("teacher-class").value],profile=byId("teacher-language").value,q=byId("teacher-voice-query").value.toLowerCase();const weakest=[...data.concepts].sort((a,b)=>a[1]-b[1])[0];let answer;if(profile==="pure_telugu")answer=q.includes("assign")||q.includes("కేటాయ")?`ఈ రోజు ${translate(weakest[0],profile)}పై మార్గదర్శక పునరభ్యాసం కేటాయించండి.`:`${translate(weakest[0],profile)}లో ${weakest[1]} శాతం ఫలితంతో ఎక్కువ సహాయం అవసరం.`;else if(profile==="telugu_assisted_english")answer=q.includes("assign")||q.includes("కేటాయ")?`Today ${translate(weakest[0],profile)}పై guided practice assign చేయండి.`:`${translate(weakest[0],profile)}లో ${weakest[1]}% scoreతో ఎక్కువ support అవసరం.`;else answer=q.includes("assign")?`Assign guided practice on ${weakest[0]} today.`:`${weakest[0]} needs the most support at ${weakest[1]}%.`;byId("teacher-answer-text").textContent=answer;byId("teacher-answer").hidden=false;});
+  ["teacher-language","teacher-class","teacher-subject"].forEach(id=>byId(id).addEventListener("change",render));render();
+})(document);
