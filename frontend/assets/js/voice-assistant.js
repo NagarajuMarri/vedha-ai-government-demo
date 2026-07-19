@@ -6,6 +6,7 @@
   let activeRecognition = null;
   let activeButton = null;
   let currentUtterance = null;
+  let speechToken = 0;
 
   const languageCodes = {
     english_medium: "en-IN",
@@ -204,6 +205,31 @@
   });
 
 
+  function narrationChunks(text, maxLength = 170) {
+    const sentences = text.trim().match(/[^.!?।]+[.!?।]?/g) || [text.trim()];
+    const chunks = [];
+    sentences.forEach((sentence) => {
+      const clean = sentence.trim();
+      if (!clean) return;
+      if (clean.length <= maxLength) {
+        chunks.push(clean);
+        return;
+      }
+      const words = clean.split(/\s+/);
+      let chunk = "";
+      words.forEach((word) => {
+        if (chunk && `${chunk} ${word}`.length > maxLength) {
+          chunks.push(chunk);
+          chunk = word;
+        } else {
+          chunk = chunk ? `${chunk} ${word}` : word;
+        }
+      });
+      if (chunk) chunks.push(chunk);
+    });
+    return chunks;
+  }
+
   async function speakText(text, languageKey, callbacks = {}) {
     if (!synth || !text?.trim()) {
       callbacks.onUnavailable?.();
@@ -215,47 +241,67 @@
       callbacks.onUnavailable?.();
       return false;
     }
+
+    const token = ++speechToken;
+    const chunks = narrationChunks(text);
+    let index = 0;
+    let firstChunkStarted = false;
     synth.cancel();
-    const utterance = new SpeechSynthesisUtterance(text.trim());
-    utterance.lang = language;
-    utterance.voice = voice;
-    utterance.rate = 0.88;
-    let started = false;
-    let retried = false;
-    let startWatchdog = null;
-    const queue = () => {
+
+    const speakChunk = () => {
+      if (token !== speechToken || index >= chunks.length) {
+        if (token === speechToken && index >= chunks.length) {
+          currentUtterance = null;
+          callbacks.onEnd?.();
+        }
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(chunks[index]);
+      utterance.lang = language;
+      if (voice) utterance.voice = voice;
+      utterance.rate = 0.88;
+      utterance.volume = 1;
+      utterance.pitch = 1;
+      currentUtterance = utterance;
+
+      let started = false;
+      const watchdog = window.setTimeout(() => {
+        if (token !== speechToken || started) return;
+        synth.cancel();
+        currentUtterance = null;
+        callbacks.onError?.();
+      }, 2500);
+
+      utterance.onstart = () => {
+        started = true;
+        window.clearTimeout(watchdog);
+        if (!firstChunkStarted) {
+          firstChunkStarted = true;
+          callbacks.onStart?.();
+        }
+      };
+      utterance.onend = () => {
+        window.clearTimeout(watchdog);
+        if (token !== speechToken) return;
+        index += 1;
+        window.setTimeout(speakChunk, 35);
+      };
+      utterance.onerror = (event) => {
+        window.clearTimeout(watchdog);
+        if (token !== speechToken || event.error === "interrupted") return;
+        currentUtterance = null;
+        callbacks.onError?.();
+      };
+
       if (synth.paused) synth.resume();
       synth.speak(utterance);
-      startWatchdog = window.setTimeout(() => {
-        if (started || currentUtterance !== utterance) return;
-        if (!retried) {
-          retried = true;
-          synth.cancel();
-          window.setTimeout(queue, 120);
-        } else {
-          callbacks.onError?.();
-        }
-      }, 1400);
+      /* Chrome occasionally leaves the queue paused even after resume(). */
+      window.setTimeout(() => {
+        if (token === speechToken && !started && synth.paused) synth.resume();
+      }, 120);
     };
-    utterance.onstart = () => {
-      started = true;
-      if (startWatchdog) window.clearTimeout(startWatchdog);
-      callbacks.onStart?.();
-    };
-    utterance.onend = () => {
-      if (startWatchdog) window.clearTimeout(startWatchdog);
-      currentUtterance = null;
-      callbacks.onEnd?.();
-    };
-    utterance.onerror = (event) => {
-      if (startWatchdog) window.clearTimeout(startWatchdog);
-      if (event.error === "interrupted" && currentUtterance !== utterance) return;
-      currentUtterance = null;
-      callbacks.onError?.();
-    };
-    currentUtterance = utterance;
-    synth.cancel();
-    window.setTimeout(queue, 90);
+
+    window.setTimeout(speakChunk, 80);
     return true;
   }
 
@@ -263,7 +309,7 @@
     speakText,
     pause() { if (synth?.speaking && !synth.paused) synth.pause(); },
     resume() { if (synth?.paused) synth.resume(); },
-    cancel() { synth?.cancel(); currentUtterance = null; },
+    cancel() { speechToken += 1; synth?.cancel(); currentUtterance = null; },
   };
 
   window.addEventListener("beforeunload", () => {
