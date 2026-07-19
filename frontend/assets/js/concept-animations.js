@@ -283,13 +283,20 @@
       stage.append(board);
     } else if (concept === "Photosynthesis") {
       const scene = node("plant-scene");
+      const sunlight = node("sunlight-rays");
+      for (let index = 0; index < 7; index += 1) {
+        sunlight.append(node(`sunlight-ray sunlight-ray-${index + 1}`));
+      }
       scene.append(
         node("plant-sun", "☀"),
+        sunlight,
         node("plant-ground"),
         node("plant-stem"),
         node("plant-leaf leaf-left"),
         node("plant-leaf leaf-right"),
+        node("leaf-chlorophyll", state.language === "te" ? "క్లోరోఫిల్" : "CHLOROPHYLL"),
         node("plant-roots"),
+        node("water-particles"),
         node("plant-flow water-flow", state.language === "te" ? "నీరు ↑" : "WATER ↑"),
         node("plant-flow carbon-flow", "CO₂ →"),
         node("plant-flow oxygen-flow", "O₂ ↑"),
@@ -374,7 +381,12 @@
       : Math.min(4, Math.ceil(((state.index + 1) / steps.length) * 4));
     const stage = byId("animation-stage");
     stage.dataset.step = String(visualStep);
-    stage.dataset.phase = visualPhase(state.concept, steps[state.index], state.index, steps.length);
+    const activePhase = visualPhase(state.concept, steps[state.index], state.index, steps.length);
+    stage.dataset.phase = activePhase;
+    [...stage.classList].filter((name) => name.startsWith("seen-")).forEach((name) => stage.classList.remove(name));
+    steps.slice(0, state.index + 1).forEach((caption, stepIndex) => {
+      stage.classList.add(`seen-${visualPhase(state.concept, caption, stepIndex, steps.length)}`);
+    });
     byId("animation-caption").textContent = steps[state.index];
     byId("animation-step").textContent = `${state.index + 1} / ${steps.length}`;
     byId("animation-progress-fill").style.width = `${((state.index + 1) / steps.length) * 100}%`;
