@@ -105,9 +105,12 @@ def test_question_limit_counter_and_keyboard_behavior() -> None:
     assert "questionInput.value.trim()" in TUTOR_JS
 
 
-def test_future_microphone_and_attachment_controls_are_accessibly_disabled() -> None:
-    assert re.search(r'<button type="button" disabled aria-label="Microphone[^>]+>', STUDENT_HTML)
-    assert re.search(r'<button type="button" disabled aria-label="Attachments[^>]+>', STUDENT_HTML)
+def test_student_microphone_is_enabled_and_transcript_remains_editable() -> None:
+    assert 'id="student-voice-input"' in STUDENT_HTML
+    assert 'data-voice-target="#question"' in STUDENT_HTML
+    assert 'data-voice-language-source=\'input[name="learning_profile"]:checked\'' in STUDENT_HTML
+    assert 'aria-pressed="false"' in STUDENT_HTML
+    assert re.search(r'<button type="button" disabled aria-label="General lesson attachments[^>]+>', STUDENT_HTML)
 
 
 def test_student_tutor_assets_are_separate_and_responsive() -> None:
@@ -281,3 +284,33 @@ def test_government_dashboard_is_responsive_and_motion_safe() -> None:
         assert selector in styles
     assert "@keyframes dashboard-bar-grow" in styles
     assert "prefers-reduced-motion: reduce" in styles
+
+
+def test_shared_voice_input_is_available_for_all_demo_roles() -> None:
+    voice_js = (FRONTEND_ROOT / "assets" / "js" / "voice-assistant.js").read_text(encoding="utf-8")
+    assert "SpeechRecognition || window.webkitSpeechRecognition" in voice_js
+    assert 'target.dispatchEvent(new Event("input", { bubbles: true }))' in voice_js
+    assert '"te-IN"' in voice_js
+    assert '"en-IN"' in voice_js
+    for interface in ("student", "teacher", "parent", "government"):
+        content = (FRONTEND_ROOT / interface / "index.html").read_text(encoding="utf-8")
+        assert 'src="../assets/js/voice-assistant.js"' in content
+        assert "data-voice-target=" in content
+        assert "voice-status" in content
+
+
+def test_student_lesson_has_bilingual_read_aloud_controls() -> None:
+    assert 'data-speak-target="#lesson-result"' in STUDENT_HTML
+    assert "data-speech-pause" in STUDENT_HTML
+    assert "data-speech-stop" in STUDENT_HTML
+    voice_js = (FRONTEND_ROOT / "assets" / "js" / "voice-assistant.js").read_text(encoding="utf-8")
+    assert "SpeechSynthesisUtterance" in voice_js
+    assert "synth.pause()" in voice_js
+    assert "synth.resume()" in voice_js
+
+
+def test_government_voice_query_applies_supported_district_filter() -> None:
+    dashboard_js = (FRONTEND_ROOT / "assets" / "js" / "government-dashboard.js").read_text(encoding="utf-8")
+    for name in ("guntur", "గుంటూరు", "visakhapatnam", "విశాఖపట్నం"):
+        assert name in dashboard_js
+    assert 'byId("government-voice-form").addEventListener("submit", applyVoiceQuery)' in dashboard_js
