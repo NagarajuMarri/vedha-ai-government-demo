@@ -373,6 +373,76 @@
     return match?.[1] || `progress-${Math.min(5, Math.max(1, Math.ceil(((index + 1) / total) * 5)))}`;
   }
 
+  const phaseVisuals = {
+    sunlight: ["☀", "⇢", "🌿"], "roots-water": ["💧", "↑", "🌱"],
+    carbon: ["CO₂", "⇢", "🍃"], food: ["☀ + H₂O + CO₂", "⇢", "C₆H₁₂O₆"],
+    oxygen: ["🍃", "⇢", "O₂"], evaporation: ["💧", "↑", "☁"],
+    cloud: ["♨", "⇢", "☁"], rain: ["☁", "↓", "🌧"], collection: ["🌧", "⇢", "🌊"],
+    whole: ["●", "⇢", "1"], cut: ["●", "✂", "◒"], equal: ["◒", "⇢", "¼"],
+    selected: ["¼ + ¼ + ¼", "=", "¾"], numerator: ["3", "⇡", "¾"], denominator: ["4", "⇣", "¾"],
+    point: ["2", "●", "35"], tenths: ["2.35", "⇢", "3/10"], hundredths: ["2.35", "⇢", "5/100"],
+    places: ["ONES", "TENTHS", "HUNDREDTHS"], sides: ["•", "━━", "•"], vertices: ["A", "B", "C"],
+    angles: ["50° + 60°", "=", "110°"], shape: ["━━", "△", "180°"],
+    sun: ["☀", "GRAVITY", "●"], inner: ["☀", "● ● ● ●"], outer: ["☀", "◉ ◉ ◉ ◉"],
+    orbit: ["●", "↻", "☀"], rotation: ["🌍", "↻", "DAY / NIGHT"],
+    subject: ["SUBJECT", "+", "WHO?"], verb: ["VERB", "+", "ACTION"],
+    object: ["OBJECT", "+", "WHAT?"], sentence: ["WORDS", "⇢", "SENTENCE"],
+    punctuation: ["SENTENCE", "+", ". ? !"], rights: ["CONSTITUTION", "⇢", "RIGHTS"],
+    duties: ["CITIZEN", "⇢", "DUTIES"], democracy: ["PEOPLE", "⇢", "DEMOCRACY"],
+    institutions: ["CONSTITUTION", "⇢", "INSTITUTIONS"], resistance: ["1857", "⇢", "RESISTANCE"],
+    "non-cooperation": ["1920", "⇢", "MOVEMENT"], salt: ["1930", "⇢", "SALT MARCH"],
+    "quit-india": ["1942", "⇢", "QUIT INDIA"], freedom: ["1947", "⇢", "🇮🇳"],
+    krishna: ["⛰", "KRISHNA", "🌾"], godavari: ["⛰", "GODAVARI", "🌾"],
+    ghats: ["⛰", "⇢", "EASTERN GHATS"], coast: ["LAND", "⇢", "BAY OF BENGAL"],
+    regions: ["COAST", "+", "UPLANDS"], panchayat: ["VILLAGE", "⇢", "PANCHAYAT"],
+    urban: ["TOWN", "⇢", "MUNICIPALITY"], water: ["🏛", "⇢", "💧"],
+    road: ["🏛", "⇢", "ROAD"], light: ["🏛", "⇢", "💡"],
+    climate: ["☀ + ☁", "⇢", "CLIMATE"], soil: ["🌍", "⇢", "SOIL"],
+    forests: ["🌍", "⇢", "FORESTS"], minerals: ["🌍", "⇢", "MINERALS"],
+    conserve: ["RESOURCES", "⇢", "FUTURE"],
+  };
+
+  const fallbackPhaseSequence = {
+    Photosynthesis: ["sunlight", "roots-water", "carbon", "food", "oxygen"],
+    Fractions: ["whole", "cut", "equal", "selected", "numerator", "denominator"],
+    Decimals: ["point", "places", "tenths", "hundredths"],
+    Geometry: ["shape", "sides", "vertices", "angles"],
+    "Water Cycle": ["evaporation", "cloud", "rain", "collection"],
+    "Solar System": ["sun", "inner", "outer", "orbit", "rotation"],
+    Grammar: ["sentence", "subject", "verb", "object", "punctuation"],
+    "Telugu Grammar": ["sentence", "subject", "object", "verb"],
+    "Indian Constitution": ["institutions", "rights", "duties", "democracy"],
+    "Indian Freedom Movement": ["resistance", "non-cooperation", "salt", "quit-india", "freedom"],
+    "Andhra Pradesh Geography": ["regions", "ghats", "krishna", "godavari", "coast"],
+    "Local Government": ["panchayat", "urban", "water", "road", "light"],
+    "Climate and Natural Resources": ["climate", "water", "soil", "forests", "minerals", "conserve"],
+  };
+
+  function resolvedVisualPhase(concept, caption, index, total) {
+    const detected = visualPhase(concept, caption, index, total);
+    if (!detected.startsWith("progress-")) return detected;
+    const sequence = fallbackPhaseSequence[concept] || [];
+    if (!sequence.length) return detected;
+    const position = Math.min(sequence.length - 1, Math.floor((index / Math.max(1, total - 1)) * sequence.length));
+    return sequence[position];
+  }
+
+  function renderPointAction(stage, concept, phase, index) {
+    stage.querySelector(".point-action-layer")?.remove();
+    const layer = node("point-action-layer");
+    layer.dataset.action = phase;
+    layer.dataset.sequence = String(index);
+    const visuals = phaseVisuals[phase] || ["●", "⇢", "●"];
+    visuals.forEach((visual, visualIndex) => {
+      layer.append(node(`point-action-item action-item-${visualIndex + 1}`, visual));
+    });
+    if (concept === "Photosynthesis") {
+      layer.classList.add("photosynthesis-action");
+      layer.append(node("action-pulse"));
+    }
+    stage.append(layer);
+  }
+
   function setStep(index) {
     const steps = state.lesson.steps[state.language];
     state.index = Math.max(0, Math.min(index, steps.length - 1));
@@ -381,12 +451,14 @@
       : Math.min(4, Math.ceil(((state.index + 1) / steps.length) * 4));
     const stage = byId("animation-stage");
     stage.dataset.step = String(visualStep);
-    const activePhase = visualPhase(state.concept, steps[state.index], state.index, steps.length);
+    const activePhase = resolvedVisualPhase(state.concept, steps[state.index], state.index, steps.length);
     stage.dataset.phase = activePhase;
     [...stage.classList].filter((name) => name.startsWith("seen-")).forEach((name) => stage.classList.remove(name));
     steps.slice(0, state.index + 1).forEach((caption, stepIndex) => {
-      stage.classList.add(`seen-${visualPhase(state.concept, caption, stepIndex, steps.length)}`);
+      stage.classList.add(`seen-${resolvedVisualPhase(state.concept, caption, stepIndex, steps.length)}`);
     });
+    stage.dataset.sequence = String(state.index);
+    renderPointAction(stage, state.concept, activePhase, state.index);
     byId("animation-caption").textContent = steps[state.index];
     byId("animation-step").textContent = `${state.index + 1} / ${steps.length}`;
     byId("animation-progress-fill").style.width = `${((state.index + 1) / steps.length) * 100}%`;
