@@ -12,16 +12,24 @@
       title: { en: "Fractions: equal parts of a whole", te: "భిన్నాలు: మొత్తంలోని సమాన భాగాలు" },
       steps: {
         en: [
-          "Start with one complete whole, such as a roti or a circle.",
-          "Divide the whole into four equal parts. Equal size is essential.",
-          "Select three of the four parts. The selected amount is three-fourths.",
-          "In three-fourths, three is the numerator and four is the denominator.",
+          "This pizza is one complete whole. Nothing has been cut or removed yet.",
+          "To share it fairly among four learners, first make one straight vertical cut through the centre.",
+          "Now make a second straight cut across the centre. The pizza is divided into four pieces.",
+          "Check the pieces carefully. All four pieces have the same size, so they are four equal parts.",
+          "Each single piece is one out of four equal parts. We write one-fourth.",
+          "Now select three equal pieces. Three of the four pieces are highlighted.",
+          "We write the selected amount as three-fourths. Three is the numerator because three pieces are selected.",
+          "Four is the denominator because the whole pizza has four equal pieces. Therefore the highlighted fraction is three-fourths.",
         ],
         te: [
-          "ఒక రొట్టె లేదా వృత్తం వంటి ఒక పూర్తి మొత్తంతో ప్రారంభిద్దాం.",
-          "ఆ మొత్తాన్ని నాలుగు సమాన భాగాలుగా విభజించాలి. ప్రతి భాగం సమాన పరిమాణంలో ఉండాలి.",
-          "నాలుగు భాగాలలో మూడు భాగాలను ఎంచుకుంటే, తీసుకున్న భాగం మూడు నాలుగవ వంతులు.",
-          "మూడు నాలుగవ వంతులలో మూడు లవం, నాలుగు హారం.",
+          "ఈ పిజ్జా ఒక పూర్తి మొత్తం. ఇప్పటివరకు దీనిని కోయలేదు, ఏ భాగాన్నీ తీసుకోలేదు.",
+          "నలుగురికి సమానంగా పంచడానికి, ముందుగా మధ్యలో నిలువుగా ఒక కోత పెట్టాలి.",
+          "ఇప్పుడు మధ్యలో అడ్డంగా రెండవ కోత పెట్టాలి. పిజ్జా నాలుగు ముక్కలుగా విభజించబడింది.",
+          "నాలుగు ముక్కలను జాగ్రత్తగా చూడండి. అన్నీ ఒకే పరిమాణంలో ఉన్నాయి కాబట్టి ఇవి నాలుగు సమాన భాగాలు.",
+          "ఒక్క ముక్క నాలుగు సమాన భాగాలలో ఒకటి. దీనిని ఒక నాలుగవ వంతు అని రాస్తాము.",
+          "ఇప్పుడు మూడు సమాన ముక్కలను ఎంచుకుందాం. నాలుగు ముక్కల్లో మూడు రంగుతో చూపబడుతున్నాయి.",
+          "ఎంచుకున్న భాగాన్ని మూడు నాలుగవ వంతులు అని రాస్తాము. మూడు ముక్కలు ఎంచుకున్నందువల్ల మూడు లవం.",
+          "మొత్తం పిజ్జాలో నాలుగు సమాన ముక్కలు ఉన్నందువల్ల నాలుగు హారం. కాబట్టి రంగుతో చూపిన భిన్నం మూడు నాలుగవ వంతులు.",
         ],
       },
     },
@@ -105,11 +113,22 @@
         const part = node(`fraction-part part-${index + 1}`);
         part.append(node("pizza-cheese"));
         for (let topping = 0; topping < 3; topping += 1) part.append(node(`pizza-topping topping-${topping + 1}`));
+        part.append(node("piece-number", String(index + 1)));
         whole.append(part);
       }
-      whole.append(node("fraction-label", "3/4"));
+      whole.append(
+        node("pizza-cut cut-vertical"),
+        node("pizza-cut cut-horizontal"),
+        node("fraction-label", "3/4"),
+      );
       plate.append(whole);
-      table.append(plate, node("fraction-story", state.language === "te" ? "4 సమాన భాగాలు" : "4 equal parts"));
+      table.append(
+        plate,
+        node("fraction-story story-whole", state.language === "te" ? "1 పూర్తి మొత్తం" : "1 complete whole"),
+        node("fraction-story story-equal", state.language === "te" ? "4 సమాన భాగాలు" : "4 equal parts"),
+        node("fraction-story story-selected", state.language === "te" ? "3 భాగాలు ఎంచుకున్నాం" : "3 parts selected"),
+        node("fraction-story story-result", "3/4"),
+      );
       stage.append(table);
     } else if (concept === "Geometry") {
       const blueprint = node("geometry-blueprint");
@@ -186,6 +205,7 @@
     byId("animation-step").textContent = `${state.index + 1} / ${steps.length}`;
     byId("animation-progress-fill").style.width = `${((state.index + 1) / steps.length) * 100}%`;
     byId("animation-progress").setAttribute("aria-valuenow", String(state.index + 1));
+    byId("animation-progress").setAttribute("aria-valuemax", String(steps.length));
     byId("animation-previous").disabled = state.index === 0;
     byId("animation-next").disabled = state.index === steps.length - 1;
   }
