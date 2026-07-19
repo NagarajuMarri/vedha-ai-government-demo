@@ -203,6 +203,38 @@
     }
   });
 
+
+  async function speakText(text, languageKey, callbacks = {}) {
+    if (!synth || !text?.trim()) {
+      callbacks.onUnavailable?.();
+      return false;
+    }
+    const language = languageCodes[languageKey] || languageKey || "en-IN";
+    const voice = await preferredVoice(language);
+    if (language.startsWith("te") && !voice) {
+      callbacks.onUnavailable?.();
+      return false;
+    }
+    synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(text.trim());
+    utterance.lang = language;
+    utterance.voice = voice;
+    utterance.rate = 0.88;
+    utterance.onstart = () => callbacks.onStart?.();
+    utterance.onend = () => callbacks.onEnd?.();
+    utterance.onerror = () => callbacks.onError?.();
+    currentUtterance = utterance;
+    synth.speak(utterance);
+    return true;
+  }
+
+  window.VedhaVoice = {
+    speakText,
+    pause() { if (synth?.speaking && !synth.paused) synth.pause(); },
+    resume() { if (synth?.paused) synth.resume(); },
+    cancel() { synth?.cancel(); currentUtterance = null; },
+  };
+
   window.addEventListener("beforeunload", () => {
     stopRecognition();
     synth?.cancel();
