@@ -36,55 +36,83 @@
     },
     Geometry: {
       title: { en: "Geometry: understanding a triangle", te: "జ్యామితి: త్రిభుజాన్ని అర్థం చేసుకుందాం" },
-      durationSeconds: 75,
+      durationSeconds: 105,
       steps: {
         en: [
-          "Three line segments join to make a closed shape called a triangle.",
-          "A triangle has three vertices and three interior angles.",
-          "The three interior angles of every triangle add up to one hundred and eighty degrees.",
-          "If two angles are fifty and sixty degrees, the third angle is seventy degrees.",
+          "Geometry studies shapes, sizes, positions, and the relationships between them. We will use a triangle to understand these ideas.",
+          "A point marks an exact position. Joining two points creates a line segment with a measurable length.",
+          "Three line segments joined end to end form this closed shape called a triangle.",
+          "The joining points are vertices. A triangle has three vertices, labelled A, B, and C.",
+          "The opening formed where two sides meet is an interior angle. This triangle has three interior angles.",
+          "An important triangle rule says that all three interior angles always add up to one hundred and eighty degrees.",
+          "Here two angles measure fifty and sixty degrees. Add them first: fifty plus sixty equals one hundred and ten degrees.",
+          "Subtract one hundred and ten from one hundred and eighty. The missing angle is seventy degrees, and all three now total one hundred and eighty.",
         ],
         te: [
-          "మూడు రేఖాఖండాలు కలిసి ఏర్పడే మూసిన ఆకారాన్ని త్రిభుజం అంటారు.",
-          "త్రిభుజానికి మూడు శీర్షాలు, మూడు అంతర్గత కోణాలు ఉంటాయి.",
-          "ప్రతి త్రిభుజంలోని మూడు అంతర్గత కోణాల మొత్తం నూట ఎనభై డిగ్రీలు.",
-          "రెండు కోణాలు యాభై, అరవై డిగ్రీలు అయితే మూడవ కోణం డెబ్బై డిగ్రీలు.",
+          "ఆకారాలు, పరిమాణాలు, స్థానాలు, వాటి మధ్య సంబంధాలను అధ్యయనం చేసే గణిత విభాగాన్ని జ్యామితి అంటారు. త్రిభుజం ద్వారా ఈ భావనలను తెలుసుకుందాం.",
+          "బిందువు ఒక ఖచ్చితమైన స్థానాన్ని సూచిస్తుంది. రెండు బిందువులను కలిపితే కొలవగల పొడవు ఉన్న రేఖాఖండం ఏర్పడుతుంది.",
+          "మూడు రేఖాఖండాలను చివరల వద్ద కలిపితే త్రిభుజం అనే మూసిన ఆకారం ఏర్పడుతుంది.",
+          "రేఖాఖండాలు కలిసే బిందువులను శీర్షాలు అంటారు. త్రిభుజానికి ఏ, బీ, సీ అనే మూడు శీర్షాలు ఉన్నాయి.",
+          "రెండు భుజాలు కలిసే చోట ఏర్పడే విస్తారాన్ని అంతర్గత కోణం అంటారు. త్రిభుజానికి మూడు అంతర్గత కోణాలు ఉంటాయి.",
+          "ప్రతి త్రిభుజంలోని మూడు అంతర్గత కోణాల మొత్తం ఎల్లప్పుడూ నూట ఎనభై డిగ్రీలు.",
+          "ఇక్కడ రెండు కోణాలు యాభై, అరవై డిగ్రీలు. ముందుగా వాటిని కలిపితే నూట పది డిగ్రీలు.",
+          "నూట ఎనభై నుండి నూట పదిని తీసివేస్తే మిగిలిన కోణం డెబ్బై డిగ్రీలు. మూడు కోణాల మొత్తం నూట ఎనభై అవుతుంది.",
         ],
       },
     },
     "Water Cycle": {
       title: { en: "The continuous water cycle", te: "నిరంతర నీటి చక్రం" },
-      durationSeconds: 100,
+      durationSeconds: 125,
       steps: {
         en: [
-          "The Sun heats water in oceans, lakes, and rivers.",
-          "Liquid water changes into water vapour and rises. This is evaporation.",
-          "Water vapour cools and forms clouds. This is condensation.",
-          "Water returns as rain and collects again, so the cycle continues.",
+          "The water cycle is the continuous movement of water between Earth's surface and the atmosphere. It has no fixed beginning or end.",
+          "Most water is stored in oceans, while lakes, rivers, soil, plants, ice, and groundwater hold smaller amounts.",
+          "Energy from the Sun heats surface water. Faster-moving water molecules escape into the air as invisible water vapour.",
+          "This change from liquid water to water vapour is evaporation. Plants also release water vapour through transpiration.",
+          "As moist air rises, it becomes cooler. Water vapour changes into tiny liquid droplets around dust particles.",
+          "This cooling process is condensation. Millions of tiny droplets gather to form visible clouds.",
+          "When droplets combine and become too heavy for the cloud, water falls as rain, snow, or hail. This is precipitation.",
+          "Some water flows over land into streams and rivers, while some enters the soil and becomes groundwater.",
+          "Collected water eventually returns to lakes and oceans. The Sun heats it again, so the water cycle continuously repeats.",
         ],
         te: [
-          "సూర్యుడి వేడి సముద్రాలు, సరస్సులు, నదుల్లోని నీటిని వేడిచేస్తుంది.",
-          "ద్రవ నీరు ఆవిరిగా మారి పైకి వెళుతుంది. దీనిని ఆవిరీకరణ అంటారు.",
-          "నీటి ఆవిరి చల్లబడి మేఘాలను ఏర్పరుస్తుంది. దీనిని సంఘననం అంటారు.",
-          "వర్షంగా నీరు తిరిగి భూమికి వచ్చి జలాశయాల్లో చేరడంతో చక్రం కొనసాగుతుంది.",
+          "భూమి ఉపరితలం మరియు వాతావరణం మధ్య నీరు నిరంతరం ప్రయాణించే ప్రక్రియను నీటి చక్రం అంటారు. దీనికి ఒక స్థిరమైన ఆరంభం లేదా ముగింపు ఉండదు.",
+          "ఎక్కువ నీరు సముద్రాల్లో ఉంటుంది. సరస్సులు, నదులు, నేల, మొక్కలు, మంచు, భూగర్భ జలాల్లో కూడా నీరు నిల్వ ఉంటుంది.",
+          "సూర్యుడి శక్తి ఉపరితల నీటిని వేడిచేస్తుంది. వేగంగా కదిలే నీటి అణువులు కనిపించని నీటి ఆవిరిగా గాలిలోకి వెళతాయి.",
+          "ద్రవ నీరు ఆవిరిగా మారడాన్ని ఆవిరీకరణ అంటారు. మొక్కలు కూడా బాష్పోత్సేకం ద్వారా నీటి ఆవిరిని విడుదల చేస్తాయి.",
+          "తేమగల గాలి పైకి వెళ్లినప్పుడు చల్లబడుతుంది. నీటి ఆవిరి ధూళి కణాల చుట్టూ చిన్న నీటి బిందువులుగా మారుతుంది.",
+          "ఈ చల్లబడే ప్రక్రియను సంఘననం అంటారు. లక్షల చిన్న బిందువులు కలిసి కనిపించే మేఘాలను ఏర్పరుస్తాయి.",
+          "బిందువులు కలసి బరువెక్కినప్పుడు వర్షం, మంచు లేదా వడగళ్ల రూపంలో భూమికి పడతాయి. దీనిని వర్షపాతం అంటారు.",
+          "కొంత నీరు నేలపై ప్రవహించి వాగులు, నదుల్లో చేరుతుంది. మరికొంత నేలలోకి ఇంకి భూగర్భ జలంగా మారుతుంది.",
+          "సేకరించిన నీరు చివరకు సరస్సులు, సముద్రాల్లో చేరుతుంది. సూర్యుడు మళ్లీ వేడిచేయడంతో నీటి చక్రం నిరంతరం కొనసాగుతుంది.",
         ],
       },
     },
     "Solar System": {
       title: { en: "Our Solar System", te: "మన సౌర కుటుంబం" },
-      durationSeconds: 100,
+      durationSeconds: 125,
       steps: {
         en: [
-          "The Sun is the star at the centre of our Solar System.",
-          "Planets travel around the Sun along paths called orbits.",
-          "Earth rotates on its axis, producing day and night.",
-          "Earth completes one revolution around the Sun in about one year.",
+          "The Solar System contains the Sun and every object held by its gravity, including planets, moons, dwarf planets, asteroids, and comets.",
+          "The Sun is a star at the centre. It contains most of the Solar System's mass and supplies the light and heat needed for life on Earth.",
+          "The four inner planets are Mercury, Venus, Earth, and Mars. They are smaller, rocky planets located closer to the Sun.",
+          "The four outer planets are Jupiter, Saturn, Uranus, and Neptune. They are much larger and are made mainly of gases or icy materials.",
+          "Every planet travels around the Sun along a curved path called an orbit. Gravity keeps planets from moving away into space.",
+          "Earth also rotates on an imaginary axis. One complete rotation takes about twenty-four hours and produces day and night.",
+          "Earth revolves around the Sun while rotating. One complete revolution takes about three hundred and sixty-five days, which forms a year.",
+          "Earth's Moon revolves around Earth. Other planets also have moons, while Saturn is especially known for its broad ring system.",
+          "The Solar System is only one small part of the Milky Way galaxy, which contains billions of stars and many other planetary systems.",
         ],
         te: [
-          "సూర్యుడు మన సౌర కుటుంబం మధ్యలో ఉన్న నక్షత్రం.",
-          "గ్రహాలు కక్ష్యలు అనే మార్గాల్లో సూర్యుని చుట్టూ తిరుగుతాయి.",
-          "భూమి తన అక్షంపై తిరగడం వల్ల పగలు, రాత్రి ఏర్పడతాయి.",
-          "భూమి సూర్యుని చుట్టూ ఒక పరిభ్రమణాన్ని సుమారు ఒక సంవత్సరంలో పూర్తి చేస్తుంది.",
+          "సూర్యుడు, అతని గురుత్వాకర్షణ వల్ల బంధించబడిన గ్రహాలు, ఉపగ్రహాలు, మరుగుజ్జు గ్రహాలు, గ్రహశకలాలు, తోకచుక్కలు కలిసి సౌర కుటుంబాన్ని ఏర్పరుస్తాయి.",
+          "సూర్యుడు మధ్యలో ఉన్న ఒక నక్షత్రం. సౌర కుటుంబంలోని ఎక్కువ ద్రవ్యరాశి సూర్యుడిలోనే ఉంది. భూమిపై జీవానికి అవసరమైన కాంతి, వేడిని అందిస్తాడు.",
+          "బుధుడు, శుక్రుడు, భూమి, అంగారకుడు అంతర్గత గ్రహాలు. ఇవి సూర్యుడికి దగ్గరగా ఉన్న చిన్న రాతి గ్రహాలు.",
+          "గురుడు, శని, యురేనస్, నెప్ట్యూన్ బాహ్య గ్రహాలు. ఇవి చాలా పెద్దవి; ప్రధానంగా వాయువులు లేదా మంచు పదార్థాలతో ఏర్పడ్డాయి.",
+          "ప్రతి గ్రహం కక్ష్య అనే వక్ర మార్గంలో సూర్యుని చుట్టూ తిరుగుతుంది. గురుత్వాకర్షణ గ్రహాలు అంతరిక్షంలోకి దూరంగా వెళ్లకుండా ఉంచుతుంది.",
+          "భూమి ఒక ఊహాత్మక అక్షంపై కూడా తిరుగుతుంది. ఒకసారి తిరగడానికి సుమారు ఇరవై నాలుగు గంటలు పడుతుంది; దీని వల్ల పగలు, రాత్రి ఏర్పడతాయి.",
+          "భూమి తన అక్షంపై తిరుగుతూ సూర్యుని చుట్టూ పరిభ్రమిస్తుంది. ఒక పరిభ్రమణానికి సుమారు మూడు వందల అరవై ఐదు రోజులు పడుతుంది; దీనినే ఒక సంవత్సరం అంటాము.",
+          "చంద్రుడు భూమి చుట్టూ తిరుగుతాడు. ఇతర గ్రహాలకు కూడా ఉపగ్రహాలు ఉన్నాయి. శని తన విస్తారమైన వలయాలకు ప్రసిద్ధి.",
+          "మన సౌర కుటుంబం పాలపుంత అనే నక్షత్ర వీధిలోని చిన్న భాగం మాత్రమే. పాలపుంతలో కోట్లాది నక్షత్రాలు, అనేక గ్రహ వ్యవస్థలు ఉన్నాయి.",
         ],
       },
     },
@@ -204,7 +232,10 @@
   function setStep(index) {
     const steps = state.lesson.steps[state.language];
     state.index = Math.max(0, Math.min(index, steps.length - 1));
-    byId("animation-stage").dataset.step = String(state.index + 1);
+    const visualStep = state.concept === "Fractions"
+      ? state.index + 1
+      : Math.min(4, Math.ceil(((state.index + 1) / steps.length) * 4));
+    byId("animation-stage").dataset.step = String(visualStep);
     byId("animation-caption").textContent = steps[state.index];
     byId("animation-step").textContent = `${state.index + 1} / ${steps.length}`;
     byId("animation-progress-fill").style.width = `${((state.index + 1) / steps.length) * 100}%`;
@@ -228,10 +259,7 @@
 
   function scheduleAdvanceAfterNarration() {
     if (!state.playing) return;
-    const steps = state.lesson.steps[state.language];
-    const minimumStepMs = (state.lesson.durationSeconds * 1000) / steps.length;
-    const elapsedMs = Date.now() - state.stepStartedAt;
-    state.timer = window.setTimeout(advanceAfterNarration, Math.max(0, minimumStepMs - elapsedMs));
+    state.timer = window.setTimeout(advanceAfterNarration, 650);
   }
 
   function advanceAfterNarration() {
@@ -259,9 +287,7 @@
       },
     });
     if (!spoken && state.playing) {
-      const steps = state.lesson.steps[state.language];
-      const minimumStepMs = (state.lesson.durationSeconds * 1000) / steps.length;
-      state.timer = window.setTimeout(advanceAfterNarration, Math.max(minimumStepMs, caption.length * 55));
+      state.timer = window.setTimeout(advanceAfterNarration, Math.max(4500, caption.length * 65));
     }
   }
 
