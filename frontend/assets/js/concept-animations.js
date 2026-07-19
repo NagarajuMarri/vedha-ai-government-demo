@@ -321,11 +321,36 @@
     }
   }
 
-  function prepare(concept, profile) {
+  function buildFullLessonNarration(generatedLesson) {
+    if (!generatedLesson) return [];
+    return [
+      generatedLesson.introduction,
+      ...generatedLesson.explanation_steps,
+      generatedLesson.example,
+      ...generatedLesson.key_points,
+      generatedLesson.check_question,
+    ].map((text) => String(text || "").trim()).filter(Boolean);
+  }
+
+  function estimateNarrationSeconds(steps) {
+    const wordCount = steps.join(" ").split(/\s+/).filter(Boolean).length;
+    return Math.max(60, Math.min(300, Math.ceil(wordCount / 1.8)));
+  }
+
+  function prepare(concept, profile, generatedLesson) {
     state.concept = concept;
     state.profile = profile;
     state.language = profiles[profile] || "en";
-    state.lesson = lessons[concept] || null;
+    const template = lessons[concept] || null;
+    const fullNarration = buildFullLessonNarration(generatedLesson);
+    state.lesson = template && fullNarration.length
+      ? {
+          ...template,
+          title: { en: generatedLesson.title, te: generatedLesson.title },
+          steps: { en: fullNarration, te: fullNarration },
+          durationSeconds: estimateNarrationSeconds(fullNarration),
+        }
+      : template;
     state.index = 0;
     state.playing = false;
     clearTimer();
