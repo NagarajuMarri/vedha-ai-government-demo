@@ -652,3 +652,32 @@ def test_parent_portal_is_responsive_and_presentation_ready() -> None:
         assert selector in styles
     assert "@media(max-width:52rem)" in styles
     assert "@media(max-width:30rem)" in styles
+
+
+def test_parent_portal_has_subject_weekly_monthly_and_exam_reports() -> None:
+    parent_html = (FRONTEND_ROOT / "parent" / "index.html").read_text(encoding="utf-8")
+    parent_js = (FRONTEND_ROOT / "assets" / "js" / "parent-dashboard.js").read_text(encoding="utf-8")
+    for element_id in (
+        "report-period", "subject-completion-list", "overall-completion",
+        "exam-completion", "exam-progress-fill", "exam-completed-list",
+        "exam-remaining-list", "exam-next-step",
+    ):
+        assert f'id="{element_id}"' in parent_html
+    assert "reports: { weekly:" in parent_js
+    assert "monthly:" in parent_js
+    assert "subjectCompletion:" in parent_js
+    assert "exam: { title:" in parent_js
+    assert 'byId("report-period").addEventListener("change",render)' in parent_js
+    assert "child.exam.completion" in parent_js
+    assert "exam|preparation|complete|పరీక్ష|సిద్ధత|పూర్తి" in parent_js
+
+
+def test_parent_exam_report_layout_is_responsive() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for selector in (
+        ".parent-report-grid", ".exam-readiness-ring", ".exam-progress-track",
+        ".exam-plan-columns", ".next-study-step",
+    ):
+        assert selector in styles
+    assert "@media(max-width:58rem)" in styles
+    assert "@media(max-width:36rem)" in styles
