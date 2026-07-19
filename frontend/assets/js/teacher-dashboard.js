@@ -22,7 +22,7 @@
   };
   const tr = {
     pure_telugu:{
-      "Fractions":"భిన్నాలు","Solar System":"సౌర కుటుంబం","Geometry":"జ్యామితి","English grammar":"ఆంగ్ల వ్యాకరణం","Indian Constitution":"భారత రాజ్యాంగం","Telugu":"తెలుగు","Science":"విజ్ఞాన శాస్త్రం","Water Cycle":"నీటి చక్రం","Decimals":"దశాంశాలు","Local Government":"స్థానిక ప్రభుత్వం","Telugu grammar":"తెలుగు వ్యాకరణం",
+      "Mathematics":"గణితం","English":"ఆంగ్లం","Social Studies":"సాంఘిక శాస్త్రం","Fractions":"భిన్నాలు","Solar System":"సౌర కుటుంబం","Geometry":"జ్యామితి","English grammar":"ఆంగ్ల వ్యాకరణం","Indian Constitution":"భారత రాజ్యాంగం","Telugu":"తెలుగు","Science":"విజ్ఞాన శాస్త్రం","Water Cycle":"నీటి చక్రం","Decimals":"దశాంశాలు","Local Government":"స్థానిక ప్రభుత్వం","Telugu grammar":"తెలుగు వ్యాకరణం",
       "Geometry intervention":"జ్యామితి సహాయ కార్యక్రమం","Grammar practice":"వ్యాకరణ అభ్యాసం","Angles revision":"కోణాల పునశ్చరణ","Equivalent fractions":"సమాన భిన్నాలు","Subject–verb agreement":"కర్త–క్రియ అన్వయం","Constitution recap":"రాజ్యాంగ పునశ్చరణ","Sentence structure":"వాక్య నిర్మాణం","Visual fraction practice":"బొమ్మలతో భిన్నాల అభ్యాసం","Decimal word problems":"దశాంశ కథన సమస్యలు","Civic concept recap":"పౌరశాస్త్ర భావనల పునశ్చరణ","A triangle has angles 50° and 60°. Find the third angle and explain the rule used.":"ఒక త్రిభుజంలో రెండు కోణాలు 50°, 60°. మూడవ కోణాన్ని కనుగొని ఉపయోగించిన నియమాన్ని వివరించండి.","Show two visual examples of fractions equivalent to 1/2 and explain how you know.":"1/2కు సమానమైన భిన్నాలకు రెండు బొమ్మల ఉదాహరణలు చూపించి, అవి సమానమని ఎలా తెలుసుకున్నారో వివరించండి."
     },
     telugu_assisted_english:{
