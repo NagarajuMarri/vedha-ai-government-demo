@@ -62,8 +62,8 @@ def test_successful_lesson_renders_every_section_safely() -> None:
 
 
 def test_steps_and_key_points_are_semantic_lists() -> None:
-    assert re.search(r'<ol id="lesson-steps"></ol>', STUDENT_HTML)
-    assert re.search(r'<ul id="lesson-points"></ul>', STUDENT_HTML)
+    assert re.search(r'<ol id="lesson-steps"[^>]*></ol>', STUDENT_HTML)
+    assert re.search(r'<ul id="lesson-points"[^>]*></ul>', STUDENT_HTML)
     assert 'setList(byId("lesson-steps"), lesson.explanation_steps)' in TUTOR_JS
     assert 'setList(byId("lesson-points"), lesson.key_points)' in TUTOR_JS
 
