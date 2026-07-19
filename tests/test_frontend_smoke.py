@@ -376,3 +376,31 @@ def test_four_showcase_concepts_have_bilingual_synchronized_animation_steps() ->
 
 def test_lesson_generation_prepares_animation_for_exact_selected_concept() -> None:
     assert "window.VedhaAnimations?.prepare(state.setup.concept, state.setup.learning_profile)" in TUTOR_JS
+
+
+def test_animation_player_has_government_presentation_controls_and_timeline() -> None:
+    assert 'id="animation-fullscreen"' in STUDENT_HTML
+    assert 'id="animation-progress"' in STUDENT_HTML
+    assert 'role="progressbar"' in STUDENT_HTML
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    assert "requestFullscreen" in animation_js
+    assert 'byId("animation-progress-fill").style.width' in animation_js
+
+
+def test_animation_scenes_use_rich_concept_specific_motion_graphics() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for visual in (
+        "fraction-plate",
+        "pizza-topping",
+        "geometry-blueprint",
+        "triangle-edge",
+        "water-landscape",
+        "rain-drop",
+        "space-star",
+        "planet-surface",
+    ):
+        assert visual in animation_js
+        assert f".{visual}" in styles
+    for animation in ("rain-fall", "star-twinkle", "sun-breathe", "water-rise"):
+        assert f"@keyframes {animation}" in styles
