@@ -772,7 +772,7 @@ def test_gateway_presents_integrated_four_role_ministerial_journey() -> None:
         assert text in landing
     for href in ('href="student/"', 'href="parent/"', 'href="teacher/"', 'href="government/"'):
         assert href in landing
-    assert 'href="../docs/DEMO_RUNBOOK.md"' in landing
+    assert 'href="demo/"' in landing\n    assert (FRONTEND_ROOT / "demo" / "index.html").is_file()
 
 
 def test_government_dashboard_has_three_profile_voice_and_spoken_insight() -> None:
