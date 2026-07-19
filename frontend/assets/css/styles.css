@@ -3646,3 +3646,107 @@ body {
 @media(prefers-reduced-motion:reduce){
   .sentence-scene,.sentence-visual-object,.process-ray,.root-drop,.gas-bubble{animation:none}
 }
+
+
+/* Dedicated sentence scenes for every available lesson */
+.dedicated-lesson-scene{background:#082541}
+.dedicated-lesson-scene > *{transition:opacity .5s,filter .5s,scale .5s}
+
+/* Fractions: whole pizza, cuts, equal pieces, selection and notation are separate scenes. */
+.dedicated-fractions{background:radial-gradient(circle,#865838,#342014)}
+.story-pizza{position:absolute;left:50%;top:46%;translate:-50% -50%;display:grid;grid-template-columns:1fr 1fr;width:18rem;height:18rem;border:.8rem solid #d58e42;border-radius:50%;overflow:hidden;background:#f4c45b;box-shadow:0 1.5rem 3rem #160a05}
+.story-pizza-piece{display:grid;place-items:center;border:.15rem solid #8c482c;color:#fff;font-size:2rem;font-weight:950;text-shadow:0 2px 5px #4a1b0d;background:radial-gradient(circle at 30% 30%,#ffe391,#eaa73e)}
+.story-cut{position:absolute;left:50%;top:46%;z-index:5;background:#fff4cf;box-shadow:0 0 .7rem #5a250f}
+.cut-one{width:.3rem;height:18rem;translate:-50% -50%}.cut-two{width:18rem;height:.3rem;translate:-50% -50%}
+.story-math-label{position:absolute;right:5%;bottom:13%;border-radius:1rem;background:#111b;color:#fff;padding:1rem 1.4rem;font-size:1.3rem;font-weight:950}
+.dedicated-fractions:not([data-dedicated-phase="cut"]):not([data-dedicated-phase="equal"]):not([data-dedicated-phase="selected"]):not([data-dedicated-phase="numerator"]):not([data-dedicated-phase="denominator"]) .story-cut{opacity:0}
+.dedicated-fractions[data-dedicated-phase="whole"] .story-pizza-piece{border-color:transparent;color:transparent}
+.dedicated-fractions[data-dedicated-phase="cut"] .story-cut{animation:cut-draw 1.3s ease both}
+.dedicated-fractions[data-dedicated-phase="equal"] .story-pizza-piece{animation:piece-pop 1.4s ease infinite}
+.dedicated-fractions[data-dedicated-phase="selected"] .story-piece-4{filter:grayscale(1) brightness(.5)}
+.dedicated-fractions[data-dedicated-phase="numerator"] .story-piece-1,.dedicated-fractions[data-dedicated-phase="numerator"] .story-piece-2,.dedicated-fractions[data-dedicated-phase="numerator"] .story-piece-3{box-shadow:inset 0 0 2rem #fff}
+.dedicated-fractions[data-dedicated-phase="denominator"] .story-pizza-piece{outline:.3rem solid #fff}
+
+/* Decimals: the current place value becomes the camera focus. */
+.dedicated-decimals{background:linear-gradient(145deg,#052e55,#0c75ad)}
+.decimal-focus-number{position:absolute;left:50%;top:21%;translate:-50%;color:#fff;font:950 5.5rem/1 ui-monospace;text-shadow:0 0 2rem #59dcff}
+.place-value-table{position:absolute;left:50%;top:58%;translate:-50% -50%;display:grid;grid-template-columns:repeat(3,11rem);border:2px solid #fff;border-radius:1rem;overflow:hidden}
+.place-value-cell{background:#ffffff18;color:#fff;text-align:center;padding:1.1rem;border-right:1px solid #ffffff66;opacity:.35}
+.place-name{font-size:.72rem;font-weight:900}.place-digit{font-size:3.2rem;font-weight:950}
+.decimal-focus-arrow{position:absolute;left:50%;top:39%;translate:-50%;color:#ffe066;font-size:3rem;animation:arrow-down 1s infinite}
+.dedicated-decimals[data-dedicated-phase="places"] .place-value-cell,.dedicated-decimals[data-dedicated-phase="point"] .place-value-cell{opacity:1}
+.dedicated-decimals[data-dedicated-phase="tenths"] .place-tenths,.dedicated-decimals[data-dedicated-phase="hundredths"] .place-hundredths{opacity:1;background:#f0a202;scale:1.12}
+
+/* Geometry: points join into sides, vertices and angles appear by sentence. */
+.dedicated-geometry{background-color:#063765;background-image:linear-gradient(#55b6e522 1px,transparent 1px),linear-gradient(90deg,#55b6e522 1px,transparent 1px);background-size:2rem 2rem}
+.geometry-story-board{position:absolute;left:50%;top:48%;translate:-50% -50%;width:26rem;height:20rem}
+.geo-point{position:absolute;z-index:5;display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:50%;background:#ffd34e;color:#063765;font-weight:950;box-shadow:0 0 1.2rem #fff}
+.point-a{left:0;bottom:0}.point-b{right:0;bottom:0}.point-c{left:calc(50% - 1.2rem);top:0}
+.geo-line{position:absolute;height:.4rem;background:#76ddff;box-shadow:0 0 1rem #76ddff;transform-origin:left;animation:line-draw 1.2s both}
+.line-ab{left:1rem;bottom:1rem;width:24rem}.line-bc{right:1rem;bottom:1rem;width:23rem;rotate:-120deg;transform-origin:right}.line-ca{left:1rem;bottom:1rem;width:23rem;rotate:-60deg}
+.geo-angle{position:absolute;color:#fff;font-size:1.2rem;font-weight:950;opacity:.2}.geo-angle-a{left:3rem;bottom:2rem}.geo-angle-b{right:3rem;bottom:2rem}.geo-angle-c{left:47%;top:3rem}
+.geometry-story-equation{position:absolute;right:4%;bottom:9%;border-radius:1rem;background:#001b;color:#fff;padding:1rem;font-weight:950}
+.dedicated-geometry[data-dedicated-phase="sides"] .geo-point,.dedicated-geometry[data-dedicated-phase="shape"] .geo-angle{opacity:.2}
+.dedicated-geometry[data-dedicated-phase="vertices"] .geo-point{scale:1.35}
+.dedicated-geometry[data-dedicated-phase="angles"] .geo-angle{opacity:1;scale:1.35}
+
+/* Water cycle: each process gets a different moving direction. */
+.dedicated-water-cycle{background:linear-gradient(#64c7f0 0 63%,#2787b5 63%)}
+.cycle-story-world{position:absolute;inset:0}.cycle-story-sun{position:absolute;left:7%;top:12%;font-size:6rem}.cycle-story-ocean{position:absolute;inset:auto 0 0;height:31%;background:#187cac;color:#d9f7ff;padding:2rem;font-weight:950}.cycle-story-cloud{position:absolute;right:15%;top:15%;font-size:8rem;color:#fff;filter:drop-shadow(0 1rem 1rem #2467)}.cycle-story-mountain{position:absolute;left:46%;bottom:25%;font-size:13rem;color:#315a55}.cycle-story-flow{position:absolute;left:25%;top:27%;width:45%;height:45%;border:.5rem dashed #fff;border-left-color:transparent;border-radius:50%;animation:slow-spin 5s linear infinite}
+.cycle-particle{position:absolute;color:#fff;animation:cycle-particle 2s linear infinite}.cycle-particle-1{left:15%;bottom:15%}.cycle-particle-2{left:23%;bottom:20%}.cycle-particle-3{left:32%;bottom:10%}.cycle-particle-4{right:18%;top:27%}.cycle-particle-5{right:25%;top:33%}.cycle-particle-6{right:32%;top:23%}.cycle-particle-7{left:42%;top:20%}.cycle-particle-8{left:50%;top:15%}.cycle-particle-9{left:59%;top:21%}.cycle-particle-10{right:10%;bottom:20%}.cycle-particle-11{right:28%;bottom:14%}.cycle-particle-12{left:8%;bottom:25%}
+.cycle-story-label{position:absolute;left:50%;bottom:7%;translate:-50%;z-index:8;border-radius:999px;background:#062f55dd;color:#fff;padding:.7rem 1rem;font-weight:950}
+.dedicated-water-cycle[data-dedicated-phase="evaporation"] .cycle-particle{animation-name:water-up}
+.dedicated-water-cycle[data-dedicated-phase="cloud"] .cycle-story-cloud{scale:1.25;filter:drop-shadow(0 0 2rem #fff)}
+.dedicated-water-cycle[data-dedicated-phase="rain"] .cycle-particle{animation-name:water-down}
+.dedicated-water-cycle[data-dedicated-phase="collection"] .cycle-story-ocean{filter:brightness(1.4)}
+
+/* Solar system: current sentence changes the active planetary motion. */
+.dedicated-solar-system{background:radial-gradient(circle,#123d70,#010611 70%)}
+.solar-story-system{position:absolute;inset:0}.solar-story-sun{position:absolute;z-index:8;left:50%;top:50%;translate:-50% -50%;font-size:6rem;filter:drop-shadow(0 0 2rem #ffb31a)}
+.solar-story-orbit{position:absolute;left:50%;top:50%;translate:-50% -50%;border:1px solid #9dc9ff55;border-radius:50%;animation:slow-spin linear infinite}.solar-story-orbit-1{width:10rem;height:10rem;animation-duration:4s}.solar-story-orbit-2{width:15rem;height:15rem;animation-duration:6s}.solar-story-orbit-3{width:20rem;height:20rem;animation-duration:8s}.solar-story-orbit-4{width:25rem;height:25rem;animation-duration:10s}.solar-story-orbit-5{width:31rem;height:31rem;animation-duration:13s}
+.solar-story-planet{position:absolute;left:50%;top:-.8rem;translate:-50%;border-radius:999px;background:#4aa1d8;color:#fff;padding:.35rem;font-size:.5rem;font-weight:900}
+.solar-story-label{position:absolute;left:50%;bottom:8%;translate:-50%;color:#fff;font-weight:950;letter-spacing:.12em}
+.dedicated-solar-system[data-dedicated-phase="sun"] .solar-story-orbit{opacity:.2}.dedicated-solar-system[data-dedicated-phase="inner"] .solar-story-orbit-4,.dedicated-solar-system[data-dedicated-phase="inner"] .solar-story-orbit-5{opacity:.12}.dedicated-solar-system[data-dedicated-phase="outer"] .solar-story-orbit-1,.dedicated-solar-system[data-dedicated-phase="outer"] .solar-story-orbit-2,.dedicated-solar-system[data-dedicated-phase="outer"] .solar-story-orbit-3{opacity:.12}.dedicated-solar-system[data-dedicated-phase="rotation"] .solar-story-planet-3{animation:earth-rotate 1.4s linear infinite}
+
+/* Grammar scenes physically assemble words into a sentence. */
+.dedicated-grammar,.dedicated-telugu-grammar{background:linear-gradient(145deg,#493e9b,#182848)}
+.grammar-story-builder{position:absolute;left:50%;top:46%;translate:-50% -50%;display:flex;gap:1rem}
+.grammar-story-word{min-width:10rem;border-radius:1rem;background:#fff;color:#14203c;padding:1.4rem;text-align:center;box-shadow:0 1rem 2rem #07102088;opacity:.25}
+.grammar-word{font-size:1.5rem;font-weight:950}.grammar-role{margin-top:.5rem;border-radius:999px;background:#0b8f82;color:#fff;padding:.3rem;font-size:.7rem;font-weight:900}
+.grammar-story-result{position:absolute;left:50%;bottom:14%;translate:-50%;color:#fff;font-size:1.7rem;font-weight:950}
+.dedicated-grammar[data-dedicated-phase="subject"] .grammar-story-word-1,.dedicated-telugu-grammar[data-dedicated-phase="subject"] .grammar-story-word-1,.dedicated-grammar[data-dedicated-phase="verb"] .grammar-story-word-2,.dedicated-telugu-grammar[data-dedicated-phase="verb"] .grammar-story-word-3,.dedicated-grammar[data-dedicated-phase="object"] .grammar-story-word-3,.dedicated-telugu-grammar[data-dedicated-phase="object"] .grammar-story-word-2{opacity:1;scale:1.16}.dedicated-grammar[data-dedicated-phase="sentence"] .grammar-story-word,.dedicated-telugu-grammar[data-dedicated-phase="sentence"] .grammar-story-word{opacity:1;animation:word-rise .7s both}
+
+/* Constitution, history, geography and government use dedicated active objects. */
+.dedicated-indian-constitution{background:linear-gradient(135deg,#f59e0b,#fff 48%,#169b62)}
+.civic-story{position:absolute;inset:0}.civic-book{position:absolute;left:50%;top:47%;translate:-50% -50%;display:grid;place-items:center;width:13rem;height:17rem;border:.6rem double #f5d36e;border-radius:1rem;background:#153b72;color:#f7dc83;font-weight:950;box-shadow:0 1.5rem 2.5rem #1237}
+.civic-ray{position:absolute;border-radius:999px;background:#fff;color:#153b72;padding:.8rem;font-weight:950;opacity:.22}.civic-rights{left:10%;top:20%}.civic-duties{right:10%;top:20%}.civic-democracy{left:10%;bottom:18%}.civic-institutions{right:10%;bottom:18%}
+.dedicated-indian-constitution[data-dedicated-phase="rights"] .civic-rights,.dedicated-indian-constitution[data-dedicated-phase="duties"] .civic-duties,.dedicated-indian-constitution[data-dedicated-phase="democracy"] .civic-democracy,.dedicated-indian-constitution[data-dedicated-phase="institutions"] .civic-institutions{opacity:1;scale:1.2;box-shadow:0 0 2rem #fff}
+
+.dedicated-indian-freedom-movement{background:linear-gradient(145deg,#4b2c1e,#1e120e)}
+.freedom-story-road{position:absolute;left:7%;right:7%;top:50%;height:.45rem;background:linear-gradient(90deg,#ff9933,#fff,#138808)}
+.freedom-story-milestone{position:absolute;top:50%;translate:-50% -50%;display:grid;place-items:center;width:6.5rem;height:6.5rem;border:3px solid #e8bd64;border-radius:50%;background:#2f1b13;color:#fff;text-align:center;opacity:.28}.milestone-1{left:0}.milestone-2{left:25%}.milestone-3{left:50%}.milestone-4{left:75%}.milestone-5{left:100%}.milestone-year{font-weight:950}.milestone-event{font-size:.58rem}.freedom-story-flag{position:absolute;right:6%;top:8%;font-size:5rem}
+.dedicated-indian-freedom-movement[data-dedicated-phase="resistance"] .milestone-1,.dedicated-indian-freedom-movement[data-dedicated-phase="non-cooperation"] .milestone-2,.dedicated-indian-freedom-movement[data-dedicated-phase="salt"] .milestone-3,.dedicated-indian-freedom-movement[data-dedicated-phase="quit-india"] .milestone-4,.dedicated-indian-freedom-movement[data-dedicated-phase="freedom"] .milestone-5{opacity:1;scale:1.25;box-shadow:0 0 2rem #ffdc77}
+
+.dedicated-andhra-pradesh-geography{background:linear-gradient(145deg,#bfe9ff,#dff5cf)}
+.ap-story-map{position:absolute;left:50%;top:48%;translate:-50% -50%;width:25rem;height:25rem;background:#4ba95d;clip-path:polygon(48% 0,70% 12%,75% 30%,92% 50%,73% 68%,65% 91%,40% 100%,23% 80%,34% 59%,8% 40%,31% 24%);filter:drop-shadow(0 1.5rem 1.5rem #1538)}
+.ap-story-ghats,.ap-story-river,.ap-story-coast{position:absolute;border-radius:999px;background:#ffffffdd;color:#174663;padding:.45rem;font-size:.65rem;font-weight:950;opacity:.2}.ap-story-ghats{left:18%;top:35%}.ap-story-krishna{left:35%;top:58%}.ap-story-godavari{left:43%;top:42%}.ap-story-coast{right:0;top:48%;rotate:78deg}
+.dedicated-andhra-pradesh-geography[data-dedicated-phase="ghats"] .ap-story-ghats,.dedicated-andhra-pradesh-geography[data-dedicated-phase="krishna"] .ap-story-krishna,.dedicated-andhra-pradesh-geography[data-dedicated-phase="godavari"] .ap-story-godavari,.dedicated-andhra-pradesh-geography[data-dedicated-phase="coast"] .ap-story-coast{opacity:1;scale:1.25;box-shadow:0 0 1.5rem #fff}
+
+.dedicated-local-government{background:linear-gradient(#73c8ee 0 62%,#74ad55 62%)}
+.government-people{position:absolute;left:5%;bottom:18%;font-size:3rem}.government-office{position:absolute;left:50%;top:43%;translate:-50% -50%;display:grid;place-items:center;width:18rem;height:11rem;border:.5rem solid #e5a529;background:#fff1c7;color:#153b72;font-weight:950;box-shadow:0 1.5rem 2rem #1237}
+.government-service{position:absolute;border-radius:999px;background:#fff;color:#0b4f85;padding:.7rem;font-weight:950;opacity:.22}.gov-water{right:8%;top:18%}.gov-road{right:7%;top:43%}.gov-light{right:9%;bottom:18%}
+.dedicated-local-government[data-dedicated-phase="water"] .gov-water,.dedicated-local-government[data-dedicated-phase="road"] .gov-road,.dedicated-local-government[data-dedicated-phase="light"] .gov-light{opacity:1;scale:1.25;box-shadow:0 0 2rem #fff}.dedicated-local-government[data-dedicated-phase="panchayat"] .government-office,.dedicated-local-government[data-dedicated-phase="urban"] .government-office{scale:1.1}
+
+.dedicated-climate-and-natural-resources{background:radial-gradient(circle,#347ca0,#062842)}
+.resource-story-earth{position:absolute;left:50%;top:48%;translate:-50% -50%;font-size:11rem}.resource-story-item{position:absolute;border-radius:999px;background:#fff;color:#075075;padding:.7rem;font-weight:950;opacity:.22}.story-water{left:8%;top:18%}.story-soil{left:10%;bottom:16%}.story-forest{right:8%;top:18%}.story-minerals{right:9%;bottom:16%}.resource-story-conserve{position:absolute;left:50%;bottom:8%;translate:-50%;border:.3rem dashed #7df0c2;border-radius:999px;color:#fff;padding:.7rem 1.2rem;font-weight:950;opacity:.2}
+.dedicated-climate-and-natural-resources[data-dedicated-phase="water"] .story-water,.dedicated-climate-and-natural-resources[data-dedicated-phase="soil"] .story-soil,.dedicated-climate-and-natural-resources[data-dedicated-phase="forests"] .story-forest,.dedicated-climate-and-natural-resources[data-dedicated-phase="minerals"] .story-minerals,.dedicated-climate-and-natural-resources[data-dedicated-phase="conserve"] .resource-story-conserve{opacity:1;scale:1.25;box-shadow:0 0 2rem #79efd0}
+
+@keyframes cut-draw{from{scale:0}to{scale:1}}@keyframes piece-pop{50%{scale:.94;filter:brightness(1.2)}}@keyframes arrow-down{50%{translate:-50% .8rem}}@keyframes line-draw{from{scale:0 1}to{scale:1}}@keyframes cycle-particle{50%{opacity:.35}}@keyframes water-up{to{translate:0 -13rem;opacity:0}}@keyframes water-down{from{translate:0 -5rem;opacity:0}to{translate:0 12rem;opacity:1}}
+
+@media(max-width:48rem){
+ .story-pizza{width:13rem;height:13rem}.cut-one{height:13rem}.cut-two{width:13rem}
+ .place-value-table{grid-template-columns:repeat(3,6.5rem)}.place-name{font-size:.5rem}
+ .geometry-story-board{scale:.7}.solar-story-orbit-5{width:22rem;height:22rem}
+ .grammar-story-builder{gap:.35rem}.grammar-story-word{min-width:6rem;padding:.7rem}.grammar-word{font-size:1rem}
+ .freedom-story-milestone{width:4.3rem;height:4.3rem}.milestone-event{display:none}
+}
