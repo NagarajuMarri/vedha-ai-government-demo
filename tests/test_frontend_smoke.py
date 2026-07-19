@@ -719,3 +719,48 @@ def test_parent_voice_insights_follow_selected_language_profile() -> None:
     assert 'profile === "telugu_assisted_english"' in parent_js
     assert "Accuracy" in parent_js
     assert "తదుపరి దశ" in parent_js
+
+
+def test_teacher_portal_is_functional_and_uses_assigned_synthetic_classes() -> None:
+    teacher_html = (FRONTEND_ROOT / "teacher" / "index.html").read_text(encoding="utf-8")
+    teacher_js = (FRONTEND_ROOT / "assets" / "js" / "teacher-dashboard.js").read_text(encoding="utf-8")
+    assert 'src="../assets/js/teacher-dashboard.js"' in teacher_html
+    assert "Synthetic demonstration data" in teacher_html
+    assert "only see assigned classes and students" in teacher_html
+    for element_id in (
+        "teacher-class", "teacher-subject", "concept-performance", "intervention-list",
+        "student-roster", "assignment-form", "approval-question", "teacher-voice-form",
+    ):
+        assert f'id="{element_id}"' in teacher_html
+    assert "nineA:" in teacher_js
+    assert "sixB:" in teacher_js
+    assert "innerHTML" not in teacher_js
+
+
+def test_teacher_portal_supports_three_language_profiles_and_voice_insights() -> None:
+    teacher_html = (FRONTEND_ROOT / "teacher" / "index.html").read_text(encoding="utf-8")
+    teacher_js = (FRONTEND_ROOT / "assets" / "js" / "teacher-dashboard.js").read_text(encoding="utf-8")
+    for profile in ("english_medium", "pure_telugu", "telugu_assisted_english"):
+        assert f'value="{profile}"' in teacher_html
+        assert profile in teacher_js
+    assert 'data-voice-language-source="#teacher-language"' in teacher_html
+    assert 'data-speak-target="#teacher-answer"' in teacher_html
+    for telugu in ("భావనల వారీ ఫలితాలు", "సహాయ సంకేతాలు", "పునరభ్యాసం కేటాయించండి"):
+        assert telugu in teacher_js
+
+
+def test_teacher_portal_supports_interventions_assignments_and_ai_approval() -> None:
+    teacher_js = (FRONTEND_ROOT / "assets" / "js" / "teacher-dashboard.js").read_text(encoding="utf-8")
+    assert 'row[3]<70' in teacher_js
+    assert 'byId("assignment-form").addEventListener("submit"' in teacher_js
+    assert 'byId("approve-question").addEventListener("click"' in teacher_js
+    assert 'byId("reject-question").addEventListener("click"' in teacher_js
+    assert "Question student practiceకు approve అయింది." in teacher_js
+
+
+def test_teacher_dashboard_layout_is_responsive_and_presentation_ready() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    for selector in (".teacher-portal", ".teacher-hero", ".teacher-metrics", ".teacher-grid", ".teacher-table-wrap"):
+        assert selector in styles
+    assert "@media(max-width:64rem)" in styles
+    assert "@media(max-width:38rem)" in styles
