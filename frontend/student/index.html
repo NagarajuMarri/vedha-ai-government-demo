@@ -7,6 +7,7 @@
     <title>Student Tutor | Vedha AI Government Demo</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script src="../assets/js/api-client.js" defer></script>
+    <script src="../assets/js/voice-assistant.js" defer></script>
     <script src="../assets/js/student-tutor.js" defer></script>
   </head>
   <body class="student-app">
@@ -111,10 +112,16 @@
             <span id="question-counter">0 / 1500</span>
           </div>
           <p id="question-error" class="field-error" role="alert" hidden></p>
+          <p id="student-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
           <div class="composer-actions">
-            <div class="future-actions" aria-label="Future tutor features">
-              <button type="button" disabled aria-label="Microphone is coming in a future sprint" title="Coming in a future sprint">🎙 Microphone</button>
-              <button type="button" disabled aria-label="Attachments are coming in a future sprint" title="Coming in a future sprint">📎 Attachment</button>
+            <div class="future-actions" aria-label="Tutor input features">
+              <button id="student-voice-input" class="voice-trigger" type="button"
+                data-voice-target="#question"
+                data-voice-status="#student-voice-status"
+                data-voice-language-source='input[name="learning_profile"]:checked'
+                data-start-label="🎙 Speak" data-stop-label="■ Stop listening"
+                aria-pressed="false">🎙 Speak</button>
+              <button type="button" disabled aria-label="General lesson attachments are coming in a future sprint" title="Practice answers already support phone photos">📎 Attachment</button>
             </div>
             <button id="ask-button" class="primary-button" type="submit">Ask Vedha</button>
           </div>
@@ -125,7 +132,13 @@
 
         <article id="lesson-result" class="lesson-result" tabindex="-1" aria-labelledby="lesson-title" hidden>
           <div id="fallback-note" class="fallback-note" role="note" hidden></div>
-          <header class="lesson-heading"><p class="eyebrow">Your Vedha lesson</p><h2 id="lesson-title"></h2></header>
+          <header class="lesson-heading"><p class="eyebrow">Your Vedha lesson</p><h2 id="lesson-title"></h2>
+            <div class="speech-controls" aria-label="Lesson narration controls">
+              <button type="button" data-speak-target="#lesson-result" data-voice-language-source='input[name="learning_profile"]:checked'>🔊 Read lesson</button>
+              <button type="button" data-speech-pause>⏯ Pause / Resume</button>
+              <button type="button" data-speech-stop>■ Stop</button>
+            </div>
+          </header>
           <section aria-labelledby="introduction-title"><h3 id="introduction-title">Introduction</h3><p id="lesson-introduction"></p></section>
           <section aria-labelledby="steps-title"><h3 id="steps-title">Step-by-step Explanation</h3><ol id="lesson-steps"></ol></section>
           <section class="example-section" aria-labelledby="example-title"><h3 id="example-title">Example</h3><p id="lesson-example"></p></section>
