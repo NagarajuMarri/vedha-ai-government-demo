@@ -9,7 +9,7 @@
 
   const languageCodes = {
     english_medium: "en-IN",
-    telugu_assisted_english: "en-IN",
+    telugu_assisted_english: "te-IN",
     pure_telugu: "te-IN",
     english: "en-IN",
     telugu: "te-IN",
@@ -105,13 +105,35 @@
     recognition.start();
   }
 
-  function preferredVoice(language) {
-    const voices = synth?.getVoices() || [];
-    const exact = voices.find((voice) => voice.lang.toLowerCase() === language.toLowerCase());
-    return exact || voices.find((voice) => voice.lang.toLowerCase().startsWith(language.slice(0, 2).toLowerCase())) || null;
+  function loadVoices() {
+    if (!synth) return Promise.resolve([]);
+    const available = synth.getVoices();
+    if (available.length) return Promise.resolve(available);
+    return new Promise((resolve) => {
+      const timer = window.setTimeout(() => resolve(synth.getVoices()), 2000);
+      synth.addEventListener("voiceschanged", () => {
+        window.clearTimeout(timer);
+        resolve(synth.getVoices());
+      }, { once: true });
+    });
   }
 
-  function speak(button) {
+  async function preferredVoice(language) {
+    const voices = await loadVoices();
+    const normalized = language.toLowerCase();
+    const exact = voices.find((voice) => voice.lang.toLowerCase() === normalized);
+    return exact || voices.find((voice) => voice.lang.toLowerCase().startsWith(normalized.slice(0, 2))) || null;
+  }
+
+  function setSpeechStatus(button, message, kind = "info") {
+    const status = document.querySelector(button.dataset.speakStatus || "");
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.state = kind;
+    status.hidden = !message;
+  }
+
+  async function speak(button) {
     if (!synth) {
       const status = document.querySelector(button.dataset.speakStatus || "");
       if (status) status.textContent = "Read-aloud is not available in this browser.";
@@ -123,20 +145,34 @@
 
     synth.cancel();
     const language = resolveLanguage(button);
+    const voice = await preferredVoice(language);
+    if (language.startsWith("te") && !voice) {
+      setSpeechStatus(
+        button,
+        "తెలుగు వాయిస్ ఈ బ్రౌజర్‌లో అందుబాటులో లేదు. Microsoft Edgeలో మళ్లీ ప్రయత్నించండి లేదా Windows Telugu speech voiceను install చేయండి.",
+        "error",
+      );
+      return;
+    }
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = language;
     utterance.rate = Number(button.dataset.speakRate || "0.9");
-    utterance.voice = preferredVoice(language);
+    utterance.voice = voice;
     currentUtterance = utterance;
 
-    utterance.onstart = () => button.closest(".speech-controls")?.classList.add("is-speaking");
+    utterance.onstart = () => {
+      button.closest(".speech-controls")?.classList.add("is-speaking");
+      setSpeechStatus(button, language.startsWith("te") ? "తెలుగు పాఠాన్ని చదువుతోంది…" : "Reading the lesson…", "success");
+    };
     utterance.onend = () => {
       button.closest(".speech-controls")?.classList.remove("is-speaking");
       currentUtterance = null;
+      setSpeechStatus(button, "", "info");
     };
     utterance.onerror = () => {
       button.closest(".speech-controls")?.classList.remove("is-speaking");
       currentUtterance = null;
+      setSpeechStatus(button, "Narration stopped. Please retry or check the installed browser voice.", "error");
     };
     synth.speak(utterance);
   }
