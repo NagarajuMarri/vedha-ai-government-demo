@@ -340,3 +340,39 @@ def test_lesson_narration_excludes_interface_controls_and_section_labels() -> No
         assert re.search(fr'id="{element_id}"[^>]*data-narration', STUDENT_HTML)
     assert 'data-speech-pause data-narration' not in STUDENT_HTML
     assert 'data-speech-stop data-narration' not in STUDENT_HTML
+
+
+def test_student_can_choose_text_or_narrated_animation_mode() -> None:
+    assert 'data-explanation-mode="text"' in STUDENT_HTML
+    assert 'data-explanation-mode="animation"' in STUDENT_HTML
+    assert 'id="concept-animation"' in STUDENT_HTML
+    assert 'id="animation-caption"' in STUDENT_HTML
+    assert 'id="animation-play"' in STUDENT_HTML
+    assert 'id="animation-previous"' in STUDENT_HTML
+    assert 'id="animation-next"' in STUDENT_HTML
+    assert 'id="animation-replay"' in STUDENT_HTML
+    assert 'src="../assets/js/concept-animations.js"' in STUDENT_HTML
+
+
+def test_animation_mode_hides_written_lesson_and_keeps_only_synchronized_caption() -> None:
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    assert ".lesson-result.animation-mode > .lesson-text-content" in styles
+    assert "display: none" in styles
+    assert 'lessonResult.classList.toggle("animation-mode", animationMode)' in animation_js
+    assert 'byId("animation-caption").textContent = steps[state.index]' in animation_js
+
+
+def test_four_showcase_concepts_have_bilingual_synchronized_animation_steps() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    for concept in ("Fractions", "Geometry", "Water Cycle", "Solar System"):
+        assert concept in animation_js
+    for telugu in ("భిన్నాలు", "జ్యామితి", "నీటి చక్రం", "సౌర కుటుంబం"):
+        assert telugu in animation_js
+    assert "window.VedhaVoice?.speakText" in animation_js
+    assert "onEnd: advanceAfterNarration" in animation_js
+    assert "prefers-reduced-motion: reduce" in (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+
+
+def test_lesson_generation_prepares_animation_for_exact_selected_concept() -> None:
+    assert "window.VedhaAnimations?.prepare(state.setup.concept, state.setup.learning_profile)" in TUTOR_JS
