@@ -476,3 +476,28 @@ def test_all_animation_templates_have_distinct_visual_scenes() -> None:
     ):
         assert visual in animation_js
         assert f".{visual}" in styles
+
+
+def test_animation_narration_autoplays_and_manual_navigation_speaks() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    voice_js = (FRONTEND_ROOT / "assets" / "js" / "voice-assistant.js").read_text(encoding="utf-8")
+    assert 'if (animationMode)' in animation_js
+    assert "play();" in animation_js
+    assert 'if (event.target.closest("#animation-next"))' in animation_js
+    assert 'if (event.target.closest("#animation-previous"))' in animation_js
+    assert animation_js.count("narrateCurrentStep();") >= 4
+    assert "if (synth.paused) synth.resume()" in voice_js
+    assert "window.setTimeout(queue, 90)" in voice_js
+    assert "startWatchdog" in voice_js
+
+
+def test_animation_visual_phase_tracks_narrated_sentence() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    styles = (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    assert "function visualPhase(concept, caption, index, total)" in animation_js
+    assert "stage.dataset.phase = visualPhase" in animation_js
+    for phase in ("roots-water", "carbon", "food", "oxygen"):
+        assert phase in animation_js
+        assert f'data-phase="{phase}"' in styles
+    for animation in ("water-into-roots", "gas-into-leaf", "oxygen-release"):
+        assert f"@keyframes {animation}" in styles
