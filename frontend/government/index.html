@@ -44,11 +44,11 @@
         <div class="role-voice-composer">
           <label class="sr-only" for="government-voice-query">Government dashboard request</label>
           <input id="government-voice-query" type="text" placeholder="Ask for a district insight">
-          <select id="government-voice-language" aria-label="Voice language"><option value="english">English</option><option value="telugu">తెలుగు</option></select>
+          <select id="government-voice-language" aria-label="Language profile"><option value="english_medium">English</option><option value="pure_telugu">తెలుగు</option><option value="telugu_assisted_english">తెలుగులో English terms తో</option></select>
           <button class="voice-trigger" type="button" data-voice-target="#government-voice-query" data-voice-status="#government-voice-status" data-voice-language-source="#government-voice-language" data-start-label="🎙 Speak" data-stop-label="■ Stop listening" aria-pressed="false">🎙 Speak</button>
-          <button class="primary-button" type="submit">Apply request</button>
+          <button class="primary-button" id="government-apply" type="submit">Apply request</button>
         </div>
-        <p id="government-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
+        <p id="government-voice-status" class="voice-status" role="status" aria-live="polite" hidden></p><div id="government-answer" class="parent-answer government-answer" role="status" aria-live="polite" hidden><p id="government-answer-text" data-narration></p><div class="speech-controls"><button type="button" data-speak-target="#government-answer" data-speak-status="#government-speech-status" data-voice-language-source="#government-voice-language">🔊 Read insight</button><button type="button" data-speech-pause>⏯ Pause / Resume</button><button type="button" data-speech-stop>■ Stop</button></div><p id="government-speech-status" class="voice-status" hidden></p></div>
       </form>
 
       <aside class="synthetic-banner" role="note">
