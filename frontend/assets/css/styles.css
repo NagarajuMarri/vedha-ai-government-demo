@@ -3196,3 +3196,135 @@ body {
   .animation-stage .plant-food,
   .animation-stage .planet-surface { animation:none !important; }
 }
+
+
+/* Progressive photosynthesis story animation */
+.sunlight-rays {
+  position:absolute;
+  z-index:4;
+  left:16%;
+  top:23%;
+  width:32%;
+  height:34%;
+  rotate:22deg;
+  opacity:0;
+  transition:opacity .45s ease;
+  pointer-events:none;
+}
+.sunlight-ray {
+  position:absolute;
+  top:0;
+  width:.42rem;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(#fff7a8,#ffd43b 60%,transparent);
+  box-shadow:0 0 1rem #ffe762;
+  transform-origin:top;
+  animation:sunbeam-fall 1.35s ease-in-out infinite;
+}
+.sunlight-ray-1{left:3%;animation-delay:-.1s}.sunlight-ray-2{left:18%;animation-delay:-.25s}
+.sunlight-ray-3{left:34%;animation-delay:-.4s}.sunlight-ray-4{left:50%;animation-delay:-.55s}
+.sunlight-ray-5{left:66%;animation-delay:-.7s}.sunlight-ray-6{left:82%;animation-delay:-.85s}
+.sunlight-ray-7{left:97%;animation-delay:-1s}
+.leaf-chlorophyll {
+  position:absolute;
+  z-index:8;
+  left:50%;
+  top:42%;
+  translate:-50%;
+  border-radius:999px;
+  background:#0b5f31e8;
+  color:#fff;
+  padding:.45rem .75rem;
+  font-size:.72rem;
+  font-weight:950;
+  opacity:0;
+  transition:opacity .5s ease, scale .5s ease;
+}
+.water-particles {
+  position:absolute;
+  z-index:6;
+  left:calc(50% - .25rem);
+  top:55%;
+  width:.55rem;
+  height:26%;
+  border-radius:999px;
+  opacity:0;
+  background:repeating-linear-gradient(to top,#b9f1ff 0 .55rem,transparent .55rem 1.15rem);
+  filter:drop-shadow(0 0 .45rem #45d8ff);
+  animation:water-up-stem 1.2s linear infinite;
+}
+
+/* Sunlight remains part of the scene after it has been introduced. */
+.animation-stage[data-concept="photosynthesis"].seen-sunlight .sunlight-rays,
+.animation-stage[data-concept="photosynthesis"][data-phase="sunlight"] .sunlight-rays {
+  opacity:1;
+}
+.animation-stage[data-concept="photosynthesis"].seen-sunlight .plant-leaf {
+  box-shadow:inset 0 0 1rem #0b5128,0 0 1.4rem #c9f56b;
+}
+.animation-stage[data-concept="photosynthesis"].seen-sunlight .leaf-chlorophyll {
+  opacity:1;
+  scale:1.05;
+}
+
+/* Water visibly enters the roots, then rises through the existing plant. */
+.animation-stage[data-concept="photosynthesis"].seen-roots-water .water-flow,
+.animation-stage[data-concept="photosynthesis"][data-phase="roots-water"] .water-flow {
+  opacity:1;
+  filter:none;
+}
+.animation-stage[data-concept="photosynthesis"].seen-roots-water .water-particles {
+  opacity:1;
+}
+.animation-stage[data-concept="photosynthesis"].seen-roots-water .plant-roots {
+  border-color:#68d9ff;
+  filter:drop-shadow(0 0 1rem #42cfff);
+}
+
+/* Carbon dioxide enters leaves; produced food and oxygen are added progressively. */
+.animation-stage[data-concept="photosynthesis"].seen-carbon .carbon-flow {
+  opacity:1; filter:none;
+}
+.animation-stage[data-concept="photosynthesis"].seen-food .plant-food {
+  opacity:1; filter:none; scale:1.2; box-shadow:0 0 2rem #ffd166;
+}
+.animation-stage[data-concept="photosynthesis"].seen-oxygen .oxygen-flow {
+  opacity:1; filter:none;
+}
+.animation-stage[data-concept="photosynthesis"][data-phase="carbon"] .carbon-flow { animation:gas-into-leaf 1.35s ease-in-out infinite; }
+.animation-stage[data-concept="photosynthesis"][data-phase="oxygen"] .oxygen-flow { animation:oxygen-release 1.3s ease-in-out infinite; }
+
+/* Other lessons also preserve introduced objects as narration advances. */
+.animation-stage.seen-rights .rights-pillar,
+.animation-stage.seen-duties .duties-pillar,
+.animation-stage.seen-democracy .democracy-pillar,
+.animation-stage.seen-resistance .event-1,
+.animation-stage.seen-non-cooperation .event-2,
+.animation-stage.seen-salt .event-3,
+.animation-stage.seen-quit-india .event-4,
+.animation-stage.seen-freedom .event-5,
+.animation-stage.seen-krishna .krishna-river,
+.animation-stage.seen-godavari .godavari-river,
+.animation-stage.seen-ghats .ap-ghats,
+.animation-stage.seen-water .resource-water,
+.animation-stage.seen-soil .resource-soil,
+.animation-stage.seen-forests .resource-forest,
+.animation-stage.seen-minerals .resource-mineral {
+  opacity:1;
+  filter:none;
+}
+
+@keyframes sunbeam-fall {
+  0%{scale:1 .25;opacity:.15}
+  55%{scale:1 1;opacity:1}
+  100%{scale:1 1;translate:2.2rem 3.2rem;opacity:0}
+}
+@keyframes water-up-stem {
+  from{background-position:0 2rem}
+  to{background-position:0 -2rem}
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .sunlight-ray,.water-particles{animation:none}
+}
