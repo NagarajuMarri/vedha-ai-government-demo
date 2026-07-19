@@ -375,7 +375,7 @@ def test_four_showcase_concepts_have_bilingual_synchronized_animation_steps() ->
 
 
 def test_lesson_generation_prepares_animation_for_exact_selected_concept() -> None:
-    assert "window.VedhaAnimations?.prepare(state.setup.concept, state.setup.learning_profile)" in TUTOR_JS
+    assert "window.VedhaAnimations?.prepare(state.setup.concept, state.setup.learning_profile, lesson)" in TUTOR_JS
 
 
 def test_animation_player_has_government_presentation_controls_and_timeline() -> None:
@@ -423,7 +423,8 @@ def test_all_animated_lessons_are_between_one_and_five_minutes() -> None:
     durations = [int(value) for value in re.findall(r"durationSeconds: (\d+)", animation_js)]
     assert len(durations) == 4
     assert all(60 <= duration <= 300 for duration in durations)
-    assert "minimumStepMs" in animation_js
+    assert "estimateNarrationSeconds" in animation_js
+    assert "Math.max(60, Math.min(300" in animation_js
     assert 'id="animation-duration"' in STUDENT_HTML
 
 
@@ -434,3 +435,18 @@ def test_fraction_animation_has_extended_eight_step_instruction() -> None:
     assert english_steps.count('",') >= 7
     assert "Three is the numerator" in fraction_block
     assert "four equal pieces" in fraction_block
+
+
+def test_animation_narrates_the_complete_generated_text_lesson() -> None:
+    animation_js = (FRONTEND_ROOT / "assets" / "js" / "concept-animations.js").read_text(encoding="utf-8")
+    assert "function buildFullLessonNarration(generatedLesson)" in animation_js
+    for lesson_part in (
+        "generatedLesson.introduction",
+        "...generatedLesson.explanation_steps",
+        "generatedLesson.example",
+        "...generatedLesson.key_points",
+        "generatedLesson.check_question",
+    ):
+        assert lesson_part in animation_js
+    assert "steps: { en: fullNarration, te: fullNarration }" in animation_js
+    assert "generatedLesson.title" in animation_js
