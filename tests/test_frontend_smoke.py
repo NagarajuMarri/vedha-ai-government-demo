@@ -370,7 +370,7 @@ def test_four_showcase_concepts_have_bilingual_synchronized_animation_steps() ->
     for telugu in ("భిన్నాలు", "జ్యామితి", "నీటి చక్రం", "సౌర కుటుంబం"):
         assert telugu in animation_js
     assert "window.VedhaVoice?.speakText" in animation_js
-    assert "onEnd: advanceAfterNarration" in animation_js
+    assert "onEnd: scheduleAdvanceAfterNarration" in animation_js
     assert "prefers-reduced-motion: reduce" in (FRONTEND_ROOT / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
 
 
