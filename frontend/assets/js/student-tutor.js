@@ -73,7 +73,7 @@
       practiceTitle: "15-question practice", practiceSummary: "Vedha prepares exactly 5 Easy, 5 Medium, and 5 Hard questions.",
       difficulties: { easy: "Easy · 5", medium: "Medium · 5", hard: "Hard · 5" },
       hintLabel: "Hint", answerPlaceholder: "Type your answer", checkAnswer: "Check Answer",
-      uploadWork: "Upload Handwritten Work", generatePractice: "Generate Practice",
+      uploadWork: "Upload Handwritten Work", voiceAnswer: "Speak Answer", generatePractice: "Generate Practice",
       progress: { title: "Progress this session", attempted: "Attempted", mastered: "Mastered", accuracy: "Accuracy", start: "Start answering practice questions to see your progress.", active: "Keep going—every correction builds understanding.", complete: "Excellent! You mastered all 15 questions.", badgeStart: "Getting started", badgeActive: "Learning in progress", badgeComplete: "Practice complete" },
     },
     telugu_assisted_english: {
@@ -89,7 +89,7 @@
       practiceTitle: "15 ప్రశ్నల practice", practiceSummary: "Vedha 5 సులభ, 5 మధ్యస్థ, 5 కఠిన questions సిద్ధం చేస్తుంది.",
       difficulties: { easy: "సులభ · 5", medium: "మధ్యస్థ · 5", hard: "కఠిన · 5" },
       hintLabel: "సూచన", answerPlaceholder: "సమాధానం type చేయండి", checkAnswer: "Answer తనిఖీ",
-      uploadWork: "చేతిరాత Work Upload", generatePractice: "Practice రూపొందించండి",
+      uploadWork: "చేతిరాత Work Upload", voiceAnswer: "Answer మాట్లాడండి", generatePractice: "Practice రూపొందించండి",
       progress: { title: "ఈ session progress", attempted: "Attempted", mastered: "Mastered", accuracy: "Accuracy", start: "Questions answer చేయడం ప్రారంభిస్తే progress కనిపిస్తుంది.", active: "Continue చేయండి—ప్రతి correction understandingను పెంచుతుంది.", complete: "Excellent! మొత్తం 15 questions mastered.", badgeStart: "Getting started", badgeActive: "Learning in progress", badgeComplete: "Practice complete" },
     },
     pure_telugu: {
@@ -105,7 +105,7 @@
       practiceTitle: "15 ప్రశ్నల అభ్యాసం", practiceSummary: "వేద 5 సులభ, 5 మధ్యస్థ, 5 కఠిన ప్రశ్నలను సిద్ధం చేస్తుంది.",
       difficulties: { easy: "సులభం · 5", medium: "మధ్యస్థం · 5", hard: "కఠినం · 5" },
       hintLabel: "సూచన", answerPlaceholder: "మీ సమాధానం రాయండి", checkAnswer: "సమాధానం తనిఖీ",
-      uploadWork: "చేతిరాత పరిష్కారం జోడించండి", generatePractice: "అభ్యాసం రూపొందించండి",
+      uploadWork: "చేతిరాత పరిష్కారం జోడించండి", voiceAnswer: "సమాధానం చెప్పండి", generatePractice: "అభ్యాసం రూపొందించండి",
       progress: { title: "ఈ అభ్యాసంలోని ప్రగతి", attempted: "ప్రయత్నించినవి", mastered: "నేర్చుకున్నవి", accuracy: "ఖచ్చితత్వం", start: "మీ ప్రగతిని చూడటానికి అభ్యాస ప్రశ్నలకు సమాధానాలు ఇవ్వడం ప్రారంభించండి.", active: "కొనసాగించండి—ప్రతి సవరణ మీ అవగాహనను పెంచుతుంది.", complete: "అద్భుతం! మీరు మొత్తం 15 ప్రశ్నలను నేర్చుకున్నారు.", badgeStart: "ప్రారంభం", badgeActive: "అభ్యాసం కొనసాగుతోంది", badgeComplete: "అభ్యాసం పూర్తయింది" },
     },
   };
@@ -288,6 +288,8 @@
         const answerRow = document.createElement("div");
         const input = document.createElement("input");
         const button = document.createElement("button");
+        const voiceButton = document.createElement("button");
+        const voiceStatus = document.createElement("p");
         const feedback = document.createElement("p");
         const guidance = document.createElement("ul");
         const uploadRow = document.createElement("div");
@@ -298,11 +300,27 @@
         hint.textContent = `${copy.hintLabel}: ${question.hint}`;
         input.type = "text";
         input.className = "practice-answer";
+        input.id = `practice-answer-${question.question_id}`;
         input.placeholder = copy.answerPlaceholder;
         input.setAttribute("aria-label", `Answer for: ${question.prompt}`);
         button.type = "button";
         button.className = "secondary-button check-answer";
         button.textContent = copy.checkAnswer;
+        voiceButton.type = "button";
+        voiceButton.className = "voice-trigger practice-voice-answer";
+        voiceButton.textContent = `🎙 ${copy.voiceAnswer}`;
+        voiceButton.dataset.startLabel = `🎙 ${copy.voiceAnswer}`;
+        voiceButton.dataset.stopLabel = "■ Stop listening";
+        voiceButton.dataset.voiceTarget = `#${input.id}`;
+        voiceButton.dataset.voiceStatus = `#practice-voice-status-${question.question_id}`;
+        voiceButton.dataset.voiceLanguageSource = 'input[name="learning_profile"]:checked';
+        voiceButton.setAttribute("aria-pressed", "false");
+        voiceButton.setAttribute("aria-label", `${copy.voiceAnswer}: ${question.prompt}`);
+        voiceStatus.id = `practice-voice-status-${question.question_id}`;
+        voiceStatus.className = "voice-status practice-voice-status";
+        voiceStatus.setAttribute("role", "status");
+        voiceStatus.setAttribute("aria-live", "polite");
+        voiceStatus.hidden = true;
         feedback.className = "answer-feedback";
         feedback.tabIndex = -1;
         feedback.setAttribute("aria-live", "polite");
@@ -332,10 +350,10 @@
           }
         });
         answerRow.className = "practice-answer-row";
-        answerRow.append(input, button);
+        answerRow.append(input, voiceButton, button);
         uploadRow.className = "handwriting-upload-row";
         uploadRow.append(uploadInput, uploadButton);
-        item.append(prompt, hint, answerRow, uploadRow, uploadStatus, feedback, guidance);
+        item.append(prompt, hint, answerRow, voiceStatus, uploadRow, uploadStatus, feedback, guidance);
         return item;
       }));
     });
