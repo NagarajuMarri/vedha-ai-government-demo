@@ -1,5 +1,7 @@
 # Vedha AI Government Demo
 
+> The versioned React/TypeScript commercial frontend migration is available in `frontend-react/`. The legacy `frontend/` demo is preserved until every portal passes migration acceptance.
+
 A professional Government Demonstration edition of the Vedha AI Learning Platform for education leaders, school communities, investors, parents, teachers, and students.
 
 > **Project status:** Sprint 4A Real OpenAI Integration and Prompt Versioning is implemented. Real provider use is opt-in through server-side environment configuration; deterministic fallback remains the default safe path when provider configuration or service is unavailable.
